@@ -1,0 +1,24 @@
+<div class="actions">
+	<a class="remove-filter" href="#" title="Remove Filter">
+		<span class="container-icon"><i class="icon-refresh"></i></span>
+	</a>
+</div>
+<h2><%- label %></h2>
+<div class="chart-container">
+	<table class="table">
+		<tr>
+			<th>
+				<a href="#" class="table-sort <%= (sortDirection == 1) ? 'asc' : 'desc' %><% if (sortProperty == 'label') { %> active<% } %>" data-sort-property="label"><i class="icon-chevron-down"></i></a>
+			</th>
+			<th>
+				<a href="#" class="table-sort <%= (sortDirection == 1) ? 'asc' : 'desc' %><% if (sortProperty == 'total') { %> active<% } %>" data-sort-property="total"><i class="icon-chevron-down"></i></a>
+			</th>
+		</tr>
+		<% _.each(values, function(observation) { %>
+			<tr class="table-row" data-id="<%= observation['id'] %>" data-index="<%= observation['index'] %>">
+				<td><a href="#"><%- observation['label'] %></a></td>
+				<td><a href="#"><%- observation['totalFormat'] %></a></td>
+			</tr>
+		<% }); %>
+	</table>
+</div>

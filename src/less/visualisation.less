@@ -1,0 +1,406 @@
+// VISUALISATION PAGE
+// --------------------------------------------------
+
+
+// ICONS
+// --------------------------------------------------
+
+.container-icon {
+    display: block;
+    width: 18px;
+    height: 19px;
+    padding: 3px 0 0 4px;
+    .border-radius(12px);
+    background: @grayDarker;
+}
+
+// VISUALISATION
+// --------------------------------------------------
+
+.visualisation {
+    background-color: #f3f3f3;
+
+    .container {
+        position: relative;
+    }
+}
+
+// VISUALISATION HEADER
+// --------------------------------------------------
+
+// Blue lines only for mortality dataset
+div#mortality {
+    .summary-text.full {
+        background: transparent url('/static/img/lines.png') no-repeat center bottom;
+    }
+}
+
+article.summaryElement {
+    background-color: transparent;
+}
+
+.sub-heading {
+    background: @grayDarker;
+    .clearfix();
+
+    h1 {
+        font-size: 30px;
+        margin: 30px 0 0 0;
+        line-height: 1em;
+    }
+
+    h2 {
+        font-size: 14px;
+        margin-bottom: 15px;
+        float: left;
+    }
+
+    p {
+        float: right;
+        margin-right: 10px;
+
+        a {
+            display: block;
+            width: 18px;
+            height: 19px;
+            padding: 3px 0 0 4px;
+            .border-radius(12px);
+            background-color: @white;
+        }
+
+    }
+}
+
+.summary-text {
+    padding: 25px 0 40px 0;
+
+    h1 {
+        margin: 0;
+        padding: 17px 0 17px 10px;
+        font-size: 21px;
+        font-weight: normal;
+        text-align: center;
+        color: @headingsColor;
+        background-color: @white;
+        border: 1px solid #6bc5e8;
+    }
+}
+
+.global-actions {
+    position: absolute;
+    top: 0;
+    right: 10px;
+    padding-top: 10px;
+
+    a {
+        font-weight: bold;
+        color: @blue;
+
+        .container-icon {
+            float: right;
+            margin-left: 10px;
+        }
+
+    }
+
+    a:hover {
+        text-decoration: none;
+    }
+
+}
+
+
+// CHART ELEMENTS
+// --------------------------------------------------
+
+.elements {
+    margin-top: 15px;
+}
+
+.element {
+    background-color: @white;
+    font-size: 11px;
+
+    h2 {
+        font-size: 18px;
+        font-weight: normal;
+        margin: 10px 10px 20px 10px;
+        color: @headingsColor;
+    }
+
+}
+
+    .actions {
+        float: right;
+        margin: 0 10px 0 0;
+
+        a .container-icon {
+            float: left;
+            width: 18px;
+            height: 21px;
+            padding: 1px 0 0 4px;
+            margin-left: 2px;
+        }
+
+        .switcher {
+            float: left;
+            margin-left: 2px;
+
+            .dropdown-toggle {
+                font-size: 11px;
+                color: @black;
+            }
+
+            a {
+                display: block;
+                font-family: @sansFontFamily;
+                font-size: 11px;
+            }
+
+        }
+
+    }
+
+    .chart-container {
+    }
+
+    /*svg {
+        width: 100%;
+        height: 100%;
+    }*/
+
+    rect,
+    circle,
+    path,
+    .chartLabel {
+        cursor: pointer;
+    }
+
+    circle.scaleBubble,
+    rect.scale {
+        cursor: auto;
+    }
+
+// TABLE CHART
+// --------------------------------------------------
+
+.tableElement {
+    max-height: 600px;
+    overflow: auto;
+
+    //the table header
+    th {
+        border-left: 1px solid #dddddd;
+        padding: 0;
+
+        //chevron up
+        .asc {
+            i.icon-chevron-down {
+                .rotate(180deg);
+            }
+        }
+
+        //hide all chevron
+        a {
+            display: block;
+            text-align: center;
+            i {
+                visibility: hidden;
+            }
+        }
+
+        //show chevron on hover
+        a:hover {
+            i {
+                visibility: visible;
+            }
+        }
+
+        //show chevron for active th
+        a.active i {
+            visibility: visible;
+        }
+    }
+
+    th.table-chevron-left {
+        border-left: none;
+    }
+
+    th:hover {
+        background-color: #c8c8c8;
+    }
+
+    tr:hover {
+       cursor: pointer;
+       background-color: @tableBackgroundHover;
+     }
+
+     td {
+        padding: 0;
+        overflow: hidden;
+
+        a {
+            display: block;
+            padding: 5px;
+            padding-bottom: 1000px;
+            margin-bottom: -995px;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+     }
+}
+
+// FACETED NAVIGATION
+// --------------------------------------------------
+
+.navigationElement {
+
+    h3 {
+        margin: 0;
+        font-size: 13px;
+
+        a {
+            display: block;
+            position: relative;
+            padding: 15px;
+            color: @black;
+            text-decoration: none;
+
+            i {
+                position: absolute;
+                top: 0;
+                right: 0;
+                margin: 17px 25px 0 0;
+            }
+
+        }
+
+        .collapsed i {
+            .rotate(180deg);
+        }
+
+    }
+
+    .table {
+        td {
+            border: none;
+            padding: 0 20px;
+        }
+
+        .right {
+            text-align: right;
+        }
+    }
+
+}
+
+// TOOLTIPS
+// --------------------------------------------------
+
+.tipsy {
+    position: absolute;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 5px;
+    z-index: 100000;
+}
+
+.tipsy-inner {
+    background-color: @black;
+    color: @white;
+    max-width: 200px;
+    padding: 5px 8px;
+    text-align: left;
+}
+
+// DATASET INFO
+// --------------------------------------------------
+#dataset-info {
+    margin: 0 0 40px 0;
+    padding-top: 5px;
+
+    article {
+        background-color: #dfdede;
+        margin-bottom: 4px;
+    }
+
+    h1 {
+        margin: 0;
+        font-size: 13px;
+
+        a {
+            display: block;
+            position: relative;
+            padding: 15px;
+            color: @black;
+            text-decoration: none;
+
+            span {
+                display: block;
+                position: absolute;
+                top: 0;
+                right: 0;
+                margin: 17px 25px 0 0;
+                width: 34px;
+                height: 16px;
+                background: url('/static/img/arrows.png') no-repeat 0 0;
+            }
+
+        }
+
+    }
+
+    .info-body {
+        overflow: hidden;
+        padding: 0 15px;
+
+        h2 {
+            margin: 0;
+            color: #525252;
+            font-size: 13px;
+        }
+
+        p {
+            margin-top: 0;
+            font-size: 13px;
+        }
+
+    }
+
+}
+
+// BUTTONS
+// --------------------------------------------------
+
+.button {
+    display: inline-block;
+    padding: 4px 25px;
+    background-color: #23a8db;
+    color: @white;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.button:hover {
+    color: @white;
+    text-decoration: none;
+}
+
+// HELP
+// --------------------------------------------------
+.modal h3 {
+    margin: 5px 0;
+    font-size: 17px;
+}
+
+.modal.fade {
+  z-index:-1;
+}
+
+.modal.fade.in {
+  z-index:1050;
+}
+
