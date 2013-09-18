@@ -73,9 +73,8 @@ define(['backbone', 'underscore', 'dataseed/models/element/dimension', 'dataseed
             this.observations.bind('change', this.change, this);
 
             // Set default cut
-            if (!_.isUndefined(this.get('defaultCut'))) {
-                this.observations.cut = this.get('defaultCut');
-                this.unset('defaultCut', {'silent': true});
+            if (_.isObject(options['defaultCut'])) {
+                this.observations.cut = options['defaultCut'];
             }
 
             // Fetch observations

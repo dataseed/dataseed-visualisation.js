@@ -24,6 +24,7 @@ define(['backbone', 'underscore', '../collections/elements'],
         resetElements: function() {
             // Set element models in collection from visualisation "elements" attribute
             this.elements.set(_.map(this.get('elements'), function(element) {
+
                 var defaults = {
                     'visualisation': this,
                     'dataset': this.dataset,
@@ -49,10 +50,6 @@ define(['backbone', 'underscore', '../collections/elements'],
             this.elements.forEach(function(element, index) {
                 element.set('weight', offset + index + 1, {'silent': true});
             });
-        },
-
-        setDefaultCut: function(defaultCut) {
-            this.defaultCut = defaultCut;
         },
 
         addCut: function(key, value) {

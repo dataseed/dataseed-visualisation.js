@@ -12,22 +12,35 @@ define(['backbone', 'underscore', './visualisation'],
          * Initialise dataset's visualisation model
          */
         initialize: function(options) {
+            var loaded = false;
+
             // Check if visualisation was supplied in model data
             if (!_.isUndefined(options['visualisations']) && !_.isUndefined(options['visualisations'][0])) {
                 this.visualisation = new Visualisation(options['visualisations'][0]);
-                this.visualisation.dataset = this;
+                loaded = true;
 
             // Check if visualisation ID was supplied
             } else if (!_.isUndefined(options['visualisation_id'])) {
                 this.visualisation = new Visualisation({
                     'id': options['visualisation_id']
                 });
-                this.visualisation.dataset = this;
-                this.visualisation.fetch();
 
             } else {
                 console.log('No visualisation model supplied');
                 return;
+            }
+
+            // Set dataset
+            this.visualisation.dataset = this;
+
+            // Set default cut
+            if (!_.isUndefined(options['cut'])) {
+                this.visualisation.set('defaultCut', options['cut'], {'silent': true});
+            }
+
+            // Fetch model if not already loaded
+            if (!loaded) {
+                this.visualisation.fetch();
             }
         },
 
