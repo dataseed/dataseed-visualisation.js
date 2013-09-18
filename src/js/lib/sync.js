@@ -1,4 +1,4 @@
-define(['backbone', 'underscore'], function(Backbone, _) {
+define(['backbone', 'underscore', 'dataseed/models/authSingleton'], function(Backbone, _, authSingleton) {
     'use strict';
 
     // Save reference to Backbone.sync for later
@@ -6,8 +6,7 @@ define(['backbone', 'underscore'], function(Backbone, _) {
 
     var sync = function(method, model, options) {
 
-        // Only use trailing slashes for POST requests
-        if (method === 'create') {
+        if (method === 'create' || !_.isUndefined(authSingleton)) {
 
             // Get model URL
             if (!options.url) {
@@ -21,9 +20,19 @@ define(['backbone', 'underscore'], function(Backbone, _) {
             var urlParts = options.url.split('?');
             options.url = urlParts.shift();
 
-            // If the URL doesn't end in a trailing slash, add one
-            if (options.url.length > 1 && options.url.lastIndexOf('/') !== options.url.length-1) {
+            // If the URL doesn't end in a trailing slash and this is a POST request, add one
+            if (method === 'create' && options.url.length > 1 && options.url.lastIndexOf('/') !== options.url.length-1) {
                 options.url += '/';
+            }
+
+            // If authentication information has been supplied, add to the URL parameters
+            if (!_.isUndefined(authSingleton)) {
+                if (urlParts.length === 0) {
+                    urlParts[0] = '';
+                } else if (urlParts[0].length > 0) {
+                    urlParts[0] += '&';
+                }
+                urlParts[0] += authSingleton.getParams();
             }
 
             // Append URL query
