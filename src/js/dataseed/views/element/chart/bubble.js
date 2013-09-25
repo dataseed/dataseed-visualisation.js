@@ -90,6 +90,11 @@ define(['../chart', 'underscore', 'd3'], function(ChartView, _, d3) {
                 ]);
 
             var ticks = this.scale.ticks(this.scaleTicks);
+            // Sets a value for the tick scale if all nodes are the same size
+            if(ticks.length < 1) {
+                ticks[0] = this.getMeasure(nodes[0]);
+            }
+
             if (ticks[0] === 0) {
                 ticks.shift();
             }

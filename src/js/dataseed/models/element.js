@@ -63,6 +63,7 @@ define(['backbone', 'underscore', 'dataseed/models/element/dimension', 'dataseed
             this.dimension.fetch();
 
             // Create observations model
+            // Note: We bind to the "sync" event to fix bug #366
             this.observations = new Observations({
                 id: elementDimension['field']['id'],
                 type: elementDimension['field']['type'],
@@ -70,7 +71,7 @@ define(['backbone', 'underscore', 'dataseed/models/element/dimension', 'dataseed
                 element: this,
                 dataset: this.dataset
             });
-            this.observations.bind('change', this.change, this);
+            this.observations.bind('sync', this.change, this);
 
             // Set default cut
             if (_.isObject(options['defaultCut'])) {

@@ -31,7 +31,7 @@
 // Blue lines only for mortality dataset
 div#mortality {
     .summary-text.full {
-        background: transparent url('/static/img/lines.png') no-repeat center bottom;
+        background: transparent url('../../img/lines.png') no-repeat center bottom;
     }
 }
 
@@ -161,13 +161,10 @@ article.summaryElement {
 
     }
 
-    .chart-container {
-    }
-
-    /*svg {
+    // Making charts fit in containers
+    svg {
         width: 100%;
-        height: 100%;
-    }*/
+    }
 
     rect,
     circle,
@@ -184,6 +181,13 @@ article.summaryElement {
 // TABLE CHART
 // --------------------------------------------------
 
+//chevron up
+.asc {
+    i.icon-chevron-down {
+        .rotate(180deg);
+    }
+}
+
 .tableElement {
     max-height: 600px;
     overflow: auto;
@@ -192,13 +196,6 @@ article.summaryElement {
     th {
         border-left: 1px solid #dddddd;
         padding: 0;
-
-        //chevron up
-        .asc {
-            i.icon-chevron-down {
-                .rotate(180deg);
-            }
-        }
 
         //hide all chevron
         a {
@@ -222,6 +219,7 @@ article.summaryElement {
         }
     }
 
+
     th.table-chevron-left {
         border-left: none;
     }
@@ -233,11 +231,11 @@ article.summaryElement {
     tr:hover {
        cursor: pointer;
        background-color: @tableBackgroundHover;
-     }
+    }
 
-     td {
-        padding: 0;
-        overflow: hidden;
+    td {
+    padding: 0;
+    overflow: hidden;
 
         a {
             display: block;
@@ -249,7 +247,7 @@ article.summaryElement {
         a:hover {
             text-decoration: none;
         }
-     }
+    }
 }
 
 // FACETED NAVIGATION
@@ -345,7 +343,7 @@ article.summaryElement {
                 margin: 17px 25px 0 0;
                 width: 34px;
                 height: 16px;
-                background: url('/static/img/arrows.png') no-repeat 0 0;
+                background: url('../../img/arrows.png') no-repeat 0 0;
             }
 
         }
@@ -371,23 +369,6 @@ article.summaryElement {
 
 }
 
-// BUTTONS
-// --------------------------------------------------
-
-.button {
-    display: inline-block;
-    padding: 4px 25px;
-    background-color: #23a8db;
-    color: @white;
-    text-decoration: none;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-.button:hover {
-    color: @white;
-    text-decoration: none;
-}
 
 // HELP
 // --------------------------------------------------
