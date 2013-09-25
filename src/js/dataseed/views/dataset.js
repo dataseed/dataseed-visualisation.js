@@ -5,7 +5,7 @@ define(['backbone', 'underscore', '../models/dataset', '../models/datasetSinglet
     var DatasetEmbedView = Backbone.View.extend({
 
         visualisationViewType: VisualisationEmbedView,
-        visualisationView: null,
+        visualisation: null,
 
         initialize: function(options) {
             // Initialise model
@@ -26,28 +26,29 @@ define(['backbone', 'underscore', '../models/dataset', '../models/datasetSinglet
                 return;
             }
 
-            // Fetch dataset model
+            // Fetch models or render
             if (!loaded) {
-                this.model.fetch({'success': _.bind(this.initializeVisualisation, this)});
+                var opts = {'success': _.after(2, _.bind(this.render, this))};
+                this.model.fetch(opts);
+                this.model.visualisation.fetch(opts);
             } else {
-                this.initializeVisualisation();
+                this.render();
             }
-        },
-
-        initializeVisualisation: function() {
-            this.visualisationView = new this.visualisationViewType({
-                'el': this.el,
-                'model': this.model.visualisation,
-                'dataset': this.model
-            });
-            this.render();
         },
 
         /**
          * Render dataset
          */
         render: function() {
-            this.visualisationView.render();
+            if (_.isNull(this.visualisation)) {
+                this.visualisation = new this.visualisationViewType({
+                    'el': this.el,
+                    'model': this.model.visualisation,
+                    'dataset': this.model
+                });
+            }
+
+            this.visualisation.render();
         }
 
     });
