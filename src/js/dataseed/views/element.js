@@ -1,6 +1,6 @@
-define(['backbone', 'underscore', './element/summary', './element/navigation', './element/chart/bar', './element/chart/bubble', './element/chart/geo', './element/chart/table',
+define(['backbone', 'underscore', './element/summary', './element/navigation', './element/chart/bar', './element/chart/bubble', './element/chart/geo', './element/chart/table', './element/chart/line',
     'bootstrap_dropdown'],
-        function(Backbone, _, SummaryElementView, NavigationElementView, BarChartView, BubbleChartView, GeoChartView, TableChartView) {
+        function(Backbone, _, SummaryElementView, NavigationElementView, BarChartView, BubbleChartView, GeoChartView, TableChartView, LineChartView) {
     'use strict';
 
     var ElementView = Backbone.View.extend({
@@ -13,7 +13,8 @@ define(['backbone', 'underscore', './element/summary', './element/navigation', '
             'bar':          BarChartView,
             'bubble':       BubbleChartView,
             'geo':          GeoChartView,
-            'table':        TableChartView
+            'table':        TableChartView,
+            'line':         LineChartView
         },
 
         element: false,
