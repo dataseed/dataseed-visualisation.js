@@ -7,7 +7,11 @@ define(['../chart', 'underscore', 'd3'],
             gutterBottom: 50,
             gutterTop: 10,
             labelY: 35,
-            heightMultiplier: 25,
+
+            // these two values are used in the height calculation
+            heightWeight: 100,
+            heightMin: 120,
+
             circleRadius: 3,
 
             render: function () {
@@ -23,7 +27,10 @@ define(['../chart', 'underscore', 'd3'],
                     };
                 });
 
-                var height = this.heightMultiplier * data.length;
+                // The height is calculated as (a sort of) log regression:
+                // it will not be so big when we have a lot of data and not so
+                // low when we have few data
+                var height = this.heightMin + Math.floor(Math.log(this.heightWeight * data.length + 1));
 
                 // Use an ordinal scale because we assume that the x domain is
                 // is made of string (the observation labels for the dimension)
@@ -36,7 +43,8 @@ define(['../chart', 'underscore', 'd3'],
                 var xAxis = d3.svg.axis()
                     .scale(x)
                     .orient("bottom")
-                    .tickSize(-height).tickSubdivide(false)
+//                    .tickSize(-height) // this draws vertical tick lines
+                    .tickSubdivide(false)
                     .tickFormat(function (d) {
                         return d;
                     });
@@ -64,14 +72,23 @@ define(['../chart', 'underscore', 'd3'],
                     .append('g')
                     .attr('transform', 'translate(' + this.gutterLeft + ',' + this.gutterTop + ')');
 
-                // calculate axis domains
+                // calculate x axis domains (discrete)
                 x.domain(_.map(data, function (d, i) {
                     return d.label;
                 }));
 
-                var ydomain = y.domain(d3.extent(data, function (d) {
+                // calculate y axis domains (continuous)
+                var ydomainNumbers = d3.extent(data, function (d) {
                     return d.total;
-                }));
+                });
+
+                if (ydomainNumbers[0] === ydomainNumbers[1]) {
+                    // we need two different values in order to get a proper
+                    // linear scale for the y axis
+                    ydomainNumbers[1] = (ydomainNumbers[0] === 0) ? 10 : ydomainNumbers[0] * 10;
+                }
+
+                y.domain(ydomainNumbers);
 
                 // Draw X axis
                 var renderedXAxis = chart.append("g")
@@ -118,7 +135,7 @@ define(['../chart', 'underscore', 'd3'],
                 // Attach tooltips
                 this.attachTooltips('circle');
 
-                //styling the axis
+                //style the axis
                 chart.selectAll('.axis path, .axis line')
                     .style('stroke', this.getStyle('scaleFeature'))
                     .style('fill', 'none');
