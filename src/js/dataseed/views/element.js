@@ -1,6 +1,7 @@
 define(['backbone', 'underscore', './element/summary', './element/navigation', './element/chart/bar', './element/chart/bubble', './element/chart/geo', './element/chart/table', './element/chart/line',
     './loadScreen' ,'bootstrap_dropdown'],
         function(Backbone, _, SummaryElementView, NavigationElementView, BarChartView, BubbleChartView, GeoChartView, TableChartView, LineChartView, LoadScreenView) {
+
     'use strict';
 
     var ElementView = Backbone.View.extend({
@@ -38,17 +39,18 @@ define(['backbone', 'underscore', './element/summary', './element/navigation', '
             }
 
             // Set element width and type
+            var type = this.model.get('type');
             this.$el.removeClass()
                 .addClass('element')
                 .addClass('span' + (this.model.get('width') * 3))
-                .addClass(this.model.get('type') + 'Element');
+                .addClass(type + 'Element');
 
-            if(this.model.get('type') !== 'summary') {
+            if(type !== 'summary' && type !== 'navigation') {
                 this.$el.append(this.loadingView.$el);
             }
 
             // Create element view
-            this.element = new this.elementTypes[this.model.get('type')] ({
+            this.element = new this.elementTypes[type] ({
                 parent: this.$el,
                 model: this.model,
                 visualisation: this.visualisation
