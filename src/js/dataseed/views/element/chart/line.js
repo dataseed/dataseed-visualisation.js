@@ -4,7 +4,7 @@ define(['../chart', 'underscore', 'd3'],
 
     var LineChartView = ChartView.extend({
         gutterLeft: 50,
-        gutterBottom: 50,
+        gutterBottom: 80,
         gutterTop: 10,
         labelY: 65,
 
