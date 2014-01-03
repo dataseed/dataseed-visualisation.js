@@ -84,7 +84,7 @@ define(['../chart', 'underscore', 'd3'], function(ChartView, _, d3) {
                     d3.min(values, this.getMeasure),
                     d3.max(values, this.getMeasure)
                 ])
-                .range([this.model.getStyle('choroplethMin'), this.model.getStyle('choroplethMax')]);
+                .range([this.model.visualisation.styles.getStyle('choroplethMin'), this.model.visualisation.styles.getStyle('choroplethMax')]);
 
             // Build choropleth
             var features = geo.selectAll('path')
@@ -134,6 +134,9 @@ define(['../chart', 'underscore', 'd3'], function(ChartView, _, d3) {
 
             // Update container size
             this.updateSize();
+
+            // Remove the load spinner when chart finished loading.
+            this.stopLoading('geo');
 
             return this;
 
@@ -188,7 +191,7 @@ define(['../chart', 'underscore', 'd3'], function(ChartView, _, d3) {
          */
         featureFill: function(d, i) {
             if (this.model.hasCutValue(i)) {
-                return this.model.getStyle('featureFill');
+                return this.model.visualisation.styles.getStyle('featureFill');
             }
             return this.colourScale(this.model.getObservation(i).total);
         },

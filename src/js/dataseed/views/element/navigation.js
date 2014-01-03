@@ -1,4 +1,5 @@
-define(['backbone', 'underscore', 'd3', 'text!../../templates/element/navigation.html', 'bootstrap_collapse'], function(Backbone, _, d3, navigationTemplate) {
+define(['backbone', 'underscore', 'd3', 'text!../../templates/element/navigation.html', 'bootstrap_collapse'],
+    function(Backbone, _, d3, navigationTemplate) {
     'use strict';
 
     var NavigationElementView = Backbone.View.extend({
@@ -30,9 +31,9 @@ define(['backbone', 'underscore', 'd3', 'text!../../templates/element/navigation
 
             this.$el.html(this.template(attrs));
 
-            this.$('.table a').css('color', this.model.getStyle('featureFill'));
-            this.$('.table.cut a').css('color', this.model.getStyle('featureFillActive'));
-            this.$('.table.cut .active a').css('color', this.model.getStyle('featureFill'));
+            this.$('.table a').css('color', this.visualisation.styles.getStyle('featureFill', this.model));
+            this.$('.table.cut a').css('color', this.visualisation.styles.getStyle('featureFillActive', this.model));
+            this.$('.table.cut .active a').css('color', this.visualisation.styles.getStyle('featureFill', this.model));
 
             return this;
         },

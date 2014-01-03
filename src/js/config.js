@@ -38,6 +38,12 @@ require.config({
         'bootstrap_dropdown': {
             deps: ['bootstrap_transition'],
             exports: 'jQuery.fn.dropdown'
+        },
+        'spin': {
+            exports: 'Spinner'
+        },
+        'markdown': {
+            exports: 'markdown'
         }
     },
     paths: {
@@ -64,6 +70,13 @@ require.config({
         bootstrap_collapse: '../components/bootstrap/js/bootstrap-collapse',
         bootstrap_dropdown: '../components/bootstrap/js/bootstrap-dropdown',
         bootstrap_modal: '../components/bootstrap/js/bootstrap-modal',
-        bootstrap_alert: '../components/bootstrap/js/bootstrap-alert'
+        bootstrap_alert: '../components/bootstrap/js/bootstrap-alert',
+
+        // Spinner
+        spin: '../components/spin/spin',
+
+        // Markdown.js
+        markdown: '../components/markdown/lib/markdown'
+
     }
 });

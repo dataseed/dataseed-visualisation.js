@@ -18,7 +18,9 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
             this.model.elements.bind('add', this.createElement, this);
             this.model.elements.bind('remove', this.removeElement, this);
             this.model.elements.bind('ready', this.renderElement, this);
-            this.model.elements.bind('reset', this.renderElements, this);
+            this.model.elements.bind('reset', this.resetElements, this);
+
+            this.model.styles.bind('ready', this.renderElements, this);
         },
 
         /**
@@ -38,17 +40,22 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
             this.$elements = this.$('.elements');
 
             // Render visualisation elements
-            this.model.resetElements();
-            this.renderElements();
+            this.model.reset();
+            this.resetElements();
         },
 
         /**
          * Render all visualisation elements
          */
         renderElements: function() {
-            this.model.elements.forEach(function(element) {
-                this.addElement(element);
-            }, this);
+            this.model.elements.forEach(this.renderElement, this);
+        },
+
+        /**
+         * Reset and render all visualisation elements
+         */
+        resetElements: function() {
+            this.model.elements.forEach(this.addElement, this);
         },
 
         /**

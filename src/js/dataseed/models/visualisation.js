@@ -1,5 +1,5 @@
-define(['backbone', 'underscore', '../collections/elements'],
-    function(Backbone, _, ElementsCollection) {
+define(['backbone', 'underscore', '../collections/elements', '../collections/styles'],
+    function(Backbone, _, ElementsCollection, StylesCollection) {
     'use strict';
 
     var Visualisation = Backbone.Model.extend({
@@ -11,9 +11,13 @@ define(['backbone', 'underscore', '../collections/elements'],
         },
 
         initialize: function() {
+            // Create collection for element models
             this.elements = new ElementsCollection();
             this.elements.bind('add', this.addElement, this);
             this.elements.bind('reset', this.updateElementOrder, this);
+
+            // Create collection for style models
+            this.styles = new StylesCollection(null, {'visualisation': this});
         },
 
         addElement: function(element) {
@@ -21,16 +25,22 @@ define(['backbone', 'underscore', '../collections/elements'],
             element.bind('removeCut', this.removeCut, this);
         },
 
-        resetElements: function() {
+        reset: function() {
+            // Set model defaults
+            var defaults = {
+                'dataset': this.dataset,
+                'visualisation': this,
+                'defaultCut': this.get('defaultCut')
+            };
+
             // Set element models in collection from visualisation "elements" attribute
             this.elements.set(_.map(this.get('elements'), function(element) {
+                return _.extend({}, defaults, element);
+            }, this));
 
-                var defaults = {
-                    'visualisation': this,
-                    'dataset': this.dataset,
-                    'defaultCut': this.get('defaultCut')
-                };
-                return _.extend(defaults, element);
+            // Set style models in collection from visualisation "styles" attribute
+            this.styles.set(_.map(this.get('styles'), function(element) {
+                return _.extend({}, defaults, element);
             }, this));
         },
 

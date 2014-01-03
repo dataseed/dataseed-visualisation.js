@@ -1,6 +1,6 @@
 define(['backbone', 'underscore', './element/summary', './element/navigation', './element/chart/bar', './element/chart/bubble', './element/chart/geo', './element/chart/table', './element/chart/line',
-    'bootstrap_dropdown'],
-        function(Backbone, _, SummaryElementView, NavigationElementView, BarChartView, BubbleChartView, GeoChartView, TableChartView, LineChartView) {
+    './loadScreen' ,'bootstrap_dropdown'],
+        function(Backbone, _, SummaryElementView, NavigationElementView, BarChartView, BubbleChartView, GeoChartView, TableChartView, LineChartView, LoadScreenView) {
     'use strict';
 
     var ElementView = Backbone.View.extend({
@@ -20,6 +20,8 @@ define(['backbone', 'underscore', './element/summary', './element/navigation', '
         element: false,
 
         initialize: function(options) {
+            //Create a new loadScreenView
+            this.loadingView = new LoadScreenView();
             this.visualisation = options['visualisation'];
         },
 
@@ -40,6 +42,10 @@ define(['backbone', 'underscore', './element/summary', './element/navigation', '
                 .addClass('element')
                 .addClass('span' + (this.model.get('width') * 3))
                 .addClass(this.model.get('type') + 'Element');
+
+            if(this.model.get('type') !== 'summary') {
+                this.$el.append(this.loadingView.$el);
+            }
 
             // Create element view
             this.element = new this.elementTypes[this.model.get('type')] ({

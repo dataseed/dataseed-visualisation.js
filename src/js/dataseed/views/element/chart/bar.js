@@ -1,5 +1,5 @@
 define(['../chart', 'underscore', 'd3'],
-        function(ChartView, _, d3) {
+    function(ChartView, _, d3) {
     'use strict';
 
     var BarChartView = ChartView.extend({
@@ -101,6 +101,9 @@ define(['../chart', 'underscore', 'd3'],
 
             // Update container size
             this.updateSize();
+
+            // Remove the load spinner when chart finished loading.
+            this.stopLoading('bar');
 
             return this;
 

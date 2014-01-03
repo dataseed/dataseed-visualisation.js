@@ -4,21 +4,6 @@ define(['backbone', 'underscore', 'dataseed/models/element/dimension', 'dataseed
 
     var Element = Backbone.Model.extend({
 
-        styleDefaults: {
-            'background':           '#fff',
-            'heading':              '#555',
-            'featureFill':          '#089fd8',
-            'featureFillActive':    '#c8c8c8',
-            'featureStroke':        '#fff',
-            'featureStrokeActive':  '#fff',
-            'label':                '#fff',
-            'scaleFeature':         '#555',
-            'scaleLabel':           '#555',
-            'measureLabel':         '#555',
-            'choroplethMin':        '#fff',
-            'choroplethMax':        '#000'
-        },
-
         url: function() {
             return '/api/datasets/' + this.dataset.get('id') + '/visualisations/' + this.visualisation.get('id') + '/elements/' + this.get('id');
         },
@@ -233,43 +218,6 @@ define(['backbone', 'underscore', 'dataseed/models/element/dimension', 'dataseed
                 return this.dataset.getChartTypes(this.dimension.get('id'));
             }
             return [];
-        },
-
-        /*
-         * Get the CSS style value for this dimension
-         */
-        getStyle: function (type, d, i) {
-            // If this is a feature, check if it's active
-            if (type.substring(0, 7) === 'feature' && !_.isUndefined(i) && this.observations.isCut() && !this.observations.hasCutValue(i)) {
-                type += 'Active';
-            }
-
-            var style = this.get('style');
-            if (!_.isUndefined(style) && _.has(style, type)) {
-                // Use colour from model
-                return style[type];
-            }
-
-            // Use default colour
-            return this.styleDefaults[type];
-        },
-
-        /*
-         * Set one or more CSS style values for this dimension
-         */
-        setStyles: function(updates) {
-            // Get existing styles
-            var style = this.get('style');
-            if (_.isUndefined(style)) {
-                style = {};
-            }
-
-            // Merge in new styles
-            style = _.extend(style, updates);
-            this.set('style', style);
-
-            // Trigger update
-            this.trigger('change');
         }
 
     });

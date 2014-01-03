@@ -6,7 +6,8 @@ define(['backbone', 'underscore', 'd3', 'text!../../templates/element/chart.html
         template: _.template(chartTemplate),
 
         events: {
-            'click .remove-filter': 'removeFilter'
+            'click .remove-filter': 'removeFilter',
+            'mouseover g': 'mouseRemoveTips'
         },
 
         chartHeightPadding: 10,
@@ -29,15 +30,12 @@ define(['backbone', 'underscore', 'd3', 'text!../../templates/element/chart.html
          * Default render functionality
          */
         render: function() {
-            // Remove tooltips and any existing charts
-            this.removeTooltips();
-
             // Render template
             this.$el.html(this.template(this.model.attributes));
 
             // Set custom colours
-            this.$('.element').css('background-color', this.model.getStyle('background'));
-            this.$('h2').css('color', this.model.getStyle('heading'));
+            this.$el.css('background-color', this.model.visualisation.styles.getStyle('background'));
+            this.$('h2').css('color', this.model.visualisation.styles.getStyle('heading'));
 
             // Get parent element size
             this.width = this.$parent.width();
@@ -56,6 +54,12 @@ define(['backbone', 'underscore', 'd3', 'text!../../templates/element/chart.html
             e.preventDefault();
             this.model.removeCut();
             this.resetFeatures();
+        },
+
+        mouseRemoveTips : function() {
+            if($('.tipsy').length > 0) {
+                $('.tipsy:gt(0)').remove();
+            }
         },
 
         /**
@@ -88,7 +92,7 @@ define(['backbone', 'underscore', 'd3', 'text!../../templates/element/chart.html
                         .style('stroke', this.getStyle('featureStroke'));
 
             // Remove any tooltips
-            this.removeTooltips();
+            //this.removeTooltips();
         },
 
         /**
@@ -107,7 +111,7 @@ define(['backbone', 'underscore', 'd3', 'text!../../templates/element/chart.html
          * Get style function for the specified type
          */
         getStyle: function(type) {
-            return _.bind(this.model.getStyle, this.model, type);
+            return _.bind(this.model.visualisation.styles.getStyle, this.model.visualisation.styles, type, this.model);
         },
 
         /**
@@ -156,8 +160,11 @@ define(['backbone', 'underscore', 'd3', 'text!../../templates/element/chart.html
             var width = html.width();
             html.remove();
             return width;
-        }
+        },
 
+        stopLoading: function(chart) {
+            $('.' + chart + 'Element .spinner').remove();
+        }
     });
 
     return ChartView;
