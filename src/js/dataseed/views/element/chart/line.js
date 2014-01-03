@@ -6,7 +6,7 @@ define(['../chart', 'underscore', 'd3'],
         gutterLeft: 50,
         gutterBottom: 50,
         gutterTop: 10,
-        labelY: 40,
+        labelY: 65,
 
         // these two values are used in the height calculation
         heightWeight: 100,
