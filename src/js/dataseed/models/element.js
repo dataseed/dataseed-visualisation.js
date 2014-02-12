@@ -44,6 +44,10 @@ define(['backbone', 'underscore', 'dataseed/models/element/dimension', 'dataseed
             });
             this.dimension.bind('sync', this.change, this);
 
+            if (_.isObject(options['defaultCut'])) {
+                this.dimension.cut = options['defaultCut'];
+            }
+
             // Attempt to fetch dimension model
             this.dimension.fetch();
 

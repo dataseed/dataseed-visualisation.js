@@ -8,7 +8,16 @@ define(['backbone', 'underscore', 'd3'],
          * Dimension values URL
          */
         url: function() {
-            return '/api/datasets/' + this.dataset.get('id') + '/dimensions/' + this.get('id');
+            var url = '/api/datasets/' + this.dataset.get('id') + '/dimensions/' + this.get('id');
+
+            // Add query parameters to URL
+            var urlParams = _.map(_.clone(this.cut), function (value, key, cut) {
+                return key + '=' + value;
+            });
+            url += '?' + urlParams.join('&');
+
+            return url;
+
         },
 
         /**
