@@ -26,7 +26,7 @@ define(['backbone', 'underscore', '../models/authSingleton'], function(Backbone,
             }
 
             // If authentication information has been supplied, add to the URL parameters
-            if (!_.isUndefined(authSingleton)) {
+            if (!_.isNull(authSingleton)) {
                 if (urlParts.length === 0) {
                     urlParts[0] = '';
                 } else if (urlParts[0].length > 0) {

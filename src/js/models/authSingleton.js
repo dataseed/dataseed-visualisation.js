@@ -5,7 +5,7 @@ define(['module', 'underscore', './auth'],
     var data = module.config().AUTH;
 
     if (_.isUndefined(data)) {
-        return undefined;
+        return null;
     }
 
     return new Auth(data);

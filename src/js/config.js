@@ -1,6 +1,5 @@
 require.config({
     baseUrl: 'src/js',
-    deps: ['app'],
     shim: {
         'jquery': {
             exports: 'jQuery'

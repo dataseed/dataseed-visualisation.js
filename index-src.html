@@ -13,9 +13,10 @@
 </head>
 <body>
     <div id="page"></div>
-    <script src="src/components/requirejs/require.js" data-main="src/js/config"></script>
+    <script src="src/components/requirejs/require.js"></script>
+    <script src="src/js/config.js"></script>
     <script>
-        require(['./dataseed/views/dataset', 'app'], function(DatasetEmbedView) {
+        require(['./views/dataset', 'app'], function(DatasetEmbedView) {
             new DatasetEmbedView({
                 'el': document.getElementById('page'),
                 'id': 'mortality',

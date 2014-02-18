@@ -2,6 +2,8 @@
 // Variables to customize the look and feel of Bootstrap
 // -----------------------------------------------------
 
+@dsBaseUrl: ~'../../';
+
 // GLOBAL VALUES
 // --------------------------------------------------
 
@@ -67,39 +69,9 @@
 @headingsFontWeight:    bold;    // instead of browser default, bold
 @headingsColor:         #555; // empty to use BS default, @textColor
 
-@dsFontLight:           "gibson light", Helvetica, Arial, sans-serif;
-@dsFontItalic:          "gibson italic", Helvetica, Arial, sans-serif;
-@dsFontSemibold:        "gibson semibold", Helvetica, Arial, sans-serif;
-
-//gibson light
-@font-face{
-  font-family: 'gibson light';
-  src: url('../../font/gibson_light_macroman/Gibson-Light-webfont.eot');
-  src: url('../../font/gibson_light_macroman/Gibson-Light-webfont.eot?#iefix') format('embedded-opentype'),
-       url('../../font/gibson_light_macroman/Gibson-Light-webfont.woff') format('woff'),
-       url('../../font/gibson_light_macroman/Gibson-Light-webfont.ttf') format('truetype'),
-       url('../../font/gibson_light_macroman/Gibson-Light-webfont.svg#webfont') format('svg');
-}
-
-//gibson italic
-@font-face{
-  font-family: 'gibson italic';
-  src: url('../../font/gibson_italic_macroman/Gibson-Italic-webfont.eot');
-  src: url('../../font/gibson_italic_macroman/Gibson-Italic-webfont.eot?#iefix') format('embedded-opentype'),
-       url('../../font/gibson_italic_macroman/Gibson-Italic-webfont.woff') format('woff'),
-       url('../../font/gibson_italic_macroman/Gibson-Italic-webfont.ttf') format('truetype'),
-       url('../../font/gibson_italic_macroman/Gibson-Italic-webfont.svg#webfont') format('svg');
-}
-
-//gibson semibold
-@font-face{
-  font-family: 'gibson semibold';
-  src: url('../../font/gibson_semibold_macroman/Gibson-SemiBold-webfont.eot');
-  src: url('../../font/gibson_semibold_macroman/Gibson-SemiBold-webfont.eot?#iefix') format('embedded-opentype'),
-       url('../../font/gibson_semibold_macroman/Gibson-SemiBold-webfont.woff') format('woff'),
-       url('../../font/gibson_semibold_macroman/Gibson-SemiBold-webfont.ttf') format('truetype'),
-       url('../../font/gibson_semibold_macroman/Gibson-SemiBold-webfont.svg#webfont') format('svg');
-}
+@dsFontLight:           Helvetica, Arial, sans-serif;
+@dsFontItalic:          Helvetica, Arial, sans-serif;
+@dsFontSemibold:        Helvetica, Arial, sans-serif;
 
 // Component sizing
 // -------------------------

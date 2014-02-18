@@ -1,4 +1,4 @@
-define(['module', 'jquery', 'underscore', 'backbone', './lib/sync', './dataseed/views/dataset'],
+define(['module', 'jquery', 'underscore', 'backbone', './lib/sync', './views/dataset'],
     function(module, $, _, Backbone, sync, DatasetEmbedView) {
     'use strict';
 

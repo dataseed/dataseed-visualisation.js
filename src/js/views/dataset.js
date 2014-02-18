@@ -12,7 +12,7 @@ define(['backbone', 'underscore', '../models/dataset', '../models/datasetSinglet
             var loaded = false;
 
             // If bootstrap data has been supplied, get as singleton
-            if (!_.isUndefined(datasetSingleton)) {
+            if (!_.isNull(datasetSingleton)) {
                 this.model = datasetSingleton;
                 loaded = true;
 

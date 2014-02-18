@@ -5,7 +5,7 @@ define(['module', 'underscore', './dataset'],
     var data = module.config().DATASET;
 
     if (_.isUndefined(data)) {
-        return undefined;
+        return null;
     }
 
     return new Dataset(data);

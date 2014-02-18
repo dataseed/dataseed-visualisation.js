@@ -34,7 +34,7 @@ module.exports = function(grunt) {
         },
         files: {
           src: [
-            'src/js/dataseed/**/*.js'
+            'src/js/**/*.js'
           ]
         }
       }
