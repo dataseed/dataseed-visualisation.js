@@ -1,6 +1,6 @@
-define(['backbone', 'underscore', './element/summary', './element/navigation', './element/chart/bar', './element/chart/bubble', './element/chart/geo', './element/chart/table', './element/chart/line',
+define(['backbone', 'underscore', './element/summary', './element/filter/navigation', './element/chart/bar', './element/chart/bubble', './element/chart/geo', './element/chart/table', './element/chart/line', './element/filter/filterForm',
     './loadScreen' ,'bootstrap_dropdown'],
-        function(Backbone, _, SummaryElementView, NavigationElementView, BarChartView, BubbleChartView, GeoChartView, TableChartView, LineChartView, LoadScreenView) {
+        function(Backbone, _, SummaryElementView, NavigationElementView, BarChartView, BubbleChartView, GeoChartView, TableChartView, LineChartView, FilterFormElementView, LoadScreenView) {
 
     'use strict';
 
@@ -16,6 +16,7 @@ define(['backbone', 'underscore', './element/summary', './element/navigation', '
             'geo':          GeoChartView,
             'table':        TableChartView,
             'line':         LineChartView
+            'filterForm':   FilterFormElementView
         },
 
         element: false,
@@ -45,7 +46,7 @@ define(['backbone', 'underscore', './element/summary', './element/navigation', '
                 .addClass('span' + (this.model.get('width') * 3))
                 .addClass(type + 'Element');
 
-            if(type !== 'summary' && type !== 'navigation') {
+            if(type !== 'summary' && type !== 'navigation' && type !== 'filterForm') {
                 this.$el.append(this.loadingView.$el);
             }
 

@@ -1,0 +1,21 @@
+<h2><%- label %></h2>
+<% _.each(dimensions, function(dimension) { %>
+    <div class="filter-group " data-dimension="<%- dimension['id'] %>">
+        <h3><%- dimension['label'] %></h3>
+        <div id="<%- dimension['dimension_filter_id'] %>" class="info-body<% if (!_.isUndefined(dimension['cut'])) {%> cut<% } %>">
+            <select class="form-control" class="dimension-cut">
+                <option data-value="-all-"<% if (!_.isUndefined(dimension['cut'])) {%> selected="selected"<% } %>>All</option>
+
+            <% _.each(dimension['values'], function(value) { %>
+                <option data-value="<%- value['id'] %>"<%
+                    if (value['id'] === dimension['cut']) {cutWrapperClass='cut-wrapper active'; selectedAttr='selected="selected"'}
+                    else{ cutWrapperClass='cut-wrapper';selectedAttr=''} %> class="<%- cutWrapperClass %>" <%- selectedAttr %>>
+                    <%- value['label'] %> (<%- value['totalFormat'] %>)
+                </option>
+
+            <% }); %>
+
+            </select>
+        </div>
+    </div>
+<% }); %>
