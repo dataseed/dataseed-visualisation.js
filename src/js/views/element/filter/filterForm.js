@@ -7,8 +7,7 @@ define(['../filter', 'underscore', 'd3', 'text!../../../templates/element/filter
             template: _.template(filterFormTemplate),
 
             events: {
-//                'change .dimension-cut': 'toggleCut'
-                'change select': 'toggleCut'
+                'change .dimension-cut': 'toggleCut'
             },
 
             accordionState: {},
@@ -16,12 +15,6 @@ define(['../filter', 'underscore', 'd3', 'text!../../../templates/element/filter
             render: function () {
 
                 this.$el.html(this.template(this.getElementAttrs()));
-
-                // TODO
-//                this.$('.table a').css('color', this.visualisation.styles.getStyle('featureFill', this.model));
-//                this.$('.table.cut a').css('color', this.visualisation.styles.getStyle('featureFillActive', this.model));
-//                this.$('.table.cut .active a').css('color', this.visualisation.styles.getStyle('featureFill', this.model));
-
                 return this;
             },
 

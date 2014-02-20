@@ -3,7 +3,7 @@
     <div class="filter-group " data-dimension="<%- dimension['id'] %>">
         <h3><%- dimension['label'] %></h3>
         <div id="<%- dimension['dimension_filter_id'] %>" class="info-body<% if (!_.isUndefined(dimension['cut'])) {%> cut<% } %>">
-            <select class="form-control" class="dimension-cut">
+            <select class="form-control dimension-cut">
                 <option data-value="-all-"<% if (!_.isUndefined(dimension['cut'])) {%> selected="selected"<% } %>>All</option>
 
             <% _.each(dimension['values'], function(value) { %>

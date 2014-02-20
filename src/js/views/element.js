@@ -15,7 +15,7 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
             'bubble':       BubbleChartView,
             'geo':          GeoChartView,
             'table':        TableChartView,
-            'line':         LineChartView
+            'line':         LineChartView,
             'filterForm':   FilterFormElementView
         },
 
