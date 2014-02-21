@@ -1,5 +1,5 @@
-define(['backbone', 'underscore', 'd3'],
-        function(Backbone, _, d3) {
+define(['backbone', 'underscore', '../../lib/format'],
+        function(Backbone, _, format) {
     'use strict';
 
     var Dimension = Backbone.Model.extend({
@@ -37,11 +37,9 @@ define(['backbone', 'underscore', 'd3'],
          */
         formatter: null,
 
-        dateFormat: d3.time.format('%d/%m/%Y'),
-
         formatters: {
             'date': function(timestamp) {
-                return this.dateFormat(new Date(parseInt(timestamp, 10)));
+                return format.date(new Date(parseInt(timestamp, 10)));
             }
         },
 

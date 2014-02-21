@@ -14,6 +14,10 @@ require.config({
         'd3': {
             exports: 'd3'
         },
+        'highcharts': {
+            deps: ['jquery'],
+            exports: 'jQuery.fn.highcharts'
+        },
         'tipsy': {
             deps: ['jquery'],
             exports: 'jQuery.fn.tipsy'
@@ -60,6 +64,9 @@ require.config({
 
         // D3
         d3: '../components/d3/d3',
+
+        // Highcharts
+        highcharts: '../components/highcharts.com/js/highcharts.src',
 
         // Tipsy tooltips
         tipsy: '../components/tipsy/src/javascripts/jquery.tipsy',

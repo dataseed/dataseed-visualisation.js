@@ -13,7 +13,8 @@
     "gulp-jshint": "~1.4.2",
     "gulp-less": "~1.2.1",
     "gulp-uglify": "~0.2.1",
-    "gulp-csso": "~0.2.3"
+    "gulp-csso": "~0.2.3",
+    "underscore": "~1.6.0"
   },
   "scripts": {
     "test": "grunt build"

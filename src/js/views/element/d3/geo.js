@@ -1,4 +1,4 @@
-define(['../chart', 'underscore', 'd3'], function(ChartView, _, d3) {
+define(['./chart', 'underscore', 'd3'], function(ChartView, _, d3) {
     'use strict';
 
     var GeoChartView = ChartView.extend({

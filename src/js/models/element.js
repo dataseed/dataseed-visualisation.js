@@ -165,6 +165,13 @@ define(['backbone', 'underscore', './element/dimension', './element/observations
         },
 
         /**
+         * Compares the specified ID to the ID of the current cut for this dimension
+         */
+        hasCutId: function(id) {
+            return this.observations.hasCutId(id);
+        },
+
+        /**
          * Compares the value at the specified index to the value of the current cut for this dimension
          */
         hasCutValue: function(i) {

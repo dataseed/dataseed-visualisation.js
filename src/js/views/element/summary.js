@@ -1,4 +1,5 @@
-define(['backbone', 'underscore', 'd3', 'text!../../templates/element/summary.html'], function(Backbone, _, d3, summaryTemplate) {
+define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/element/summary.html'],
+    function(Backbone, _, format, summaryTemplate) {
     'use strict';
 
     var SummaryElementView = Backbone.View.extend({
@@ -6,9 +7,6 @@ define(['backbone', 'underscore', 'd3', 'text!../../templates/element/summary.ht
         template: _.template(summaryTemplate),
 
         initialize: function(options) {
-            // Initialise number formatter
-            this.numFormat = d3.format(',');
-
             // Bind to element models
             this.visualisation = options['visualisation'];
             this.visualisation.elements.bind('ready', this.render, this);
@@ -31,7 +29,7 @@ define(['backbone', 'underscore', 'd3', 'text!../../templates/element/summary.ht
                     dimensionElements = this.visualisation.elements.chain().filter(function(element) {
                         return !_.isUndefined(element.observations);
                     }),
-                    total = this.numFormat(dimensionElements.first().value().getTotal());
+                    total = format.num(dimensionElements.first().value().getTotal());
 
                 // Check if summary text has been provided
                 if (dimensions.pluck('text_default').reject(_.isEmpty).size().value() > 0) {

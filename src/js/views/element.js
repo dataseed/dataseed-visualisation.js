@@ -1,4 +1,4 @@
-define(['backbone', 'underscore', './element/summary', './element/navigation', './element/chart/bar', './element/chart/bubble', './element/chart/geo', './element/chart/table', './element/chart/line',
+define(['backbone', 'underscore', './element/summary', './element/navigation', './element/d3/bar', './element/d3/bubble', './element/d3/geo', './element/d3/table', './element/d3/line',
     './loadScreen' ,'bootstrap_dropdown'],
         function(Backbone, _, SummaryElementView, NavigationElementView, BarChartView, BubbleChartView, GeoChartView, TableChartView, LineChartView, LoadScreenView) {
 

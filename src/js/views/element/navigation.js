@@ -1,5 +1,5 @@
-define(['backbone', 'underscore', 'd3', 'text!../../templates/element/navigation.html', 'bootstrap_collapse'],
-    function(Backbone, _, d3, navigationTemplate) {
+define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/element/navigation.html', 'bootstrap_collapse'],
+    function(Backbone, _, format, navigationTemplate) {
     'use strict';
 
     var NavigationElementView = Backbone.View.extend({
@@ -14,9 +14,6 @@ define(['backbone', 'underscore', 'd3', 'text!../../templates/element/navigation
         accordionState: {},
 
         initialize: function(options) {
-            // Initialise number formatter
-            this.numFormat = d3.format(',');
-
             // Bind to element models
             this.visualisation = options['visualisation'];
             this.visualisation.elements.bind('ready', this.render, this);
@@ -50,7 +47,7 @@ define(['backbone', 'underscore', 'd3', 'text!../../templates/element/navigation
                             return {
                                 'id': value['id'],
                                 'total': value['total'],
-                                'totalFormat': this.numFormat(value['total']),
+                                'totalFormat': format.num(value['total']),
                                 'label': model.getLabel(value)['label']
                             };
                         }, this)

@@ -1,4 +1,4 @@
-define(['../chart', 'underscore', 'd3', 'text!../../../templates/element/table.html'],
+define(['./chart', 'underscore', 'd3', 'text!../../../templates/element/table.html'],
     function(ChartView, _, d3, tableTemplate) {
     'use strict';
 
