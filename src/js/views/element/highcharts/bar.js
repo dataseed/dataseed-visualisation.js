@@ -37,6 +37,15 @@ define(['./chart', 'underscore', 'highcharts'],
                     text: null,
                     style: { display: 'none' }
                 },
+                plotOptions: {
+                    bar: {
+                        animation: false,
+                        dataLabels: { enabled: false },
+                        events: {
+                            click: _.bind(this.featureClick, this)
+                        }
+                    }
+                },
                 xAxis: {
                     categories: categories,
                     title: { text: null }
@@ -51,14 +60,6 @@ define(['./chart', 'underscore', 'highcharts'],
                         }
                     },
                     labels: { overflow: 'justify' }
-                },
-                plotOptions: {
-                    bar: {
-                        dataLabels: { enabled: false },
-                        events: {
-                            click: _.bind(this.featureClick, this)
-                        }
-                    }
                 },
                 tooltip: {
                     pointFormat: '<b>{point.y}</b>'
