@@ -32,6 +32,10 @@ define(['backbone', 'underscore', '../../lib/format'],
             }
         },
 
+        isLoaded: function() {
+            return (!_.isUndefined(this.get(this.get('id'))));
+        },
+
         /**
          * Dimension label formatting
          */

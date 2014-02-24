@@ -1,6 +1,6 @@
-define(['backbone', 'underscore', './element/summary', './element/navigation', './element/d3/bar', './element/d3/bubble', './element/d3/geo', './element/d3/table', './element/d3/line',
+define(['backbone', 'underscore', './element/table', './element/summary', './element/navigation', './element/d3/bar', './element/d3/bubble', './element/d3/geo', './element/d3/line',
     './loadScreen' ,'bootstrap_dropdown'],
-        function(Backbone, _, SummaryElementView, NavigationElementView, BarChartView, BubbleChartView, GeoChartView, TableChartView, LineChartView, LoadScreenView) {
+        function(Backbone, _, TableChartView, SummaryElementView, NavigationElementView, BarChartView, BubbleChartView, GeoChartView, LineChartView, LoadScreenView) {
 
     'use strict';
 
@@ -9,24 +9,42 @@ define(['backbone', 'underscore', './element/summary', './element/navigation', '
         tagName: 'article',
 
         elementTypes: {
+            // HTML elements
             'summary':      SummaryElementView,
             'navigation':   NavigationElementView,
+            'table':        TableChartView,
+
+            // D3/Highcharts elements
             'bar':          BarChartView,
             'bubble':       BubbleChartView,
             'geo':          GeoChartView,
-            'table':        TableChartView,
             'line':         LineChartView
         },
 
         element: false,
+        loadingView: false,
 
         initialize: function(options) {
-            //Create a new loadScreenView
-            this.loadingView = new LoadScreenView();
             this.visualisation = options['visualisation'];
         },
 
         render: function() {
+            // Set element width and type
+            this.$el.removeClass()
+                .addClass('element')
+                .addClass('span' + (this.model.get('width') * 3))
+                .addClass(type + 'Element');
+
+            // If the model hasn't loaded, show loading view
+            var type = this.model.get('type');
+            if (!this.model.isLoaded()) {
+                if(type !== 'summary' && type !== 'navigation') {
+                    this.loadingView = new LoadScreenView({left: 40, top: 60});
+                    this.$el.append(this.loadingView.$el);
+                }
+                return;
+            }
+
             // Remove existing element view
             if (this.element) {
                 this.element.remove();
@@ -38,16 +56,6 @@ define(['backbone', 'underscore', './element/summary', './element/navigation', '
                 return this;
             }
 
-            // Set element width and type
-            var type = this.model.get('type');
-            this.$el.removeClass()
-                .addClass('element')
-                .addClass('span' + (this.model.get('width') * 3))
-                .addClass(type + 'Element');
-
-            if(type !== 'summary' && type !== 'navigation') {
-                this.$el.append(this.loadingView.$el);
-            }
 
             // Create element view
             this.element = new this.elementTypes[type] ({
@@ -58,6 +66,13 @@ define(['backbone', 'underscore', './element/summary', './element/navigation', '
 
             // Render element
             this.$el.append(this.element.render().$el);
+
+            // Hide loading view
+            if (this.loadingView !== false) {
+                this.loadingView.remove();
+                this.loadingView = false;
+            }
+
             return this;
         }
 

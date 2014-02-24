@@ -57,7 +57,6 @@ gulp.task('js-highcharts', function() {
                 'views/element/d3/bubble': 'views/element/highcharts/bubble',
                 'views/element/d3/geo': 'views/element/highcharts/geo',
                 'views/element/d3/line': 'views/element/highcharts/line',
-                'views/element/d3/table': 'views/element/highcharts/table',
             },
             out: 'dataseed-highcharts.js'
         }))

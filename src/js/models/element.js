@@ -86,9 +86,9 @@ define(['backbone', 'underscore', './element/dimension', './element/observations
          */
         isLoaded: function() {
             // If there is no observations model specifically associated with this element
-            // then it should always be loaded otherwise just return the loaded status of
-            // the observations model
-            return (_.isUndefined(this.observations) || this.observations.isLoaded());
+            // then it should always be loaded otherwise return true if both observations
+            // and dimensions are loaded
+            return (_.isUndefined(this.observations) || (this.observations.isLoaded() && this.dimension.isLoaded()));
         },
 
         /*

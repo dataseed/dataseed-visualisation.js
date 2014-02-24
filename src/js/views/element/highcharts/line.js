@@ -4,16 +4,6 @@ define(['./chart', 'underscore'],
 
     var LineChartView = ChartView.extend({
 
-        render: function() {
-
-            // Setup chart
-            ChartView.prototype.render.apply(this, arguments);
-
-            this.stopLoading('line');
-            return this;
-
-        }
-
     });
 
     return LineChartView;

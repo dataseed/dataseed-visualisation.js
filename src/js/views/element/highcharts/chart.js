@@ -5,13 +5,62 @@ define(['backbone', 'underscore', 'text!../../../templates/element/chart.html'],
 
         template: _.template(chartTemplate),
 
+        events: {
+            'click .remove-filter': 'removeFilter'
+        },
+
+        defaultChartOptions: {
+            title: {
+                text: null,
+                style: { display: 'none' }
+            },
+            subtitle: {
+                text: null,
+                style: { display: 'none' }
+            },
+            legend: { enabled: false },
+            credits: { enabled: false }
+        },
+
         initialize: function(options) {
-            // Get parent element
             this.$parent = options['parent'];
         },
 
         /**
-         * Default render functionality
+         * Get Highcharts chart options object
+         */
+        getChart: function() {
+            return {};
+        },
+
+        /**
+         * Get style value
+         */
+        getStyle: function(type) {
+            return this.model.visualisation.styles.getStyle(type, this.model);
+        },
+
+        /**
+         * Handle chart feature (bar/point/etc) click
+         */
+        featureClick: function(e) {
+            if (this.model.hasCutId(e.point.options.id)) {
+                this.model.removeCut();
+            } else {
+                this.model.addCut(e.point.options.id);
+            }
+        },
+
+        /**
+         * Reset chart filters button event handler
+         */
+        removeFilter: function(e) {
+            e.preventDefault();
+            this.model.removeCut();
+        },
+
+        /**
+         * Render the chart
          */
         render: function() {
             // Render template
@@ -25,14 +74,12 @@ define(['backbone', 'underscore', 'text!../../../templates/element/chart.html'],
             this.width = this.$parent.width();
             this.height = this.$parent.height();
 
-            // Kepp reference to container element for highcharts
-            this.chartContainer = this.$('.chart-container');
+            // Get chart options
+            var opts = _.defaults(this.getChart(), this.defaultChartOptions);
 
+            // Render chart
+            this.$('.chart-container').highcharts(opts);
             return this;
-        },
-
-        stopLoading: function(chart) {
-            $('.' + chart + 'Element .spinner').remove();
         }
 
     });

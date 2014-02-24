@@ -160,11 +160,8 @@ define(['backbone', 'underscore', 'd3', 'text!../../../templates/element/chart.h
             var width = html.width();
             html.remove();
             return width;
-        },
-
-        stopLoading: function(chart) {
-            $('.' + chart + 'Element .spinner').remove();
         }
+
     });
 
     return ChartView;

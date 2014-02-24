@@ -137,9 +137,6 @@ define(['./chart', 'underscore', 'd3'],
                 .style('stroke', this.getStyle('scaleFeature'))
                 .style('fill', 'none');
 
-            // Remove the load spinner when chart finished loading.
-            this.stopLoading('line');
-
             return this;
         },
 

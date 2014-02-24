@@ -16,7 +16,11 @@ require.config({
         },
         'highcharts': {
             deps: ['jquery'],
-            exports: 'jQuery.fn.highcharts'
+            exports: 'Highcharts'
+        },
+        'highcharts_more': {
+            deps: ['highcharts'],
+            exports: 'Highcharts'
         },
         'tipsy': {
             deps: ['jquery'],
@@ -67,6 +71,7 @@ require.config({
 
         // Highcharts
         highcharts: '../components/highcharts.com/js/highcharts.src',
+        highcharts_more: '../components/highcharts.com/js/highcharts-more.src',
 
         // Tipsy tooltips
         tipsy: '../components/tipsy/src/javascripts/jquery.tipsy',

@@ -4,10 +4,9 @@ define(['backbone', 'underscore', 'spin'], function(Backbone, _, Spinner) {
 
     var LoadScreenView = Backbone.View.extend({
 
-        id: 'loading',
-        className: 'spinner',
+        className: 'spinner-container',
 
-        spinnerOptions: {
+        defaultOptions: {
             lines: 11, // The number of lines to draw
             length: 24, // The length of each line
             width: 10, // The line thickness
@@ -24,14 +23,13 @@ define(['backbone', 'underscore', 'spin'], function(Backbone, _, Spinner) {
             zIndex: 2e9 // The z-index (defaults to 2000000000)
         },
 
-        initialize: function() {
+        initialize: function(opts) {
+            this.spinner = new Spinner(_.extend(this.defaultOptions, opts));
             this.render();
         },
 
         render: function() {
-            var spinner = new Spinner(this.spinnerOptions).spin();
-            this.$el.append(spinner.el);
-            this.$el.css('height', '300px');
+            this.spinner.spin(this.el);
         }
 
     });
