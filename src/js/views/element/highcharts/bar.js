@@ -27,6 +27,7 @@ define(['./chart', 'underscore', 'highcharts'],
                     title: { text: null }
                 },
                 yAxis: {
+                    min: 0,
                     title: {
                         text: this.model.getMeasureLabel(),
                         style: {

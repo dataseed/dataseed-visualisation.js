@@ -1,36 +1,49 @@
-define(['./chart', 'underscore', 'highcharts_more'],
+define(['./chart', 'underscore', 'highcharts'],
     function(ChartView, _) {
     'use strict';
 
-    var BubbleChartView = ChartView.extend({
+    var ColumnChartView = ChartView.extend({
 
         getChart: function() {
             return {
                 chart: {
-                    type: 'bubble',
-                    zoomType: 'xy',
+                    type: 'column',
                     width: this.width,
                 },
                 plotOptions: {
-                    bubble: {
+                    column: {
                         animation: false,
                         color: this.getStyle('featureFill'),
+                        dataLabels: { enabled: false },
                         events: {
                             click: _.bind(this.featureClick, this)
                         }
                     }
                 },
+                xAxis: {
+                    categories: _.map(this.model.getObservations(), function (d) {
+                        return this.model.getLabel(d).label;
+                    }, this),
+                    title: { text: null }
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: this.model.getMeasureLabel(),
+                        style: {
+                            color: this.getStyle('measureLabel'),
+                            fontWeight: 'normal'
+                        }
+                    },
+                    labels: { overflow: 'justify' }
+                },
                 tooltip: {
-                    useHTML: true,
-                    headerFormat: '',
-                    pointFormat: '{point.name}<br/><b>{point.y}</b>'
+                    pointFormat: '<b>{point.y}</b>'
                 },
                 series: [{
                     data: _.map(this.model.getObservations(), function (d) {
                         var point = {
                             id: d.id,
-                            name: this.model.getLabel(d).label,
-                            z: d.total,
                             y: d.total
                         };
                         if (this.model.hasCutId(d.id)) {
@@ -44,6 +57,6 @@ define(['./chart', 'underscore', 'highcharts_more'],
 
     });
 
-    return BubbleChartView;
+    return ColumnChartView;
 
 });
