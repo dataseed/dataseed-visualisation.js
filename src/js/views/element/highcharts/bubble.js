@@ -20,6 +20,15 @@ define(['./chart', 'underscore', 'highcharts_more'],
                         }
                     }
                 },
+                yAxis: {
+                    title: {
+                        text: this.model.getMeasureLabel(),
+                        style: {
+                            color: this.getStyle('measureLabel'),
+                            fontWeight: 'normal'
+                        }
+                    }
+                },
                 tooltip: {
                     useHTML: true,
                     headerFormat: '',
