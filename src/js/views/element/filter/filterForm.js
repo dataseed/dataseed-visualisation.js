@@ -1,5 +1,5 @@
-define(['../filter', 'underscore', 'd3', 'text!../../../templates/element/filterForm.html'],
-    function (FilterElementView, _, d3, filterFormTemplate) {
+define(['../filter', 'underscore', 'text!../../../templates/element/filterForm.html'],
+    function (FilterElementView, _, filterFormTemplate) {
         'use strict';
 
         var FilterFormElementView = FilterElementView.extend({

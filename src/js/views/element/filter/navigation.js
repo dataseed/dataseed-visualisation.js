@@ -1,5 +1,5 @@
-define(['../filter', 'underscore', 'd3', 'text!../../../templates/element/navigation.html', 'bootstrap_collapse'],
-    function (FilterElementView, _, d3, navigationTemplate) {
+define(['../filter', 'underscore', 'text!../../../templates/element/navigation.html', 'bootstrap_collapse'],
+    function (FilterElementView, _, navigationTemplate) {
         'use strict';
 
         var NavigationElementView = FilterElementView.extend({

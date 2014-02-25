@@ -74,9 +74,7 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
          */
         addElement: function(element) {
             this.$elements.append(this.elementsViews[element.id].$el);
-            if (element.isLoaded()) {
-                this.renderElement(element);
-            }
+            this.renderElement(element);
         },
 
         /**

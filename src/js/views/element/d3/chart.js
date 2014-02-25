@@ -1,4 +1,4 @@
-define(['backbone', 'underscore', 'd3', 'text!../../templates/element/chart.html', 'tipsy'], function(Backbone, _, d3, chartTemplate) {
+define(['backbone', 'underscore', 'd3', 'text!../../../templates/element/chart.html', 'tipsy'], function(Backbone, _, d3, chartTemplate) {
     'use strict';
 
     var ChartView = Backbone.View.extend({
@@ -160,11 +160,8 @@ define(['backbone', 'underscore', 'd3', 'text!../../templates/element/chart.html
             var width = html.width();
             html.remove();
             return width;
-        },
-
-        stopLoading: function(chart) {
-            $('.' + chart + 'Element .spinner').remove();
         }
+
     });
 
     return ChartView;

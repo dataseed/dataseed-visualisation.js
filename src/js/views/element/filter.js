@@ -1,13 +1,10 @@
-define(['backbone', 'underscore', 'd3'],
-    function (Backbone, _, d3) {
+define(['backbone', 'underscore', '../../lib/format'],
+    function (Backbone, _, format) {
         'use strict';
 
         var FilterElementView = Backbone.View.extend({
 
             initialize: function (options) {
-                // Initialise number formatter
-                this.numFormat = d3.format(',');
-
                 // Bind to element models
                 this.visualisation = options['visualisation'];
                 this.visualisation.elements.bind('ready', this.render, this);
@@ -32,7 +29,7 @@ define(['backbone', 'underscore', 'd3'],
                             return {
                                 'id': value['id'],
                                 'total': value['total'],
-                                'totalFormat': this.numFormat(value['total']),
+                                'totalFormat': format.num(value['total']),
                                 'label': model.getLabel(value)['label']
                             };
                         }, this)
