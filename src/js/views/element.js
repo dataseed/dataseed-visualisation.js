@@ -20,6 +20,9 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
             'line':         LineChartView
         },
 
+        // Elements that should use the loading view
+        loadingElementTypes: ['table', 'bar', 'bubble', 'geo', 'line'],
+
         element: false,
         loadingView: false,
 
@@ -37,7 +40,7 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
             // If the model hasn't loaded, show loading view
             var type = this.model.get('type');
             if (!this.model.isLoaded()) {
-                if(type !== 'summary' && type !== 'navigation') {
+                if (_.contains(this.loadingElementTypes, type)) {
                     this.loadingView = new LoadScreenView({left: 40, top: 60});
                     this.$el.append(this.loadingView.$el);
                 }

@@ -30,6 +30,7 @@ define(['backbone', 'underscore', 'spin'], function(Backbone, _, Spinner) {
 
         render: function() {
             this.spinner.spin(this.el);
+            this.$el.css('height', '300px');
         }
 
     });
