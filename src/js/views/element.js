@@ -44,7 +44,7 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
                     this.loadingView = new LoadScreenView({left: 40, top: 60});
                     this.$el.append(this.loadingView.$el);
                 }
-                return;
+                return this;
             }
 
             // Remove existing element view
