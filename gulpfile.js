@@ -1,6 +1,7 @@
 var gulp = require('gulp'),
     _ = require('underscore'),
     jshint = require('gulp-jshint'),
+    shell = require('gulp-shell'),
     rjs = require('gulp-requirejs'),
     uglify = require('gulp-uglify'),
     less = require('gulp-less'),
@@ -36,6 +37,9 @@ gulp.task('lint', function() {
         }))
         .pipe(jshint.reporter('default'));
 });
+
+// Test JS
+gulp.task('test', shell.task(['phantomjs test/run-jasmine.js test/index.html']))
 
 // Compile JS (d3)
 gulp.task('js-d3', function() {
@@ -77,4 +81,4 @@ gulp.task('less', function () {
 });
 
 // Default
-gulp.task('default', ['lint', 'js-d3', 'js-highcharts', 'less']);
+gulp.task('default', ['lint', 'test', 'js-d3', 'js-highcharts', 'less']);
