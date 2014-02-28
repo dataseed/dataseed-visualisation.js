@@ -30,6 +30,15 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
             return this;
         },
 
+        featureClick: function (index) {
+            if (this.model.hasCutValue(index)) {
+                this.model.removeCut();
+            } else {
+                this.model.addCut(this.model.getObservation(index).id);
+            }
+            this.resetFeatures();
+        },
+
         getTableValues: function() {
             var values = _.chain(this.model.getObservations())
                 //._map transforms an array to another array
@@ -58,7 +67,7 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
 
         selectRow: function(e) {
             e.preventDefault();
-            this.featureClick(null, $(e.currentTarget).parents('tr').data('index'));
+            this.featureClick($(e.currentTarget).parents('tr').data('index'));
         },
 
         sortSelect: function(e) {
