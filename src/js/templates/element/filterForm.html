@@ -1,21 +1,50 @@
 <h2><%- label %></h2>
-<% _.each(dimensions, function(dimension) { %>
-    <div class="filter-group " data-dimension="<%- dimension['id'] %>">
+<% _.each(dimensions, function(dimension) {
+    var hierarchyLevels = null,
+        currentLevel = null,
+        dimensionValuesByLevel = null
+        parentDimensionIds = null,
+        levelAttrId=null;
+    if(!_.isUndefined(dimension['hierarchy']) && !_.isUndefined(dimension['observations_cut'][dimension['hierarchy']['level_attr_id']])){
+        hierarchyLevels = dimension['hierarchy']['ancestor_dimensions'].length;
+        currentLevel = dimension['observations_cut'][dimension['hierarchy']['level_attr_id']];
+        dimensionValuesByLevel = dimension['hierarchy']['values_by_level'];
+        parentDimensionIds = dimension['hierarchy']['ancestor_dimensions'];
+        levelAttrId = dimension['hierarchy']['level_attr_id'];
+    }%>
+    <div class="filter-group " data-dimension="<%- dimension['id'] %>" <% if (!_.isNull(levelAttrId)) {%> data-level_attr_id="<%- levelAttrId %>"<% } %><% if (!_.isNull(parentDimensionIds)) {%> data-ancestor_dimensions="<%- JSON.stringify(parentDimensionIds) %>"<% } %>>
         <h3><%- dimension['label'] %></h3>
         <div id="<%- dimension['dimension_filter_id'] %>" class="info-body<% if (!_.isUndefined(dimension['cut'])) {%> cut<% } %>">
+            <%if(!_.isNull(hierarchyLevels) && !_.isNull(currentLevel)){
+                for(i = hierarchyLevels; i >= currentLevel ; i--){
+                    var parentDimensionId = parentDimensionIds[(i - 1) - 1],
+                        parentCutValue = dimension['observations_cut'][parentDimensionId];%>
+                <select class="form-control dimension-cut" data-hlevel="<%- i %>">
+                    <option data-value="-all-" <%if (_.isUndefined(parentCutValue)){%> selected="selected" <% } %>>All</option>
+                    <%if(!_.isUndefined(dimensionValuesByLevel[i -1]) && i > 1){
+                        _.each(dimensionValuesByLevel[i - 1], function(value) { %>
+                        <option data-value="<%- value['id'] %>"<%
+                            if (value['id'].split(':')[1] === parentCutValue) {cutWrapperClass='cut-wrapper active'; selectedAttr='selected="selected"'}
+                            else{ cutWrapperClass='cut-wrapper';selectedAttr=''} %> class="<%- cutWrapperClass %>" <%- selectedAttr %>>
+                            <%- value['label'] %> (<%- value['totalFormat'] %>)
+                        </option>
+                        <% });
+
+                    }%>
+                </select>
+                <% }
+            }else{%>
             <select class="form-control dimension-cut">
                 <option data-value="-all-"<% if (!_.isUndefined(dimension['cut'])) {%> selected="selected"<% } %>>All</option>
-
-            <% _.each(dimension['values'], function(value) { %>
+                <%_.each(dimension['values'], function(value) { %>
                 <option data-value="<%- value['id'] %>"<%
                     if (value['id'] === dimension['cut']) {cutWrapperClass='cut-wrapper active'; selectedAttr='selected="selected"'}
                     else{ cutWrapperClass='cut-wrapper';selectedAttr=''} %> class="<%- cutWrapperClass %>" <%- selectedAttr %>>
                     <%- value['label'] %> (<%- value['totalFormat'] %>)
                 </option>
-
-            <% }); %>
-
+                <% });%>
             </select>
+            <% }%>
         </div>
     </div>
 <% }); %>

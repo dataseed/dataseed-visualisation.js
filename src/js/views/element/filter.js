@@ -10,6 +10,13 @@ define(['backbone', 'underscore', '../../lib/format'],
                 this.visualisation.elements.bind('ready', this.render, this);
             },
 
+            dimensionValuesByLevel: [],
+
+            /**
+             * Getter method used basically to get the element's attributes
+             * which are passed to the filter template by the child instances
+             * @returns {{id: (*|Array), label: (*|Array), dimensions: *}}
+             */
             getElementAttrs: function () {
                 return  {
                     'id': this.model.get('id'),
@@ -40,7 +47,9 @@ define(['backbone', 'underscore', '../../lib/format'],
                     'id': id,
                     'model': model,
                     // Sort descending
-                    'values': values.reverse()
+                    'values': values.reverse(),
+                    'hierarchy': dimension.field.hierarchy,
+                    'observations_cut': this.model.observations.cut
                 };
             },
 
@@ -51,13 +60,28 @@ define(['backbone', 'underscore', '../../lib/format'],
 
                     var id = dimensionAttrs.id,
                         model = dimensionAttrs.model,
-                        values = dimensionAttrs.values;
+                        values = dimensionAttrs.values,
+                        hierarchy = dimensionAttrs.hierarchy,
+                        observations_cut = dimensionAttrs.observations_cut;
+
+                    /**
+                     * If the dimension is hierarchical, we need to keep track
+                     * of the dimension values displayed on each level
+                     */
+                    if (!_.isUndefined(hierarchy) && !_.isUndefined(observations_cut[hierarchy.level_attr_id])) {
+                        var currentLevel = observations_cut[hierarchy.level_attr_id];
+                        this.dimensionValuesByLevel[currentLevel - 1] = values;
+                    }
 
                     return {
                         'id': id,
                         'dimension_filter_id': this.model.get('id') + '_' + id.replace(/[^a-z0-9_\-]/gi, '_'),
                         'label': model.get('label'),
+                        // cut set on this dimension
                         'cut': model.getCut(),
+                        // the cut set on all the dimensions
+                        'observations_cut': observations_cut,
+                        'hierarchy': _.extend({}, hierarchy, {'values_by_level': this.dimensionValuesByLevel}),
                         'values': values
                     };
 
@@ -69,9 +93,11 @@ define(['backbone', 'underscore', '../../lib/format'],
                 var $cut = $(e.currentTarget),
                     dimension = $cut.parents('.filter-group').data('dimension');
                 if ($cut.closest('.cut-wrapper').hasClass('active')) {
-                    this.visualisation.removeCut(dimension);
+                    this.visualisation.removeCut([dimension]);
                 } else {
-                    this.visualisation.addCut(dimension, String($cut.data('value')));
+                    this.visualisation.addCut([
+                        {"key": dimension, "value": String($cut.data('value'))}
+                    ]);
                 }
             }
 

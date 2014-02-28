@@ -62,12 +62,12 @@ define(['backbone', 'underscore', '../collections/elements', '../collections/sty
             });
         },
 
-        addCut: function(key, value) {
-            this.elements.invoke('setCut', key, value);
+        addCut: function(cut) {
+            this.elements.invoke('setCut', cut);
         },
 
-        removeCut: function(key) {
-            this.elements.invoke('unsetCut', key);
+        removeCut: function(keys) {
+            this.elements.invoke('unsetCut', keys);
         }
 
     });

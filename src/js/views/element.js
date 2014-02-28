@@ -31,14 +31,15 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
         },
 
         render: function() {
+            // If the model hasn't loaded, show loading view
+            var type = this.model.get('type');
+
             // Set element width and type
             this.$el.removeClass()
                 .addClass('element')
                 .addClass('span' + (this.model.get('width') * 3))
                 .addClass(type + 'Element');
 
-            // If the model hasn't loaded, show loading view
-            var type = this.model.get('type');
             if (!this.model.isLoaded()) {
                 if (_.contains(this.loadingElementTypes, type)) {
                     this.loadingView = new LoadScreenView({left: 40, top: 60});

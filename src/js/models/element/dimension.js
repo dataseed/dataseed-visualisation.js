@@ -4,6 +4,8 @@ define(['backbone', 'underscore', '../../lib/format'],
 
     var Dimension = Backbone.Model.extend({
 
+        cut: {},
+
         /**
          * Dimension values URL
          */
@@ -73,8 +75,53 @@ define(['backbone', 'underscore', '../../lib/format'],
                 label['label'] = this.formatter(label['label']);
             }
             return label;
-        }
+        },
 
+        /**
+         * Set cut
+         * @param cut list of cut object descriptors in the form
+         *      {"key":"foo", "value":"bar"}
+         * @param successCallback optional callback to invoke upon completion of
+         *      the fetch request
+         */
+        setCut: function (cut, successCallback) {
+            _.each(cut, _.bind(function (c) {
+                    if(_.isNull(c.value)){
+                        delete this.cut[c.key];
+                    }else{
+                        this.cut[c.key] = c.value;
+                    }
+                },this));
+            // TODO Ensure we really need to fetch the dimensions each time the cut changes
+            if(_.isUndefined(successCallback)){
+                this.fetch();
+            }else{
+                this.fetch().complete(successCallback);
+            }
+
+        },
+
+        /**
+         * Unset cut
+         * @param cut list of dimension ids
+         * @param successCallback optional callback to invoke upon completion of
+         *      the fetch request
+         */
+        unsetCut: function (keys, successCallback) {
+            if (_.isUndefined(keys)) {
+                this.cut = {};
+            } else {
+                _.each(keys, _.bind(function (k) {
+                    delete this.cut[k];
+                }, this));
+            }
+            // TODO Ensure we really need to fetch the dimensions each time the cut changes
+            if (_.isUndefined(successCallback)) {
+                this.fetch();
+            } else {
+                this.fetch().complete(successCallback);
+            }
+        }
     });
 
     return Dimension;

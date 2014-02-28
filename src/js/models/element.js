@@ -182,26 +182,31 @@ define(['backbone', 'underscore', './element/dimension', './element/observations
          * Trigger add cut event
          */
         addCut: function(value) {
-            this.trigger('addCut', this.observations.get('id'), value);
+            this.trigger('addCut', [{"key": this.observations.get('id'), "value": value}]);
         },
 
         /**
          * Trigger remove cut event
          */
         removeCut: function() {
-            this.trigger('removeCut', this.observations.get('id'));
+            this.trigger('removeCut', [this.observations.get('id')]);
         },
 
         /**
          * Set observations cut
          */
-        setCut: function(key, value) {
+        setCut: function(cut) {
             if (!_.isUndefined(this.observations)) {
                 // Set cut
-                this.observations.setCut(key, value);
+                this.dimension.setCut(cut);
+                this.observations.setCut(cut);
+                var cutOnOurselves = _.find(cut, _.bind(function (c) {
+                        c.key === this.observations.get('id');
+                    },
+                    this));
 
                 // If we're cutting on ourselves, force a re-render
-                if (this.observations.get('id') === key && this.isLoaded()) {
+                if (!_.isUndefined(cutOnOurselves) && this.isLoaded()) {
                     this.trigger('ready', this);
                 }
             }
@@ -210,13 +215,19 @@ define(['backbone', 'underscore', './element/dimension', './element/observations
         /**
          * Unset observations cut
          */
-        unsetCut: function(key) {
+        unsetCut: function(keys) {
             if (!_.isUndefined(this.observations)) {
                 // Unset cut
-                this.observations.unsetCut(key);
+                this.dimension.unsetCut(keys);
+                this.observations.unsetCut(keys);
+
+                var cutOnOurselves = _.find(keys, _.bind(function (k) {
+                        k === this.observations.get('id');
+                    },
+                    this));
 
                 // If we're removing a cut on ourselves, force a re-render
-                if ((this.observations.get('id') === key || _.isUndefined(key)) && this.isLoaded()) {
+                if ((!_.isUndefined(cutOnOurselves) || _.isUndefined(keys)) && this.isLoaded()) {
                     this.trigger('ready', this);
                 }
             }

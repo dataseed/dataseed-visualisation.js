@@ -102,20 +102,30 @@ define(['backbone', 'underscore'], function(Backbone, _) {
 
         /**
          * Set cut
+         * @param cut list of cut object descriptors in the form
+         *      {"key":"foo", "value":"bar"}
          */
-        setCut: function(key, value) {
-            this.cut[key] = value;
+        setCut: function (cut) {
+            _.each(cut, _.bind(function (c) {
+                if (_.isNull(c.value)) {
+                    delete this.cut[c.key];
+                } else {
+                    this.cut[c.key] = c.value;
+                }
+            }, this));
             this.fetch();
         },
 
         /**
          * Unset cut
          */
-        unsetCut: function(key) {
-            if (_.isUndefined(key)) {
+        unsetCut: function(keys) {
+            if (_.isUndefined(keys)) {
                 this.cut = {};
             } else {
-                delete this.cut[key];
+                _.each(keys, _.bind(function (k) {
+                    delete this.cut[k];
+                }, this));
             }
             this.fetch();
         }
