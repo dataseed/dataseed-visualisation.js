@@ -14,7 +14,16 @@ define(['./chart', 'underscore', 'highcharts'],
                     bar: {
                         animation: false,
                         color: this.getStyle('featureFill'),
-                        dataLabels: { enabled: false },
+                        dataLabels: {
+                            enabled: true,
+                            inside: true,
+                            format: '{point.category}',
+                            color: this.getStyle('label'),
+                            align: 'left',
+                            style: {
+                                fontSize: '11px'
+                            }
+                        },
                         events: {
                             click: _.bind(this.featureClick, this)
                         }
@@ -24,7 +33,10 @@ define(['./chart', 'underscore', 'highcharts'],
                     categories: _.map(this.model.getObservations(), function (d) {
                         return this.model.getLabel(d).label;
                     }, this),
-                    title: { text: null }
+                    title: { text: null },
+                    labels: { enabled: false },
+                    tickLength: 0,
+                    minorTickLength: 0
                 },
                 yAxis: {
                     min: 0,
