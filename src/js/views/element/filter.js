@@ -26,8 +26,10 @@ define(['backbone', 'underscore', '../../lib/format'],
             },
 
             getDimensionAttrs: function (dimension) {
-                var thisView = this;
-                var id = dimension.field.id,
+                var thisView = this,
+                    defaultSort = {"attribute":"total", "direction":"desc"},
+                    sort = !_.isUndefined(dimension.field.sort)? _.extend({}, defaultSort, dimension.field.sort): defaultSort,
+                    id = dimension.field.id,
                     model = this.visualisation.elements.find(function (element) {
                         return (element.getFieldId() === id && element.get('id') !== thisView.model.id);
                     }),
@@ -40,14 +42,14 @@ define(['backbone', 'underscore', '../../lib/format'],
                                 'label': model.getLabel(value)['label']
                             };
                         }, this)
-                        .sortBy('total')
+                        .sortBy(sort.attribute)
                         .value();
 
                 return {
                     'id': id,
                     'model': model,
                     // Sort descending
-                    'values': values.reverse(),
+                    'values': (sort.direction === "desc") ? values.reverse() : values,
                     'hierarchy': dimension.field.hierarchy,
                     'observations_cut': this.model.observations.cut
                 };
