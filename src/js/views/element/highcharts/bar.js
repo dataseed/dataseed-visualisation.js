@@ -4,7 +4,11 @@ define(['./chart', 'underscore', 'highcharts'],
 
     var BarChartView = ChartView.extend({
 
+
         getChart: function() {
+            // Label font size in px
+            var labelSize = 11;
+
             return {
                 chart: {
                     type: 'bar',
@@ -17,11 +21,16 @@ define(['./chart', 'underscore', 'highcharts'],
                         dataLabels: {
                             enabled: true,
                             inside: true,
-                            format: '{point.category}',
+                            formatter: function() {
+                                if (labelSize > this.point.pointWidth) {
+                                    return null;
+                                }
+                                return this.point.category;
+                            },
                             color: this.getStyle('label'),
                             align: 'left',
                             style: {
-                                fontSize: '11px'
+                                fontSize: labelSize + 'px'
                             }
                         },
                         events: {
