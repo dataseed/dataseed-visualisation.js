@@ -4,15 +4,15 @@
         currentLevel = null,
         dimensionValuesByLevel = null
         parentDimensionIds = null,
-        levelAttrId=null;
-    if(!_.isUndefined(dimension['hierarchy']) && !_.isUndefined(dimension['observations_cut'][dimension['hierarchy']['level_attr_id']])){
-        hierarchyLevels = dimension['hierarchy']['ancestor_dimensions'].length;
-        currentLevel = dimension['observations_cut'][dimension['hierarchy']['level_attr_id']];
+        levelField=null;
+    if(!_.isUndefined(dimension['hierarchy']) && !_.isUndefined(dimension['observations_cut'][dimension['hierarchy']['level_field']])){
+        hierarchyLevels = dimension['hierarchy']['ancestor_fields'].length;
+        currentLevel = dimension['observations_cut'][dimension['hierarchy']['level_field']];
         dimensionValuesByLevel = dimension['hierarchy']['values_by_level'];
-        parentDimensionIds = dimension['hierarchy']['ancestor_dimensions'];
-        levelAttrId = dimension['hierarchy']['level_attr_id'];
+        parentDimensionIds = dimension['hierarchy']['ancestor_fields'];
+        levelField = dimension['hierarchy']['level_field'];
     }%>
-    <div class="filter-group " data-dimension="<%- dimension['id'] %>" <% if (!_.isNull(levelAttrId)) {%> data-level_attr_id="<%- levelAttrId %>"<% } %><% if (!_.isNull(parentDimensionIds)) {%> data-ancestor_dimensions="<%- JSON.stringify(parentDimensionIds) %>"<% } %>>
+    <div class="filter-group " data-dimension="<%- dimension['id'] %>">
         <h3><%- dimension['label'] %></h3>
         <div id="<%- dimension['dimension_filter_id'] %>" class="info-body<% if (!_.isUndefined(dimension['cut'])) {%> cut<% } %>">
             <%if(!_.isNull(hierarchyLevels) && !_.isNull(currentLevel)){

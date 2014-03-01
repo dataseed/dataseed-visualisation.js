@@ -92,6 +92,7 @@ define(['backbone', 'underscore', '../../lib/format'],
                         this.cut[c.key] = c.value;
                     }
                 },this));
+
             // TODO Ensure we really need to fetch the dimensions each time the cut changes
             if(_.isUndefined(successCallback)){
                 this.fetch();

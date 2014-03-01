@@ -48,9 +48,9 @@ define(['backbone', 'underscore', '../../lib/format'],
                 return {
                     'id': id,
                     'model': model,
-                    // Sort descending
+                    // Sorting
                     'values': (sort.direction === "desc") ? values.reverse() : values,
-                    'hierarchy': dimension.field.hierarchy,
+                    'hierarchy': this.visualisation.getDimensionHierarchy(id),
                     'observations_cut': this.model.observations.cut
                 };
             },
@@ -70,8 +70,8 @@ define(['backbone', 'underscore', '../../lib/format'],
                      * If the dimension is hierarchical, we need to keep track
                      * of the dimension values displayed on each level
                      */
-                    if (!_.isUndefined(hierarchy) && !_.isUndefined(observations_cut[hierarchy.level_attr_id])) {
-                        var currentLevel = observations_cut[hierarchy.level_attr_id];
+                    if (!_.isUndefined(hierarchy) && !_.isUndefined(observations_cut[hierarchy.level_field])) {
+                        var currentLevel = observations_cut[hierarchy.level_field];
                         this.dimensionValuesByLevel[currentLevel - 1] = values;
                     }
 
