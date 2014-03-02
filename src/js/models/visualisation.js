@@ -149,7 +149,7 @@ define(['backbone', 'underscore', '../collections/elements', '../collections/sty
 
                 // if the dimension is not hierarchical or we already are in the
                 // highest level of the hierarchy, do nothing
-                if (_.isUndefined(dimensionHierarchy) || triggerLevel >= dimensionHierarchy.ancestor_fields.length) {
+                if (_.isUndefined(dimensionHierarchy) || triggerLevel > dimensionHierarchy.ancestor_fields.length) {
                     return;
                 }
 
