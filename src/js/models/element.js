@@ -8,6 +8,9 @@ define(['backbone', 'underscore', './element/dimension', './element/observations
             return '/api/datasets/' + this.dataset.get('id') + '/visualisations/' + this.visualisation.get('id') + '/elements/' + this.get('id');
         },
 
+        // Keeps track of the calls to this.change() (@see this.change())
+        changeCount : 0,
+
         initialize: function(options) {
             this.bind('change', this.change, this);
 
@@ -76,7 +79,19 @@ define(['backbone', 'underscore', './element/dimension', './element/observations
          * Change event handler
          */
         change: function() {
-            if (this.isLoaded()) {
+            // this method is called when observations OR dimensions are fetched
+            // we need to trigger the 'ready' event only when BOTH are fetched,
+            // that is, when change is called twice.
+            //
+            // Note 1 - we need this counter basically only when we add a cut:
+            // in that case this.isLoaded() is not enough to ensure that both
+            // dimensions and observations are fetched as this.observations and
+            // this.dimensions are already defined before calling fetch
+            //
+            // Note 2 - We should use _.after() but for some reason it doesn't
+            // work in this case
+            if ((++this.changeCount == 2) && this.isLoaded()) {
+                this.changeCount = 0;
                 this.trigger('ready', this);
             }
         },
