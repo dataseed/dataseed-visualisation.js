@@ -72,7 +72,7 @@ define(['backbone', 'underscore', '../collections/elements', '../collections/sty
 
             getDimensionHierarchy: function (dimensionId) {
                 // hierarchy defined by the visualisation for this dimension
-                var hierarchy = undefined;
+                var hierarchy;
 
                 if (!_.isUndefined(this.get('hierarchies'))) {
                     hierarchy = _.chain(this.get('hierarchies'))
@@ -80,13 +80,14 @@ define(['backbone', 'underscore', '../collections/elements', '../collections/sty
                             return h.id == dimensionId;
                         })
                         .value();
-                }
 
-                if(_.isUndefined(hierarchy.available_levels) || _.isUndefined(hierarchy.available_levels.lower_bound) || _.isUndefined(hierarchy.available_levels.upper_bound)){
-                    hierarchy = _.extend({}, hierarchy.available_levels, {
-                        "lower_bound": 1,
-                        "upper_bound": hierarchy.ancestor_fields.length
-                    });
+                    // set default available levels if not provided by the model
+                    if (_.isUndefined(hierarchy.available_levels) || _.isUndefined(hierarchy.available_levels.lower_bound) || _.isUndefined(hierarchy.available_levels.upper_bound)) {
+                        hierarchy.available_levels = _.extend({}, hierarchy.available_levels, {
+                            "lower_bound": 1,
+                            "upper_bound": hierarchy.ancestor_fields.length
+                        });
+                    }
                 }
 
                 return hierarchy;

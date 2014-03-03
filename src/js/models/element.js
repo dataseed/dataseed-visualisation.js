@@ -210,15 +210,14 @@ define(['backbone', 'underscore', './element/dimension', './element/observations
         /**
          * Set observations cut
          */
-        setCut: function(cut) {
+        setCut: function (cut) {
             if (!_.isUndefined(this.observations)) {
                 // Set cut
                 this.dimension.setCut(cut);
                 this.observations.setCut(cut);
                 var cutOnOurselves = _.find(cut, _.bind(function (c) {
-                        c.key === this.observations.get('id');
-                    },
-                    this));
+                    return (c.key === this.observations.get('id'));
+                }, this));
 
                 // If we're cutting on ourselves, force a re-render
                 if (!_.isUndefined(cutOnOurselves) && this.isLoaded()) {
@@ -230,16 +229,15 @@ define(['backbone', 'underscore', './element/dimension', './element/observations
         /**
          * Unset observations cut
          */
-        unsetCut: function(keys) {
+        unsetCut: function (keys) {
             if (!_.isUndefined(this.observations)) {
                 // Unset cut
                 this.dimension.unsetCut(keys);
                 this.observations.unsetCut(keys);
 
                 var cutOnOurselves = _.find(keys, _.bind(function (k) {
-                        k === this.observations.get('id');
-                    },
-                    this));
+                    return (k === this.observations.get('id'));
+                }, this));
 
                 // If we're removing a cut on ourselves, force a re-render
                 if ((!_.isUndefined(cutOnOurselves) || _.isUndefined(keys)) && this.isLoaded()) {
