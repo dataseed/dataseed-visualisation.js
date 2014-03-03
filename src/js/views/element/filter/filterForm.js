@@ -52,9 +52,12 @@ define(['../filter', 'underscore', 'text!../../../templates/element/filterForm.h
                     // value
                     if (cutValue === '-all-') {
                         this.visualisation.drillUp(dimension, hLevel);
-
                     } else {
-                        this.visualisation.drillDown(dimension, hLevel, cutValue.split(':')[1]);
+                        var validParent_re = /\d+/;
+
+                        if (validParent_re.test(cutValue)) {
+                            this.visualisation.drillDown(dimension, hLevel, validParent_re.exec(cutValue)[0]);
+                        }
                     }
                 }
             }
