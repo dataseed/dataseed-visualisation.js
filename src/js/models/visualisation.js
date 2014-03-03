@@ -81,6 +81,14 @@ define(['backbone', 'underscore', '../collections/elements', '../collections/sty
                         })
                         .value();
                 }
+
+                if(_.isUndefined(hierarchy.available_levels) || _.isUndefined(hierarchy.available_levels.lower_bound) || _.isUndefined(hierarchy.available_levels.upper_bound)){
+                    hierarchy = _.extend({}, hierarchy.available_levels, {
+                        "lower_bound": 1,
+                        "upper_bound": hierarchy.ancestor_fields.length
+                    });
+                }
+
                 return hierarchy;
             },
 
@@ -111,8 +119,8 @@ define(['backbone', 'underscore', '../collections/elements', '../collections/sty
                 var dimensionHierarchy = this.getDimensionHierarchy(dimensionId);
 
                 // if the dimension is not hierarchical or we already are in the
-                // deepest level of the hierarchy, do nothing
-                if (_.isUndefined(dimensionHierarchy) || triggerLevel <= 1) {
+                // deepest available level of the hierarchy, do nothing
+                if (_.isUndefined(dimensionHierarchy) || triggerLevel <= dimensionHierarchy.available_levels.lower_bound) {
                     return;
                 }
                 // List of the dimensions ids of the hierarchical
@@ -148,8 +156,8 @@ define(['backbone', 'underscore', '../collections/elements', '../collections/sty
                 var dimensionHierarchy = this.getDimensionHierarchy(dimensionId);
 
                 // if the dimension is not hierarchical or we already are in the
-                // highest level of the hierarchy, do nothing
-                if (_.isUndefined(dimensionHierarchy) || triggerLevel > dimensionHierarchy.ancestor_fields.length) {
+                // highest available level of the hierarchy, do nothing
+                if (_.isUndefined(dimensionHierarchy) || triggerLevel > dimensionHierarchy.available_levels.upper_bound) {
                     return;
                 }
 

@@ -1,12 +1,14 @@
 <h2><%- label %></h2>
 <% _.each(dimensions, function(dimension) {
-    var hierarchyLevels = null,
+    var maxAvailableLevel = null,
+        minAvailableLevel = null,
         currentLevel = null,
         dimensionValuesByLevel = null
         parentDimensionIds = null,
         levelField=null;
     if(!_.isUndefined(dimension['hierarchy']) && !_.isUndefined(dimension['observations_cut'][dimension['hierarchy']['level_field']])){
-        hierarchyLevels = dimension['hierarchy']['ancestor_fields'].length;
+        maxAvailableLevel = dimension['hierarchy']['available_levels']['upper_bound'];
+        minAvailableLevel = dimension['hierarchy']['available_levels']['lower_bound'];
         currentLevel = dimension['observations_cut'][dimension['hierarchy']['level_field']];
         dimensionValuesByLevel = dimension['hierarchy']['values_by_level'];
         parentDimensionIds = dimension['hierarchy']['ancestor_fields'];
@@ -15,13 +17,13 @@
     <div class="filter-group " data-dimension="<%- dimension['id'] %>">
         <h3><%- dimension['label'] %></h3>
         <div id="<%- dimension['dimension_filter_id'] %>" class="info-body<% if (!_.isUndefined(dimension['cut'])) {%> cut<% } %>">
-            <%if(!_.isNull(hierarchyLevels) && !_.isNull(currentLevel)){
-                for(i = hierarchyLevels; i >= currentLevel ; i--){
+            <%if(!_.isNull(maxAvailableLevel) && !_.isNull(currentLevel)){
+                for(i = maxAvailableLevel; i >= currentLevel ; i--){
                     var parentDimensionId = parentDimensionIds[(i - 1) - 1],
                         parentCutValue = dimension['observations_cut'][parentDimensionId];%>
                 <select class="form-control dimension-cut" data-hlevel="<%- i %>">
                     <option data-value="-all-" <%if (_.isUndefined(parentCutValue)){%> selected="selected" <% } %>>All</option>
-                    <%if(!_.isUndefined(dimensionValuesByLevel[i -1]) && i > 1){
+                    <%if(!_.isUndefined(dimensionValuesByLevel[i -1]) && i > minAvailableLevel){
                         _.each(dimensionValuesByLevel[i - 1], function(value) { %>
                         <option data-value="<%- value['id'] %>"<%
                             if (value['id'].split(':')[1] === parentCutValue) {cutWrapperClass='cut-wrapper active'; selectedAttr='selected="selected"'}
