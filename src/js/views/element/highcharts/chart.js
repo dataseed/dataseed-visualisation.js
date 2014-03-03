@@ -43,11 +43,31 @@ define(['backbone', 'underscore', 'text!../../../templates/element/chart.html'],
         /**
          * Handle chart feature (bar/point/etc) click
          */
-        featureClick: function(e) {
-            if (this.model.hasCutId(e.point.options.id)) {
-                this.model.removeCut();
+        featureClick: function (e) {
+            var index = e.point.series.data.indexOf(e.point),
+                dimension = this.model.dimension.id,
+                dimensionHierarchy = this.model.visualisation
+                    .getDimensionHierarchy(dimension);
+
+            if (_.isUndefined(dimensionHierarchy)) {
+                // the dimension is not hierarchical
+
+                if (this.model.hasCutId(e.point.options.id)) {
+                    this.model.removeCut();
+                } else {
+                    this.model.addCut(e.point.options.id);
+                }
             } else {
-                this.model.addCut(e.point.options.id);
+                // the dimension is hierarchical: this featureClick should
+                // handle the drill up/down
+                var levelField = dimensionHierarchy['level_field'],
+                    level = this.model.getObservation(index)[levelField],
+                    cutValue = this.model.getObservation(index).id,
+                    validParent_re = /\d+/;
+
+                if (validParent_re.test(cutValue)) {
+                    this.model.visualisation.drillDown(dimension, level, validParent_re.exec(cutValue)[0]);
+                }
             }
         },
 

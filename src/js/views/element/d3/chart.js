@@ -99,10 +99,27 @@ define(['backbone', 'underscore', 'd3', 'text!../../../templates/element/chart.h
          * Handle a chart feature click
          */
         featureClick: function(d, i) {
-            if (this.model.hasCutValue(i)) {
-                this.model.removeCut();
+            var dimension = this.model.dimension.id,
+                dimensionHierarchy = this.model.visualisation.getDimensionHierarchy(dimension);
+            if (_.isUndefined(dimensionHierarchy)) {
+                // the dimension is not hierarchical
+
+                if (this.model.hasCutValue(i)) {
+                    this.model.removeCut();
+                } else {
+                    this.model.addCut(this.model.getObservation(i).id);
+                }
             } else {
-                this.model.addCut(this.model.getObservation(i).id);
+                // the dimension is hierarchical: this featureClick should
+                // handle the drill up/down
+                var levelField = dimensionHierarchy['level_field'],
+                    level = this.model.getObservation(i)[levelField],
+                    cutValue = this.model.getObservation(i).id,
+                    validParent_re = /\d+/;
+
+                if (validParent_re.test(cutValue)) {
+                    this.model.visualisation.drillDown(dimension, level, validParent_re.exec(cutValue)[0]);
+                }
             }
             this.resetFeatures();
         },

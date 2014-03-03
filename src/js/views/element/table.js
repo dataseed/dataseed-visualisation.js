@@ -26,15 +26,32 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
             this.$el.html(this.template(attrs));
 
             this.resetFeatures();
-
             return this;
         },
 
         featureClick: function (index) {
-            if (this.model.hasCutValue(index)) {
-                this.model.removeCut();
+            var dimension = this.model.dimension.id,
+                dimensionHierarchy = this.model.visualisation.getDimensionHierarchy(dimension);
+
+            if (_.isUndefined(dimensionHierarchy)) {
+                // the dimension is not hierarchical
+
+                if (this.model.hasCutValue(index)) {
+                    this.model.removeCut();
+                } else {
+                    this.model.addCut(this.model.getObservation(index).id);
+                }
             } else {
-                this.model.addCut(this.model.getObservation(index).id);
+                // the dimension is hierarchical: this featureClick should
+                // handle the drill up/down
+                var levelField = dimensionHierarchy['level_field'],
+                    level = this.model.getObservation(index)[levelField],
+                    cutValue = this.model.getObservation(index).id,
+                    validParent_re = /\d+/;
+
+                if (validParent_re.test(cutValue)) {
+                    this.model.visualisation.drillDown(dimension, level, validParent_re.exec(cutValue)[0]);
+                }
             }
             this.resetFeatures();
         },
