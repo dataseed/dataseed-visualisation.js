@@ -99,6 +99,10 @@ define(['backbone', 'underscore', 'd3', 'text!../../../templates/element/chart.h
          * Handle a chart feature click
          */
         featureClick: function(d, i) {
+            if (this.model.get("interactive") === false) {
+                return;
+            }
+
             var dimension = this.model.dimension.id,
                 dimensionHierarchy = this.model.visualisation.getDimensionHierarchy(dimension);
             if (_.isUndefined(dimensionHierarchy)) {

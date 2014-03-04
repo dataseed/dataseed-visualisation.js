@@ -30,6 +30,10 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
         },
 
         featureClick: function (index) {
+            if (this.model.get("interactive") === false) {
+                return;
+            }
+
             var dimension = this.model.dimension.id,
                 dimensionHierarchy = this.model.visualisation.getDimensionHierarchy(dimension);
 

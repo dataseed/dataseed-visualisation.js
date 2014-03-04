@@ -95,7 +95,7 @@ define(['backbone', 'underscore', '../collections/elements', '../collections/sty
 
             /**
              * Reset the cut defined on the ancestor dimensions that are related
-             * to hierarchy levels equal or deeper than leve
+             * to hierarchy levels equal to or deeper than level
              */
             resetAncestorsCut: function (dimensionId, ancestorFields, level) {
                 return _.chain(ancestorFields.slice(0, level - 1))

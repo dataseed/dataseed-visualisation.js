@@ -44,6 +44,10 @@ define(['backbone', 'underscore', 'text!../../../templates/element/chart.html'],
          * Handle chart feature (bar/point/etc) click
          */
         featureClick: function (e) {
+            if(this.model.get("interactive") === false){
+                return;
+            }
+
             var index = e.point.series.data.indexOf(e.point),
                 dimension = this.model.dimension.id,
                 dimensionHierarchy = this.model.visualisation
