@@ -44,34 +44,7 @@ define(['backbone', 'underscore', 'text!../../../templates/element/chart.html'],
          * Handle chart feature (bar/point/etc) click
          */
         featureClick: function (e) {
-            if(this.model.get("interactive") === false){
-                return;
-            }
-
-            var index = e.point.series.data.indexOf(e.point),
-                dimension = this.model.get('dimension'),
-                dimensionHierarchy = this.model.visualisation.dataset.getDimensionHierarchy(dimension);
-
-            if (_.isUndefined(dimensionHierarchy)) {
-                // the dimension is not hierarchical
-
-                if (this.model.hasCutId(e.point.options.id)) {
-                    this.model.removeCut();
-                } else {
-                    this.model.addCut(e.point.options.id);
-                }
-            } else {
-                // the dimension is hierarchical: this featureClick should
-                // handle the drill up/down
-                var levelField = dimensionHierarchy['level_field'],
-                    level = this.model.getObservation(index)[levelField],
-                    cutValue = this.model.getObservation(index).id,
-                    validParent_re = /\d+/;
-
-                if (validParent_re.test(cutValue)) {
-                    this.model.visualisation.dataset.drillDown(dimension, level, validParent_re.exec(cutValue)[0]);
-                }
-            }
+            this.model.featureClick(e.point.series.data.indexOf(e.point));
         },
 
         /**

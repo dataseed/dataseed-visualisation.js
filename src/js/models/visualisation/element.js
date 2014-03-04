@@ -4,6 +4,8 @@ define(['backbone', 'underscore'],
 
     var Element = Backbone.Model.extend({
 
+        validParent: /\d+/,
+
         url: function() {
             return '/api/datasets/' + this.dataset.get('id') + '/visualisations/' + this.visualisation.get('id') + '/elements/' + this.get('id');
         },
@@ -52,6 +54,37 @@ define(['backbone', 'underscore'],
 
         change: function() {
             this.trigger('ready', this);
+        },
+
+        /**
+         * Handle element feature (bar/point/etc) click
+         */
+        featureClick: function(index) {
+            if (this.get('interactive') === false) {
+                return false;
+            }
+
+            var dimension = this.getFieldId(),
+                hierarchy = this.dataset.getDimensionHierarchy(dimension),
+                observation = this.getObservation(index);
+
+            // Non-hierarchical dimension
+            if (_.isUndefined(hierarchy)) {
+                if (this.hasCutId(observation.id)) {
+                    this.removeCut();
+                } else {
+                    this.addCut(observation.id);
+                }
+
+            // Hierarchical dimension, handle the drill up/down
+            } else {
+                var level = observation[hierarchy['level_field']];
+                if (this.validParent.test(observation.id)) {
+                    this.dataset.drillDown(dimension, level, this.validParent.exec(observation.id)[0]);
+                }
+            }
+
+            return true;
         },
 
         /**
