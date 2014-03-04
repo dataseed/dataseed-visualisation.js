@@ -48,6 +48,7 @@ define(['backbone', 'underscore', '../models/dataset', '../models/datasetSinglet
                 });
             }
 
+            this.model.reset();
             this.visualisation.render();
         }
 

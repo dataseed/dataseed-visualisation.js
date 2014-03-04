@@ -1,4 +1,4 @@
-define(['backbone', '../models/style'],
+define(['backbone', '../models/visualisation/style'],
         function(Backbone, Style) {
     'use strict';
 

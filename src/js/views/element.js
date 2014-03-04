@@ -41,7 +41,7 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
                 .addClass(type + 'Element');
 
             if (!this.model.isLoaded()) {
-                if (_.contains(this.loadingElementTypes, type)) {
+                if (this.loadingView === false && _.contains(this.loadingElementTypes, type)) {
                     this.loadingView = new LoadScreenView({left: 40, top: 60});
                     this.$el.append(this.loadingView.$el);
                 }
@@ -75,6 +75,7 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
                 this.loadingView = false;
             }
 
+            console.log('render element', this.model.get('id'));
             return this;
         }
 

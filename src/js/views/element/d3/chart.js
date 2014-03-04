@@ -90,24 +90,21 @@ define(['backbone', 'underscore', 'd3', 'text!../../../templates/element/chart.h
                     .selectAll('g rect, .node circle')
                         .style('fill', this.getStyle('featureFill'))
                         .style('stroke', this.getStyle('featureStroke'));
-
-            // Remove any tooltips
-            //this.removeTooltips();
         },
 
         /**
          * Handle a chart feature click
          */
         featureClick: function(d, i) {
-            if (this.model.get("interactive") === false) {
+            if (this.model.get('interactive') === false) {
                 return;
             }
 
-            var dimension = this.model.dimension.id,
-                dimensionHierarchy = this.model.visualisation.getDimensionHierarchy(dimension);
+            var dimension = this.model.getFieldId(),
+                dimensionHierarchy = this.model.visualisation.dataset.getDimensionHierarchy(dimension);
+
             if (_.isUndefined(dimensionHierarchy)) {
                 // the dimension is not hierarchical
-
                 if (this.model.hasCutValue(i)) {
                     this.model.removeCut();
                 } else {
@@ -122,7 +119,7 @@ define(['backbone', 'underscore', 'd3', 'text!../../../templates/element/chart.h
                     validParent_re = /\d+/;
 
                 if (validParent_re.test(cutValue)) {
-                    this.model.visualisation.drillDown(dimension, level, validParent_re.exec(cutValue)[0]);
+                    this.model.visualisation.dataset.drillDown(dimension, level, validParent_re.exec(cutValue)[0]);
                 }
             }
             this.resetFeatures();

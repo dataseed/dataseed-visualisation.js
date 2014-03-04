@@ -49,9 +49,8 @@ define(['backbone', 'underscore', 'text!../../../templates/element/chart.html'],
             }
 
             var index = e.point.series.data.indexOf(e.point),
-                dimension = this.model.dimension.id,
-                dimensionHierarchy = this.model.visualisation
-                    .getDimensionHierarchy(dimension);
+                dimension = this.model.get('dimension'),
+                dimensionHierarchy = this.model.visualisation.dataset.getDimensionHierarchy(dimension);
 
             if (_.isUndefined(dimensionHierarchy)) {
                 // the dimension is not hierarchical
@@ -70,7 +69,7 @@ define(['backbone', 'underscore', 'text!../../../templates/element/chart.html'],
                     validParent_re = /\d+/;
 
                 if (validParent_re.test(cutValue)) {
-                    this.model.visualisation.drillDown(dimension, level, validParent_re.exec(cutValue)[0]);
+                    this.model.visualisation.dataset.drillDown(dimension, level, validParent_re.exec(cutValue)[0]);
                 }
             }
         },

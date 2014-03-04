@@ -35,7 +35,7 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
             }
 
             var dimension = this.model.dimension.id,
-                dimensionHierarchy = this.model.visualisation.getDimensionHierarchy(dimension);
+                dimensionHierarchy = this.model.visualisation.dataset.getDimensionHierarchy(dimension);
 
             if (_.isUndefined(dimensionHierarchy)) {
                 // the dimension is not hierarchical
