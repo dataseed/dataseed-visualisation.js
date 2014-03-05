@@ -6,6 +6,8 @@ define(['backbone', 'underscore'],
 
         validParent: /\d+/,
 
+        loaded: 0,
+
         url: function() {
             return '/api/datasets/' + this.dataset.get('id') + '/visualisations/' + this.visualisation.get('id') + '/elements/' + this.get('id');
         },
@@ -45,15 +47,26 @@ define(['backbone', 'underscore'],
             }, this);
         },
 
-        isLoaded: function() {
-            // Check that isLoaded returns true for every connection
-            return _.reduce(this.dimensions, function(memo, conn) {
-                return (memo && conn.isLoaded());
-            }, true);
+        /**
+         * Dataset connection change event handler
+         */
+        change: function() {
+            this.loaded++;
+            this.trigger('ready', this);
         },
 
-        change: function() {
-            this.trigger('ready', this);
+        /**
+         * Return true if all required data has loaded
+         */
+        isLoaded: function() {
+            // Check that all observations and dimensions have completed sync
+            // and that isLoaded returns true
+            return (
+                ((this.loaded % (this.dimensions.length + this.observations.length)) === 0) &&
+                _.reduce(this.dimensions.concat(this.observations), function(memo, conn) {
+                    return (memo && conn.isLoaded());
+                }, true)
+            );
         },
 
         /**
@@ -116,7 +129,11 @@ define(['backbone', 'underscore'],
         },
 
         getLabel: function(value) {
-            return this.dimensions[0].getValue(value.id);
+            var label = this.dimensions[0].getValue(value.id);
+            if (_.isUndefined(label)) {
+                return _.extend({'label': ''}, value);
+            }
+            return label;
         },
 
         getObservations: function() {

@@ -58,6 +58,9 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
          * Get the value of the current cut for this dimension
          */
         getCut: function(dimension) {
+            if (_.isUndefined(dimension)) {
+                return this.cut;
+            }
             return this.cut[dimension];
         },
 
@@ -105,14 +108,12 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
                 // Update cut on every field connection
                 conn.set('cut', this.cut);
 
-                if (conn.get('type') == 'observations') {
-                    if (_.size(cut) > 1 || !_.has(cut, conn.get('dimension'))) {
-                        // Re-fetch if the field *isn't* included in the updated cut
-                        conn.fetch();
-                    } else {
-                        // Otherwise, initiate a re-render
-                        conn.trigger('change');
-                    }
+                if (_.size(cut) > 1 || !_.has(cut, conn.get('dimension'))) {
+                    // Re-fetch if the field *isn't* included in the updated cut
+                    conn.fetch();
+                } else {
+                    // Otherwise, initiate a re-render
+                    conn.trigger('change');
                 }
 
             }, this);

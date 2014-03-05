@@ -75,7 +75,6 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
                 this.loadingView = false;
             }
 
-            console.log('render element', this.model.get('id'));
             return this;
         }
 

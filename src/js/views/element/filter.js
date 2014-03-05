@@ -51,7 +51,7 @@ define(['backbone', 'underscore', '../../lib/format'],
                 // Sorting
                 'values': (sort.direction === "desc") ? values.reverse() : values,
                 'hierarchy': this.visualisation.dataset.getDimensionHierarchy(id),
-                'observations_cut': this.model.getCut()
+                'observations_cut': this.visualisation.dataset.getCut()
             };
         },
 
