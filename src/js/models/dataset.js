@@ -147,10 +147,11 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
                  _.isUndefined(hierarchy.available_levels.lower_bound) ||
                  _.isUndefined(hierarchy.available_levels.upper_bound))
                ){
-                hierarchy = _.extend({}, hierarchy.available_levels, {
+                var default_available_levels = {
                     "lower_bound": 1,
                     "upper_bound": hierarchy.ancestor_fields.length
-                });
+                };
+                hierarchy = _.extend({}, default_available_levels, hierarchy.available_levels);
             }
 
             return hierarchy;

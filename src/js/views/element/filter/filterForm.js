@@ -55,7 +55,6 @@ define(['../filter', 'underscore', 'text!../../../templates/element/filterForm.h
                 if (cutValue === '-all-') {
                     this.visualisation.dataset.drillUp(dimension, hLevel);
                 } else {
-
                     if (this.validParent.test(cutValue)) {
                         this.visualisation.dataset.drillDown(dimension, hLevel, this.validParent.exec(cutValue)[0]);
                     }
