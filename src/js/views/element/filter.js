@@ -26,65 +26,76 @@ define(['backbone', 'underscore', '../../lib/format'],
         },
 
         getDimensionAttrs: function (dimension) {
-            var thisView = this,
-                defaultSort = {"attribute":"total", "direction":"desc"},
+            var defaultSort = {"attribute":"total", "direction":"desc"},
                 sort = !_.isUndefined(dimension.field.sort)? _.extend({}, defaultSort, dimension.field.sort): defaultSort,
                 id = dimension.field.id,
-                model = this.visualisation.elements.find(function (element) {
-                    return (element.getFieldId() === id && element.get('id') !== thisView.model.id);
-                }),
-                values = _.chain(model.getObservations())
-                    .map(function (value, index) {
+                values,
+                valuesSource;
+
+            // We don't always need to get the element's totals. See the Element
+            // model initialize()
+            valuesSource = (this.model.fetchObservations[id]) ? this.model.getObservations(id) : this.model.getDimensions(id);
+            values = _.chain(valuesSource)
+                .map(function (value, index) {
+                    if (this.model.fetchObservations[id]) {
                         return {
                             'id': value['id'],
                             'total': value['total'],
                             'totalFormat': format.num(value['total']),
-                            'label': model.getLabel(value)['label']
+                            'label': this.model.getLabel(value, id)['label']
                         };
-                    }, this)
-                    .sortBy(sort.attribute)
-                    .value();
+                    } else {
+                        return {
+                            'id': value['id'],
+                            'label': value['label']
+                        };
+                    }
+                }, this)
+                .sortBy(sort.attribute)
+                .value();
 
             return {
                 'id': id,
-                'model': model,
                 // Sorting
                 'values': (sort.direction === "desc") ? values.reverse() : values,
                 'hierarchy': this.visualisation.dataset.getDimensionHierarchy(id),
-                'observations_cut': this.visualisation.dataset.getCut()
+                'dataset_cut': this.visualisation.dataset.getCut(),
+                'required': _.isBoolean(dimension.field.required) ? dimension.field.required : false
             };
         },
 
         getDimensions: function () {
-            return _(this.model.get('dimensions')).map(function (dimension) {
+            return _(this.model.get('dimensions')).map(function (dimension, iterator) {
 
                 var dimensionAttrs = this.getDimensionAttrs(dimension);
 
                 var id = dimensionAttrs.id,
-                    model = dimensionAttrs.model,
                     values = dimensionAttrs.values,
                     hierarchy = dimensionAttrs.hierarchy,
-                    observations_cut = dimensionAttrs.observations_cut;
+                    dataset_cut = dimensionAttrs.dataset_cut,
+                    required = dimensionAttrs.required,
+                    field = this.visualisation.dataset.fields.findWhere({'id':id});
 
                 /**
                  * If the dimension is hierarchical, we need to keep track
                  * of the dimension values displayed on each level
                  */
-                if (!_.isUndefined(hierarchy) && !_.isUndefined(observations_cut[hierarchy.level_field])) {
-                    var currentLevel = observations_cut[hierarchy.level_field];
+                if (!_.isUndefined(hierarchy) && !_.isUndefined(dataset_cut[hierarchy.level_field])) {
+                    var currentLevel = dataset_cut[hierarchy.level_field];
                     this.dimensionValuesByLevel[currentLevel - 1] = values;
                 }
 
                 return {
                     'id': id,
                     'dimension_filter_id': this.model.get('id') + '_' + id.replace(/[^a-z0-9_\-]/gi, '_'),
-                    'label': model.get('label'),
+                    'label': _.isUndefined(field) ? this.model.get('label') : field.get('label'),
                     // cut set on this dimension
-                    'cut': model.getCut(),
+                    'cut': this.model.getCut(iterator),
                     // the cut set on all the dimensions
-                    'observations_cut': observations_cut,
+                    'dataset_cut': dataset_cut,
                     'hierarchy': _.extend({}, hierarchy, {'values_by_level': this.dimensionValuesByLevel}),
-                    'values': values
+                    'values': values,
+                    'required': required
                 };
 
             }, this);
@@ -97,7 +108,7 @@ define(['backbone', 'underscore', '../../lib/format'],
             if ($cut.closest('.cut-wrapper').hasClass('active')) {
                 this.visualisation.dataset.removeCut([dimension]);
             } else {
-                this.visualisation.dataset.addCut({dimension: String($cut.data('value'))});
+                this.visualisation.dataset.addCut(_.object([dimension], [String($cut.data('value'))]));
             }
         }
 

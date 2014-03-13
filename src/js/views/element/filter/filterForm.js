@@ -35,7 +35,7 @@ define(['../filter', 'underscore', 'text!../../../templates/element/filterForm.h
                 if (cutValue === '-all-') {
                     this.visualisation.dataset.removeCut([dimension]);
                 } else {
-                    this.visualisation.dataset.addCut({dimension: cutValue});
+                    this.visualisation.dataset.addCut(_.object([dimension], [cutValue]));
                 }
             } else {
                 // the dimension is hierarchical

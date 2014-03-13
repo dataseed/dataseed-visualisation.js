@@ -110,6 +110,8 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
 
                 if (_.size(cut) > 1 || !_.has(cut, conn.get('dimension'))) {
                     // Re-fetch if the field *isn't* included in the updated cut
+                    // (see how we set the connections in the initialise method
+                    // of the Element model)
                     conn.fetch();
                 } else {
                     // Otherwise, initiate a re-render

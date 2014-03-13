@@ -16,7 +16,7 @@
                                 <%- value['label'] %>
                             </a>
                         </td>
-                        <td class="right">(<%- value['totalFormat'] %>)</td>
+                        <td class="right"><% if (!_.isUndefined(value['totalFormat'])) {%> (<%- value['totalFormat'] %>) <% } %></td>
                     </tr>
                 <% }); %>
             </table>

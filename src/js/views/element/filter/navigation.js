@@ -25,19 +25,19 @@ define(['../filter', 'underscore', 'text!../../../templates/element/navigation.h
         },
 
         getDimensions: function () {
-            return _(this.model.get('dimensions')).map(function (dimension) {
+            return _(this.model.get('dimensions')).map(function (dimension, iterator) {
 
                 var dimensionAttrs = this.getDimensionAttrs(dimension);
 
                 var id = dimensionAttrs.id,
-                    model = dimensionAttrs.model,
-                    values = dimensionAttrs.values;
+                    values = dimensionAttrs.values,
+                    field = this.visualisation.dataset.fields.findWhere({'id':id});
 
                 return {
                     'id': id,
                     'accordion_id': this.model.get('id') + '_' + id.replace(/[^a-z0-9_\-]/gi, '_'),
-                    'label': model.get('label'),
-                    'cut': model.getCut(),
+                    'label': _.isUndefined(field) ? this.model.get('label') : field.get('label'),
+                    'cut': this.model.getCut(iterator),
                     'state': (this.accordionState[id] === true),
                     'values': values
                 };
