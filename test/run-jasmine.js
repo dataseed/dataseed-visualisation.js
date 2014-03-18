@@ -115,7 +115,7 @@ page.open(system.args[1], function(status){
                     var specs = specDetails[i].querySelectorAll('ul.specs');
                     for(var j = 0; j < specs.length; j++)
                     {
-                      console.log(" it: " + specs[i].innerText);
+                      console.log(" it: " + specs[j].innerText);
                     }
                   }
                 }
