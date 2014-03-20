@@ -26,33 +26,33 @@ define(['backbone', 'underscore', '../../lib/format'],
         },
 
         getDimensionAttrs: function (dimension) {
-            var defaultSort = {"attribute":"total", "direction":"desc"},
-                sort = !_.isUndefined(dimension.field.sort)? _.extend({}, defaultSort, dimension.field.sort): defaultSort,
+            var defaultSort = {"attribute": "total", "direction": "desc"},
+                sort = !_.isUndefined(dimension.field.sort) ? _.extend({}, defaultSort, dimension.field.sort) : defaultSort,
                 id = dimension.field.id,
-                values,
-                valuesSource;
 
             // We don't always need to get the element's totals. See the Element
             // model initialize()
-            valuesSource = (this.model.fetchObservations[id]) ? this.model.getObservations(id) : this.model.getDimensions(id);
-            values = _.chain(valuesSource)
-                .map(function (value, index) {
-                    if (this.model.fetchObservations[id]) {
-                        return {
-                            'id': value['id'],
-                            'total': value['total'],
-                            'totalFormat': format.num(value['total']),
-                            'label': this.model.getLabel(value, id)['label']
-                        };
-                    } else {
-                        return {
-                            'id': value['id'],
-                            'label': value['label']
-                        };
-                    }
-                }, this)
-                .sortBy(sort.attribute)
-                .value();
+                valuesSource = (this.model.fetchObservations[id])?
+                    this.model.getObservations(id):
+                    this.model.getLabels(id),
+                values = _.chain(valuesSource)
+                    .map(function (value, index) {
+                        if (this.model.fetchObservations[id]) {
+                            return {
+                                'id': value['id'],
+                                'total': value['total'],
+                                'totalFormat': format.num(value['total']),
+                                'label': this.model.getLabel(value, id)['label']
+                            };
+                        } else {
+                            return {
+                                'id': value['id'],
+                                'label': value['label']
+                            };
+                        }
+                    }, this)
+                    .sortBy(sort.attribute)
+                    .value();
 
             return {
                 'id': id,

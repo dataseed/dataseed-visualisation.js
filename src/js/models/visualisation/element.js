@@ -1,5 +1,5 @@
 define(['backbone', 'underscore'],
-    function(Backbone, _) {
+function (Backbone, _) {
     'use strict';
 
     var Element = Backbone.Model.extend({
@@ -8,11 +8,11 @@ define(['backbone', 'underscore'],
 
         loaded: 0,
 
-        url: function() {
+        url: function () {
             return '/api/datasets/' + this.dataset.get('id') + '/visualisations/' + this.visualisation.get('id') + '/elements/' + this.get('id');
         },
 
-        initialize: function(options) {
+        initialize: function (options) {
             this.bind('change', this.change, this);
 
             // Set dataset and visualisation models
@@ -25,17 +25,10 @@ define(['backbone', 'underscore'],
 
             this.fetchObservations = {};
 
-            _.each(this.get('dimensions'), function(opts) {
+            _.each(this.get('dimensions'), function (opts) {
                 if (_.isUndefined(opts['field']['id'])) {
                     return;
                 }
-
-                // Set up connections.
-                // Given a dataset cut c we ensure that the element’s dimensions'
-                // and observations' fetch will omit from c all the dimensions
-                // the element is bound to.
-                // We apply a similar logic in the addCut() method of the
-                // Dataset model as well.
 
                 var values = {
                         dimension: opts['field']['id'],
@@ -44,11 +37,7 @@ define(['backbone', 'underscore'],
                         aggregation: this.get('aggregation')
                     },
 
-                    dimension = this.dataset.pool.getConnection(_.extend(
-                        {
-                            type: 'dimensions',
-                            'cut': _.omit(this.dataset.cut, opts['field']['id'])
-                        }, values)),
+                    dimension = this.dataset.pool.getConnection(_.extend({type: 'dimensions'}, values)),
 
                     observations;
 
@@ -64,11 +53,7 @@ define(['backbone', 'underscore'],
 
                 // Observations are needed only if we need to print totals
                 if (this.fetchObservations[opts['field']['id']]) {
-                    observations = this.dataset.pool.getConnection(_.extend(
-                        {
-                            type: 'observations',
-                            'cut': _.omit(this.dataset.cut, opts['field']['id'])
-                        }, values));
+                    observations = this.dataset.pool.getConnection(_.extend({type: 'observations'}, values));
                 }
 
                 // Bind to sync event and keep references
@@ -86,7 +71,7 @@ define(['backbone', 'underscore'],
         /**
          * Dataset connection change event handler
          */
-        change: function() {
+        change: function () {
             this.loaded++;
             this.trigger('ready', this);
         },
@@ -94,21 +79,21 @@ define(['backbone', 'underscore'],
         /**
          * Return true if all required data has loaded
          */
-        isLoaded: function() {
+        isLoaded: function () {
             // Check that all observations and dimensions have completed sync
             // and that isLoaded returns true
             return (
                 ((this.loaded % (this.dimensions.length + this.observations.length)) === 0) &&
-                _.reduce(this.dimensions.concat(this.observations), function(memo, conn) {
-                    return (memo && conn.isLoaded());
-                }, true)
-            );
+                    _.reduce(this.dimensions.concat(this.observations), function (memo, conn) {
+                        return (memo && conn.isLoaded());
+                    }, true)
+                );
         },
 
         /**
          * Handle element feature (bar/point/etc) click
          */
-        featureClick: function(index) {
+        featureClick: function (index) {
             if (this.get('interactive') === false) {
                 return false;
             }
@@ -124,9 +109,8 @@ define(['backbone', 'underscore'],
                 } else {
                     this.addCut(observation.id);
                 }
-
-            // Hierarchical dimension, handle the drill up/down
             } else {
+                // Hierarchical dimension, handle the drill up/down
                 var level = observation[hierarchy['level_field']];
                 if (this.validParent.test(observation.id)) {
                     this.dataset.drillDown(dimension, level, this.validParent.exec(observation.id)[0]);
@@ -139,166 +123,117 @@ define(['backbone', 'underscore'],
         /**
          * Send an "addCut" event for th
          */
-        addCut: function(value) {
+        addCut: function (value) {
             this.trigger('addCut', _.object([this.getFieldId()], [value]));
         },
 
         /**
          * Send an "addCut" event
          */
-        removeCut: function() {
+        removeCut: function () {
             this.trigger('removeCut', [this.getFieldId()]);
         },
 
         /**
          * Get label for this element's measure
          */
-        getMeasureLabel: function() {
+        getMeasureLabel: function () {
             return this.get('measure_label');
+        },
+
+        /**
+         * Returns an element connection
+         * @param type connection type. Possibile values: "dimensions" or "observations"
+         * @param dimensionId the dimension id of the connection we want to get
+         * if undefined, the first element of the dimensions/observations
+         * connection is returned
+         * @returns an Element connection
+         */
+        getElementConnection: function (type, dimensionId) {
+            if (!_.isUndefined(this[type])) {
+                if (_.isUndefined(dimensionId)) {
+                    return this[type][0];
+                }
+                return _.find(this[type], function (conn) {
+                    return conn.get('dimension') === dimensionId;
+                });
+            }
         },
 
         /**
          * Proxy methods
          */
-        getElementConnection: function (type, dimensionId) {
-            // dimensions or observations
-            var elementHaystack;
-            switch(type){
-                case "dimensions":
-                    elementHaystack = this.dimensions;
-                    break;
-                case "observations":
-                    elementHaystack = this.observations;
-                    break;
-                default:
-                    return;
-            }
+        getElementConnectionData: function (type, dimensionId) {
+            var conn = this.getElementConnection(type, dimensionId);
 
-            return _.chain(elementHaystack)
-                .find(function (connection) {
-                    return connection.get('dimension') === dimensionId;
-                })
-                .value();
+            if (!_.isUndefined(conn)) {
+                return conn.getData();
+            }
         },
 
-        getLabels: function(dimensionId) {
-            if(_.isUndefined(dimensionId)){
-                return this.dimensions[0].getData();
-            }
-            var labels,
-                dimensionConnection = this.getElementConnection("dimensions", dimensionId);
-
-            if(!_.isUndefined(dimensionConnection)){
-                labels = dimensionConnection.getData();
-            }
-
-            return labels;
+        getLabels: function (dimensionId) {
+            return this.getElementConnectionData("dimensions", dimensionId);
         },
 
-        getLabel: function(value, dimensionId) {
-            var label,
-                dimensionConnection;
+        getLabel: function (value, dimensionId) {
+            var label = _.extend({'label': ''}, value),
+                conn = this.getElementConnection("dimensions", dimensionId);
 
-            if (_.isUndefined(dimensionId)) {
-                label = this.dimensions[0].getValue(value.id);
-            }else{
-                dimensionConnection = this.getElementConnection("dimensions", dimensionId);
-                if(!_.isUndefined(dimensionConnection)){
-                    label = dimensionConnection.getValue(value.id);
-                }
-            }
-
-            if (_.isUndefined(label)) {
-                return _.extend({'label': ''}, value);
+            if (!_.isUndefined(conn) && !_.isUndefined(conn.getValue(value.id))) {
+                label = conn.getValue(value.id);
             }
 
             return label;
         },
 
-        getObservations: function(dimensionId) {
-            if (_.isUndefined(dimensionId)) {
-                return this.observations[0].getData();
-            }
-            var observationConnection = this.getElementConnection("observations", dimensionId);
-
-            if(_.isUndefined(observationConnection)){
-                return;
-            }
-
-            return observationConnection.getData();
+        getObservations: function (dimensionId) {
+            return this.getElementConnectionData("observations", dimensionId);
         },
 
-        getObservation: function(i, dimensionId) {
-            if (_.isUndefined(dimensionId)) {
-                return this.observations[0].getValue(i);
+        getObservation: function (i, dimensionId) {
+            var conn = this.getElementConnection("observations", dimensionId);
+
+            if (!_.isUndefined(conn)) {
+                return conn.getValue(i);
             }
-            var observationConnection = this.getElementConnection("observations", dimensionId);
-
-            if (_.isUndefined(observationConnection)) {
-                return;
-            }
-
-            return observationConnection.getValue(i);
-        },
-
-        getDimensions: function (dimensionId) {
-            if (_.isUndefined(dimensionId)) {
-                return this.dimensions[0].getData();
-            }
-
-            var dimensionConnection = this.getElementConnection("dimensions", dimensionId);
-            if (_.isUndefined(dimensionConnection)) {
-                return;
-            }
-
-            return dimensionConnection.getData();
         },
 
         getDimension: function (i, dimensionId) {
-            if (_.isUndefined(dimensionId)) {
-                return this.dimensions[0].getValue(i);
-            }
+            var conn = this.getElementConnection("dimensions", dimensionId);
 
-            var dimensionConnection = this.getElementConnection("dimensions", dimensionId);
-            if (_.isUndefined(dimensionConnection)) {
-                return;
+            if (!_.isUndefined(conn)) {
+                return conn.getValue(i);
             }
-            return dimensionConnection.getValue(i);
         },
 
-        getTotal: function(dimensionId) {
-            if (_.isUndefined(dimensionId)) {
-                return this.observations[0].getTotal();
-            }
-            var observationConnection = this.getElementConnection("observations", dimensionId);
+        getTotal: function (dimensionId) {
+            var conn = this.getElementConnection("observations", dimensionId);
 
-            if (_.isUndefined(observationConnection)) {
-                return;
+            if (!_.isUndefined(conn)) {
+                return conn.getTotal();
             }
-
-            return observationConnection.getTotal();
         },
 
-        getFieldId: function(index) {
+        getFieldId: function (index) {
             if (_.isUndefined(index)) {
                 index = 0;
             }
             return this.get('dimensions')[index].field.id;
         },
 
-        getCut: function(index) {
+        getCut: function (index) {
             return this.dataset.getCut(this.getFieldId(index));
         },
 
-        isCut: function(index) {
+        isCut: function (index) {
             return this.dataset.isCut(this.getFieldId(index));
         },
 
-        hasCutId: function(id, index) {
+        hasCutId: function (id, index) {
             return this.dataset.hasCutId(this.getFieldId(index), id);
         },
 
-        hasCutValue: function(i, index) {
+        hasCutValue: function (i, index) {
             return this.dataset.hasCutValue(this.getFieldId(index), i);
         }
 
