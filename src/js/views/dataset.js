@@ -50,7 +50,6 @@ define(['backbone', 'underscore', '../models/dataset', '../models/datasetSinglet
 
             this.visualisation.render();
         }
-
     });
 
     return DatasetEmbedView;

@@ -75,7 +75,17 @@ require.config({
         spin: '../components/spin/spin',
 
         // Markdown.js
-        markdown: '../components/markdown/lib/markdown'
+        markdown: '../components/markdown/lib/markdown',
+
+        // Masonry.js
+        masonry: '../components/masonry',
+        outlayer: '../components/outlayer',
+        eventie: '../components/eventie',
+        'doc-ready': '../components/doc-ready',
+        eventEmitter: '../components/eventEmitter',
+        'get-size': '../components/get-size',
+        'get-style-property': '../components/get-style-property',
+        'matches-selector': '../components/matches-selector'
 
     }
 });

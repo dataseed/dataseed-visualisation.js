@@ -1,11 +1,14 @@
-define(['backbone', 'underscore', '../models/visualisation', './element', 'text!../templates/visualisation.html'],
-    function(Backbone, _, Visualisation, ElementView, visualisationEmbedTemplate) {
+// This view renders the base visualisation
+define(['backbone', 'underscore', '../models/visualisation', './element', 'text!../templates/visualisation.html', 'masonry/masonry'],
+    function(Backbone, _, Visualisation, ElementView, visualisationEmbedTemplate, Masonry) {
     'use strict';
 
     var VisualisationEmbedView = Backbone.View.extend({
 
         template: _.template(visualisationEmbedTemplate),
         templateDefaults: {},
+        msnry: null,
+        store: [], //array to store the charts that has been loaded
 
         // Views for visualisation elements
         elementsViews: {},
@@ -21,6 +24,7 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
             this.model.elements.bind('reset', this.resetElements, this);
 
             this.model.styles.bind('ready', this.renderElements, this);
+
         },
 
         /**
@@ -44,6 +48,22 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
             this.resetElements();
         },
 
+        // Masonry.js function
+        layout: function() {
+            //when msnry obj has not been created and all the charts have been rendered. create msnry obj
+            if (this.store.length === this.model.elements.length && this.msnry === null) {
+                this.msnry = new Masonry(this.$elements.get(0), {
+                    columnWidth: 10,
+                    itemSelector: '.element'
+                });
+            }
+            //recall layout if created
+            if (this.store.length === this.model.elements.length) {
+                this.msnry.layout();
+                this.msnry.reloadItems();
+            }
+        },
+
         /**
          * Render all visualisation elements
          */
@@ -56,6 +76,8 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
          */
         resetElements: function() {
             this.model.elements.forEach(this.addElement, this);
+            //call layout() when all the elements are reseted
+            this.layout();
         },
 
         /**
@@ -93,6 +115,18 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
          */
         renderElement: function(element) {
             this.elementsViews[element.id].render();
+
+            // clear the store counter array when customise is active. So masonary waits until all the element
+            // have been loaded
+            if($('.customise-menu').length !== 0 && this.store.length === this.model.elements.length) {
+                this.store = [];
+            }
+
+            // Checking if the chart element has already been created and adding to the count
+            if(this.store.indexOf(element.id) === -1) {
+                this.store.push(element.id);
+            }
+            this.layout();
         },
 
         /**
