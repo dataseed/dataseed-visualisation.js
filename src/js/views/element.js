@@ -1,6 +1,6 @@
 define(['backbone', 'underscore', './element/summary', './element/navigation', './element/chart/bar', './element/chart/bubble', './element/chart/geo', './element/chart/table', './element/chart/line',
     './loadScreen' ,'bootstrap_dropdown'],
-        function(Backbone, _, SummaryElementView, NavigationElementView, BarChartView, BubbleChartView, GeoChartView, TableChartView, LineChartView, LoadScreenView) {
+        function(Backbone, _, SummaryElementView, NavigationElementView, BarChartView, BubbleChartView, GeoChartView, TableChartView, LineChartView, LoadSpinnerView) {
 
     'use strict';
 
@@ -22,7 +22,11 @@ define(['backbone', 'underscore', './element/summary', './element/navigation', '
 
         initialize: function(options) {
             //Create a new loadScreenView
-            this.loadingView = new LoadScreenView();
+            this.loadingView = new LoadSpinnerView(
+                    {
+                        color: 'black'
+                    }
+                );
             this.visualisation = options['visualisation'];
         },
 
