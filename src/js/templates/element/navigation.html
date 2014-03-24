@@ -1,6 +1,6 @@
 <h2><%- label %></h2>
 <% _.each(dimensions, function(dimension) { %>
-    <div class="accordion-group" data-dimension="<%- dimension['id'] %>">
+    <div class="filter-group accordion-group" data-dimension="<%- dimension['id'] %>">
         <h3>
             <a data-toggle="collapse" href="#<%- dimension['accordion_id'] %>"<% if (!dimension['state']) { %> class="collapsed"<% } %>>
                 <%- dimension['label'] %>
@@ -10,13 +10,13 @@
         <div id="<%- dimension['accordion_id'] %>" class="info-body collapse<% if (dimension['state']) { %> in<% } %>">
             <table class="table<% if (!_.isUndefined(dimension['cut'])) { %> cut<% } %>">
                 <% _.each(dimension['values'], function(value) { %>
-                <tr<% if (value['id'] === dimension['cut']) { %> class="active"<% } %>>
+                <tr<% if (value['id'] === dimension['cut']) { cutWrapperClass='cut-wrapper active';}else{ cutWrapperClass='cut-wrapper';} %> class="<%- cutWrapperClass %>" >
                         <td>
                             <a href="#" data-value="<%- value['id'] %>" class="dimension-cut">
                                 <%- value['label'] %>
                             </a>
                         </td>
-                        <td class="right">(<%- value['totalFormat'] %>)</td>
+                        <td class="right"><% if (!_.isUndefined(value['totalFormat'])) {%> (<%- value['totalFormat'] %>) <% } %></td>
                     </tr>
                 <% }); %>
             </table>

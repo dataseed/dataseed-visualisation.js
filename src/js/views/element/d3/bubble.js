@@ -1,4 +1,4 @@
-define(['../chart', 'underscore', 'd3'], function(ChartView, _, d3) {
+define(['./chart', 'underscore', 'd3'], function(ChartView, _, d3) {
     'use strict';
 
     var BubbleChartView = ChartView.extend({
@@ -173,9 +173,6 @@ define(['../chart', 'underscore', 'd3'], function(ChartView, _, d3) {
             // Update container size
             this.updateSize();
 
-            // Remove the load spinner when chart finished loading.
-            this.stopLoading('bubble');
-
             return this;
 
         },
@@ -220,26 +217,24 @@ define(['../chart', 'underscore', 'd3'], function(ChartView, _, d3) {
          * Get a scale bubble's position
          */
         getScalePosition: function(d, i) {
-        // Calculate scale bubble's radius
-        var radius = this.scale(d);
-        // Second scale bubbles
-        if (i > 0) {
-            this.scalePosX += radius + this.scaleRadius + 5;
-        }
-        // first scale bubbles
-        else {
-            if(this.numberOfBubbles > 2) {
-                this.scalePosX += radius + 30;
+            // Calculate scale bubble's radius
+            var radius = this.scale(d);
+            // Second scale bubbles
+            if (i > 0) {
+                this.scalePosX += radius + this.scaleRadius + 5;
+            // first scale bubbles
+            } else {
+                if(this.numberOfBubbles > 2) {
+                    this.scalePosX += radius + 30;
+                } else {
+                    this.scalePosX += radius + 10;
+                }
             }
-            else {
-                this.scalePosX += radius + 10;
-            }
-        }
-        // Storing the radius of the previous scale bubble
-        this.scaleRadius = radius;
+            // Storing the radius of the previous scale bubble
+            this.scaleRadius = radius;
 
-        // Move scale bubble/label to correct position
-        return 'translate(' + this.scalePosX + ',' + this.scalePosY + ')';
+            // Move scale bubble/label to correct position
+            return 'translate(' + this.scalePosX + ',' + this.scalePosY + ')';
         }
 
     });

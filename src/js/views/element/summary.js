@@ -1,4 +1,5 @@
-define(['backbone', 'underscore', 'd3', 'text!../../templates/element/summary.html'], function(Backbone, _, d3, summaryTemplate) {
+define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/element/summary.html'],
+    function(Backbone, _, format, summaryTemplate) {
     'use strict';
 
     var SummaryElementView = Backbone.View.extend({
@@ -6,9 +7,6 @@ define(['backbone', 'underscore', 'd3', 'text!../../templates/element/summary.ht
         template: _.template(summaryTemplate),
 
         initialize: function(options) {
-            // Initialise number formatter
-            this.numFormat = d3.format(',');
-
             // Bind to element models
             this.visualisation = options['visualisation'];
             this.visualisation.elements.bind('ready', this.render, this);
@@ -21,17 +19,14 @@ define(['backbone', 'underscore', 'd3', 'text!../../templates/element/summary.ht
 
         getSummaryText: function() {
 
-            var summaryText = '',
+            var summaryText,
                 measure = this.model.getMeasureLabel();
 
-            if (this.visualisation.elements.length > 0) {
+            if (this.model.dimensions.length > 0) {
 
                 // Get aggregate total
                 var dimensions = _(this.model.get('dimensions')).chain(),
-                    dimensionElements = this.visualisation.elements.chain().filter(function(element) {
-                        return !_.isUndefined(element.observations);
-                    }),
-                    total = this.numFormat(dimensionElements.first().value().getTotal());
+                    total = format.num(this.model.getTotal());
 
                 // Check if summary text has been provided
                 if (dimensions.pluck('text_default').reject(_.isEmpty).size().value() > 0) {
@@ -43,13 +38,17 @@ define(['backbone', 'underscore', 'd3', 'text!../../templates/element/summary.ht
 
                     // Get default summary text or current cut value for each element
                     var summary = dimensions.map(function(dimension) {
-                            var element = dimensionElements.findWhere({'id': dimension.field.id}).value();
-                            if (!_.isUndefined(element) && element.isCut()) {
-                                return dimension.text_format.replace('$', _.escape(element.getCutLabel().label));
+                            if (this.visualisation.dataset.isCut(dimension.field.id)) {
+                                var conn = this.visualisation.dataset.pool.getConnection({
+                                        type: 'dimensions',
+                                        dimension: dimension.field.id
+                                    }),
+                                    value = this.visualisation.dataset.getCut(dimension.field.id);
+                                return dimension.text_format.replace('$', _.escape(conn.getValue(value).label));
                             } else {
                                 return dimension.text_default;
                             }
-                        })
+                        }, this)
                         // Prepend measure total to summary
                         .unshift('<strong>' + total + '</strong>');
 

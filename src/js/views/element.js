@@ -1,7 +1,5 @@
-define(['backbone', 'underscore', './element/summary', './element/navigation', './element/chart/bar', './element/chart/bubble', './element/chart/geo', './element/chart/table', './element/chart/line',
-    './loadScreen' ,'bootstrap_dropdown'],
-        function(Backbone, _, SummaryElementView, NavigationElementView, BarChartView, BubbleChartView, GeoChartView, TableChartView, LineChartView, LoadSpinnerView) {
-
+define(['backbone', 'underscore', './element/summary', './element/filter/navigation', './element/filter/filterForm', './element/table', './element/d3/bar', './element/d3/bubble', './element/d3/geo', './element/d3/line', './loadScreen', 'bootstrap_dropdown'],
+    function(Backbone, _, SummaryElementView, NavigationElementView, FilterFormElementView, TableChartView, BarChartView, BubbleChartView, GeoChartView, LineChartView, LoadScreenView) {
     'use strict';
 
     var ElementView = Backbone.View.extend({
@@ -9,28 +7,47 @@ define(['backbone', 'underscore', './element/summary', './element/navigation', '
         tagName: 'article',
 
         elementTypes: {
+            // HTML elements
             'summary':      SummaryElementView,
             'navigation':   NavigationElementView,
+            'filterForm':   FilterFormElementView,
+            'table':        TableChartView,
+
+            // D3/Highcharts elements
             'bar':          BarChartView,
             'bubble':       BubbleChartView,
             'geo':          GeoChartView,
-            'table':        TableChartView,
             'line':         LineChartView
         },
 
+        // Elements that should use the loading view
+        loadingElementTypes: ['table', 'bar', 'bubble', 'geo', 'line'],
+
         element: false,
+        loadingView: false,
 
         initialize: function(options) {
-            //Create a new loadScreenView
-            this.loadingView = new LoadSpinnerView(
-                    {
-                        color: 'black'
-                    }
-                );
             this.visualisation = options['visualisation'];
         },
 
         render: function() {
+            // If the model hasn't loaded, show loading view
+            var type = this.model.get('type');
+
+            // Set element width and type
+            this.$el.removeClass()
+                .addClass('element')
+                .addClass('span' + (this.model.get('width') * 3))
+                .addClass(type + 'Element');
+
+            if (!this.model.isLoaded()) {
+                if (this.loadingView === false && _.contains(this.loadingElementTypes, type)) {
+                    this.loadingView = new LoadScreenView({color: 'black'});
+                    this.$el.append(this.loadingView.$el);
+                }
+                return this;
+            }
+
             // Remove existing element view
             if (this.element) {
                 this.element.remove();
@@ -42,17 +59,6 @@ define(['backbone', 'underscore', './element/summary', './element/navigation', '
                 return this;
             }
 
-            // Set element width and type
-            var type = this.model.get('type');
-            this.$el.removeClass()
-                .addClass('element')
-                .addClass('span' + (this.model.get('width') * 3))
-                .addClass(type + 'Element');
-
-            if(type !== 'summary' && type !== 'navigation') {
-                this.$el.append(this.loadingView.$el);
-            }
-
             // Create element view
             this.element = new this.elementTypes[type] ({
                 parent: this.$el,
@@ -62,6 +68,13 @@ define(['backbone', 'underscore', './element/summary', './element/navigation', '
 
             // Render element
             this.$el.append(this.element.render().$el);
+
+            // Hide loading view
+            if (this.loadingView !== false) {
+                this.loadingView.remove();
+                this.loadingView = false;
+            }
+
             return this;
         }
 

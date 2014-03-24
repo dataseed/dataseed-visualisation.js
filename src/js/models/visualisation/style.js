@@ -1,5 +1,5 @@
 define(['backbone', 'underscore'],
-        function(Backbone, _) {
+    function(Backbone, _) {
     'use strict';
 
     var Style = Backbone.Model.extend({

@@ -1,4 +1,4 @@
-define(['../chart', 'underscore', 'd3'],
+define(['./chart', 'underscore', 'd3'],
     function (ChartView, _, d3) {
     'use strict';
 
@@ -136,9 +136,6 @@ define(['../chart', 'underscore', 'd3'],
             chart.selectAll('.axis path, .axis line')
                 .style('stroke', this.getStyle('scaleFeature'))
                 .style('fill', 'none');
-
-            // Remove the load spinner when chart finished loading.
-            this.stopLoading('line');
 
             return this;
         },

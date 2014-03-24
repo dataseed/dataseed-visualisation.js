@@ -1,8 +1,8 @@
-define(['../chart', 'underscore', 'd3', 'text!../../../templates/element/table.html'],
-    function(ChartView, _, d3, tableTemplate) {
+define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/element/table.html'],
+    function(Backbone, _, format, tableTemplate) {
     'use strict';
 
-    var TableChartView = ChartView.extend({
+    var TableChartView = Backbone.View.extend({
 
         events: {
             'click .remove-filter': 'removeFilter',
@@ -15,12 +15,7 @@ define(['../chart', 'underscore', 'd3', 'text!../../../templates/element/table.h
         sortProperty: 'total',
         sortDirection: -1,
 
-        initialize: function() {
-            this.numFormat = d3.format(',');
-        },
-
         render: function() {
-            //.extend() adds values to the attributes in model
             var attrs = _.extend({
                 'values': this.getTableValues(),
                 'cut': this.model.getCut(),
@@ -31,11 +26,38 @@ define(['../chart', 'underscore', 'd3', 'text!../../../templates/element/table.h
             this.$el.html(this.template(attrs));
 
             this.resetFeatures();
-
-            // Remove the load spinner when chart finished loading.
-            this.stopLoading('table');
-
             return this;
+        },
+
+        featureClick: function (index) {
+            if (this.model.get("interactive") === false) {
+                return;
+            }
+
+            var dimension = this.model.dimension.id,
+                dimensionHierarchy = this.model.visualisation.dataset.getDimensionHierarchy(dimension);
+
+            if (_.isUndefined(dimensionHierarchy)) {
+                // the dimension is not hierarchical
+
+                if (this.model.hasCutValue(index)) {
+                    this.model.removeCut();
+                } else {
+                    this.model.addCut(this.model.getObservation(index).id);
+                }
+            } else {
+                // the dimension is hierarchical: this featureClick should
+                // handle the drill up/down
+                var levelField = dimensionHierarchy['level_field'],
+                    level = this.model.getObservation(index)[levelField],
+                    cutValue = this.model.getObservation(index).id,
+                    validParent_re = /\d+/;
+
+                if (validParent_re.test(cutValue)) {
+                    this.model.visualisation.drillDown(dimension, level, validParent_re.exec(cutValue)[0]);
+                }
+            }
+            this.resetFeatures();
         },
 
         getTableValues: function() {
@@ -46,10 +68,10 @@ define(['../chart', 'underscore', 'd3', 'text!../../../templates/element/table.h
                     //_.extend used to add more objects to the value object
                     return {
                         'index': index,
-                'id': value['id'],
-                'total': value['total'],
-                'totalFormat': this.numFormat(value['total']),
-                'label': this.model.getLabel(value)['label']
+                        'id': value['id'],
+                        'total': value['total'],
+                        'totalFormat': format.num(value['total']),
+                        'label': this.model.getLabel(value)['label']
                     };
                 }, this)
                 //sort the object by the current sorting property
@@ -66,11 +88,10 @@ define(['../chart', 'underscore', 'd3', 'text!../../../templates/element/table.h
 
         selectRow: function(e) {
             e.preventDefault();
-            this.featureClick(null, $(e.currentTarget).parents('tr').data('index'));
+            this.featureClick($(e.currentTarget).parents('tr').data('index'));
         },
 
         sortSelect: function(e) {
-            //stops <a> from putting # in url
             e.preventDefault();
             var $sort = $(e.currentTarget);
 
@@ -88,7 +109,8 @@ define(['../chart', 'underscore', 'd3', 'text!../../../templates/element/table.h
         resetFeatures: function() {
             var featureFill = this.model.visualisation.styles.getStyle('featureFill', this.model);
             if (this.model.isCut()) {
-                this.$('.table-row a').css('color', this.model.visualisation.styles.getStyle('featureFillActive', this.model));
+                var featureFillActive = this.model.visualisation.styles.getStyle('featureFillActive', this.model);
+                this.$('.table-row a').css('color', featureFillActive);
                 this.$('.table-row[data-id="' + this.model.getCut() + '"] a').css('color', featureFill);
             }
             else {

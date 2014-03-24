@@ -1,4 +1,4 @@
-define(['backbone', 'underscore', 'd3', 'text!../../templates/element/chart.html', 'tipsy'], function(Backbone, _, d3, chartTemplate) {
+define(['backbone', 'underscore', 'd3', 'text!../../../templates/element/chart.html', 'tipsy'], function(Backbone, _, d3, chartTemplate) {
     'use strict';
 
     var ChartView = Backbone.View.extend({
@@ -90,21 +90,15 @@ define(['backbone', 'underscore', 'd3', 'text!../../templates/element/chart.html
                     .selectAll('g rect, .node circle')
                         .style('fill', this.getStyle('featureFill'))
                         .style('stroke', this.getStyle('featureStroke'));
-
-            // Remove any tooltips
-            //this.removeTooltips();
         },
 
         /**
          * Handle a chart feature click
          */
         featureClick: function(d, i) {
-            if (this.model.hasCutValue(i)) {
-                this.model.removeCut();
-            } else {
-                this.model.addCut(this.model.getObservation(i).id);
+            if (this.model.featureClick(i)) {
+                this.resetFeatures();
             }
-            this.resetFeatures();
         },
 
         /**
@@ -160,11 +154,8 @@ define(['backbone', 'underscore', 'd3', 'text!../../templates/element/chart.html
             var width = html.width();
             html.remove();
             return width;
-        },
-
-        stopLoading: function(chart) {
-            $('.' + chart + 'Element .spinner').remove();
         }
+
     });
 
     return ChartView;

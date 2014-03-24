@@ -1,4 +1,4 @@
-define(['../chart', 'underscore', 'd3'], function(ChartView, _, d3) {
+define(['./chart', 'underscore', 'd3'], function(ChartView, _, d3) {
     'use strict';
 
     var GeoChartView = ChartView.extend({
@@ -134,9 +134,6 @@ define(['../chart', 'underscore', 'd3'], function(ChartView, _, d3) {
 
             // Update container size
             this.updateSize();
-
-            // Remove the load spinner when chart finished loading.
-            this.stopLoading('geo');
 
             return this;
 

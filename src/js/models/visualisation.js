@@ -1,16 +1,19 @@
 define(['backbone', 'underscore', '../collections/elements', '../collections/styles'],
-    function(Backbone, _, ElementsCollection, StylesCollection) {
+    function (Backbone, _, ElementsCollection, StylesCollection) {
     'use strict';
 
     var Visualisation = Backbone.Model.extend({
 
         MAX_ELEMENTS: 100,
 
-        url: function() {
+        url: function () {
             return '/api/datasets/' + this.dataset.get('id') + '/visualisations/' + this.get('id');
         },
 
-        initialize: function() {
+        initialize: function (options) {
+            // Set dataset
+            this.dataset = options['dataset'];
+
             // Create collection for element models
             this.elements = new ElementsCollection();
             this.elements.bind('add', this.addElement, this);
@@ -20,33 +23,32 @@ define(['backbone', 'underscore', '../collections/elements', '../collections/sty
             this.styles = new StylesCollection(null, {'visualisation': this});
         },
 
-        addElement: function(element) {
-            element.bind('addCut', this.addCut, this);
-            element.bind('removeCut', this.removeCut, this);
+        addElement: function (element) {
+            element.bind('addCut', this.dataset.addCut, this.dataset);
+            element.bind('removeCut', this.dataset.removeCut, this.dataset);
         },
 
-        reset: function() {
+        reset: function () {
             // Set model defaults
             var defaults = {
                 'dataset': this.dataset,
-                'visualisation': this,
-                'defaultCut': this.get('defaultCut')
+                'visualisation': this
             };
 
             // Set element models in collection from visualisation "elements" attribute
-            this.elements.set(_.map(this.get('elements'), function(element) {
+            this.elements.set(_.map(this.get('elements'), function (element) {
                 return _.extend({}, defaults, element);
             }, this));
 
             // Set style models in collection from visualisation "styles" attribute
-            this.styles.set(_.map(this.get('styles'), function(element) {
+            this.styles.set(_.map(this.get('styles'), function (element) {
                 return _.extend({}, defaults, element);
             }, this));
         },
 
-        updateElementOrder: function() {
+        updateElementOrder: function () {
             // Start from current largest weight
-            var offsetElement = this.elements.max(function(element) {
+            var offsetElement = this.elements.max(function (element) {
                     return element.get('weight');
                 }),
                 offset = offsetElement.get('weight');
@@ -57,17 +59,9 @@ define(['backbone', 'underscore', '../collections/elements', '../collections/sty
             }
 
             // Update element weights
-            this.elements.forEach(function(element, index) {
+            this.elements.forEach(function (element, index) {
                 element.set('weight', offset + index + 1, {'silent': true});
             });
-        },
-
-        addCut: function(key, value) {
-            this.elements.invoke('setCut', key, value);
-        },
-
-        removeCut: function(key) {
-            this.elements.invoke('unsetCut', key);
         }
 
     });
