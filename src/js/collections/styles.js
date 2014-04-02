@@ -85,7 +85,6 @@ define(['backbone', '../models/visualisation/style'],
          * Save all styles in collection
          */
         save: function(attrs, opts) {
-            console.log('save styles');
             this.invoke('save', attrs, opts);
         }
 

@@ -83,7 +83,7 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
          */
         hasCutValue: function(dimension, i) {
             if (this.isCut(dimension)) {
-                var value = this.pool.findWhere({'dimension': dimension}).getValue(i);
+                var value = this.pool.findWhere({type: 'observations', dimension: dimension}).getValue(i);
                 return (!_.isUndefined(value) && this.getCut(dimension) === value.id);
             }
             return false;
