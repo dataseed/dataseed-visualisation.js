@@ -20,18 +20,13 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
             'line':         LineChartView
         },
 
-        // Elements that should use the loading view
-        loadingElementTypes: ['table', 'bar', 'bubble', 'geo', 'line'],
-
         element: false,
-        loadingView: false,
 
         initialize: function(options) {
             this.visualisation = options['visualisation'];
         },
 
         render: function() {
-            // If the model hasn't loaded, show loading view
             var type = this.model.get('type');
 
             // Set element width and type
@@ -41,10 +36,6 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
                 .addClass(type + 'Element');
 
             if (!this.model.isLoaded()) {
-                if (this.loadingView === false && _.contains(this.loadingElementTypes, type)) {
-                    this.loadingView = new LoadScreenView({color: 'black'});
-                    this.$el.append(this.loadingView.$el);
-                }
                 return this;
             }
 
@@ -68,13 +59,6 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
 
             // Render element
             this.$el.append(this.element.render().$el);
-
-            // Hide loading view
-            if (this.loadingView !== false) {
-                this.loadingView.remove();
-                this.loadingView = false;
-            }
-
             return this;
         }
 
