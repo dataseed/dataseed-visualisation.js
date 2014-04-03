@@ -126,6 +126,9 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
          * Remove cut(s)
          */
         removeCut: function(keys) {
+            if (_.isUndefined(keys)) {
+                keys = _.keys(this.cut);
+            }
             this.addCut(_.object(keys, _.map(keys, function() { return null; })));
         },
 

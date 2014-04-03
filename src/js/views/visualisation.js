@@ -132,7 +132,7 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
          */
         resetFilters: function(e) {
             e.preventDefault();
-            this.model.removeCut();
+            this.model.dataset.removeCut();
         }
 
     });
