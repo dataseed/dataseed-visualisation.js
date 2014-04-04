@@ -108,10 +108,12 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
                 // Update cut on every field connection
                 conn.set('cut', this.cut);
 
-                if (_.size(cut) > 1 || !_.has(cut, conn.get('dimension'))) {
+                var dimension = conn.get('dimension'),
+                    type = conn.get('type'),
+                    update = this.fields.get(dimension).get('update_dimension');
+
+                if ((_.size(cut) > 1 || !_.has(cut, dimension)) && (type != 'dimensions' || update === true)) {
                     // Re-fetch if the field *isn't* included in the updated cut
-                    // (see how we set the connections in the initialise method
-                    // of the Element model)
                     conn.fetch();
                 } else {
                     // Otherwise, initiate a re-render

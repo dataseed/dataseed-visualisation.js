@@ -27,32 +27,9 @@ define(['backbone', 'underscore', '../../lib/format'],
 
         getDimensionAttrs: function (dimension) {
             var defaultSort = {"attribute": "total", "direction": "desc"},
-                sort = !_.isUndefined(dimension.field.sort) ? _.extend({}, defaultSort, dimension.field.sort) : defaultSort,
+                sort = !_.isUndefined(dimension.sort) ? _.extend({}, defaultSort, dimension.sort) : defaultSort,
                 id = dimension.field.id,
-
-            // We don't always need to get the element's totals. See the Element
-            // model initialize()
-                valuesSource = (this.model.fetchObservations[id])?
-                    this.model.getObservations(id):
-                    this.model.getLabels(id),
-                values = _.chain(valuesSource)
-                    .map(function (value, index) {
-                        if (this.model.fetchObservations[id]) {
-                            return {
-                                'id': value['id'],
-                                'total': value['total'],
-                                'totalFormat': format.num(value['total']),
-                                'label': this.model.getLabel(value, id)['label']
-                            };
-                        } else {
-                            return {
-                                'id': value['id'],
-                                'label': value['label']
-                            };
-                        }
-                    }, this)
-                    .sortBy(sort.attribute)
-                    .value();
+                values = _.sortBy(this.model.getLabels(id), sort.attribute);
 
             return {
                 'id': id,
@@ -60,7 +37,7 @@ define(['backbone', 'underscore', '../../lib/format'],
                 'values': (sort.direction === "desc") ? values.reverse() : values,
                 'hierarchy': this.visualisation.dataset.getDimensionHierarchy(id),
                 'dataset_cut': this.visualisation.dataset.getCut(),
-                'required': _.isBoolean(dimension.field.required) ? dimension.field.required : false
+                'required': _.isBoolean(dimension.required) ? dimension.required : false
             };
         },
 

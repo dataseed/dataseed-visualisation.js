@@ -23,8 +23,6 @@ function (Backbone, _) {
             this.dimensions = [];
             this.observations = [];
 
-            this.fetchObservations = {};
-
             _.each(this.get('dimensions'), function (opts) {
                 if (_.isUndefined(opts['field']['id'])) {
                     return;
@@ -36,35 +34,15 @@ function (Backbone, _) {
                         measure: this.get('measure')['id'],
                         aggregation: this.get('aggregation')
                     },
-
-                    dimension = this.dataset.pool.getConnection(_.extend({type: 'dimensions'}, values)),
-
-                    observations;
-
-                // False if we don't need to fetch observations for this dimension.
-                // For a charted dimension this should be always true but for
-                // other elements (e.g. filters) we may just want to show the
-                // possible element's dimensions values.
-                // Note: if observations are not fetched it's up to the backend
-                // dimension API returning either only the dimension values that
-                // have the at least one match in the current dataset cut or
-                // just all the possible values for the dataset dimension.
-                this.fetchObservations[opts['field']['id']] = _.isUndefined(opts['fetch_observations']) || (opts['fetch_observations'] === true);
-
-                // Observations are needed only if we need to print totals
-                if (this.fetchObservations[opts['field']['id']]) {
-                    observations = this.dataset.pool.getConnection(_.extend({type: 'observations'}, values));
-                }
+                    observations = this.dataset.pool.getConnection(_.extend({type: 'observations'}, values)),
+                    dimension = this.dataset.pool.getConnection(_.extend({type: 'dimensions'}, values));
 
                 // Bind to sync event and keep references
+                observations.bind('sync', this.change, this);
+                this.observations.push(observations);
+
                 dimension.bind('sync', this.change, this);
                 this.dimensions.push(dimension);
-
-                if (!_.isUndefined(observations)) {
-                    observations.bind('sync', this.change, this);
-                    this.observations.push(observations);
-                }
-
             }, this);
         },
 
