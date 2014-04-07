@@ -120,6 +120,14 @@ function (Backbone, _) {
         },
 
         /**
+         * Get allowed chart types for this element's dimension
+         */
+        getChartTypes: function() {
+            var field = this.dataset.fields.get(this.getFieldId());
+            return _.pluck(field.get('charts'), 'type');
+        },
+
+        /**
          * Returns an element connection
          * @param type connection type. Possibile values: "dimensions" or "observations"
          * @param dimensionId the dimension id of the connection we want to get

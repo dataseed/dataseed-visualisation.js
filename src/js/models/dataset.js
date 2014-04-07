@@ -55,6 +55,15 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
         },
 
         /**
+         * Get dataset measure fields
+         */
+        getMeasureFields: function() {
+            return this.fields.filter(function(field) {
+                return (_.size(field.get('aggregations')) > 0);
+            });
+        },
+
+        /**
          * Get the value of the current cut for this dimension
          */
         getCut: function(dimension) {
