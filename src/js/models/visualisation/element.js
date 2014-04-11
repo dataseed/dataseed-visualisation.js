@@ -31,7 +31,7 @@ function (Backbone, _) {
                 var values = {
                         dimension: opts['field']['id'],
                         bucket: opts['bucket'],
-                        measure: this.get('measure')['id'],
+                        measure: _.isNull(this.get('measure')) ? null : this.get('measure')['id'],
                         aggregation: this.get('aggregation')
                     },
                     observations = this.dataset.pool.getConnection(_.extend({type: 'observations'}, values)),

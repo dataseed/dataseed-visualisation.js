@@ -6,10 +6,11 @@ define(['backbone', 'underscore'],
 
         url: function() {
             var url = '/api/datasets/' + this.dataset.get('id') + '/' + this.get('type') + '/' + this.get('dimension'),
-                params = _.extend({}, this.get('cut'), {
-                    'measure': this.get('measure'),
-                    'aggregation': this.get('aggregation')
-                });
+                params = _.extend({}, this.get('cut'), {'aggregation': this.get('aggregation')});
+
+            if (!_.isNull(this.get('measure'))) {
+                params['measure'] = this.get('measure');
+            }
 
             // Bucket dimensions
             var bucket = this.get('bucket');
