@@ -60,8 +60,19 @@ function (Backbone, _) {
         isLoaded: function () {
             // Check that all observations and dimensions have completed sync
             // and that isLoaded returns true
+
+            var dimensionsToUpdate = _.filter(this.dimensions, function (d) {
+                var datasetField = this.dataset.fields.get(d.get('dimension'));
+
+                // A dimension is fetched at least once.
+                // When a cut is added/removed, a dimension it is updated
+                // (re-fetched) only if the "update_dimension" field's attribute
+                // is true
+                return (!d.isLoaded() || (datasetField.get('update_dimension') === true));
+            }, this);
+
             return (
-                ((this.loaded % (this.dimensions.length + this.observations.length)) === 0) &&
+                ((this.loaded % (dimensionsToUpdate.length + this.observations.length)) === 0) &&
                     _.reduce(this.dimensions.concat(this.observations), function (memo, conn) {
                         return (memo && conn.isLoaded());
                     }, true)
