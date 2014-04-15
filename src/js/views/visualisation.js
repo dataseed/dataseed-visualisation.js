@@ -1,13 +1,12 @@
 // This view renders the base visualisation
-define(['backbone', 'underscore', '../models/visualisation', './element', 'text!../templates/visualisation.html', 'masonry/masonry'],
-    function(Backbone, _, Visualisation, ElementView, visualisationEmbedTemplate, Masonry) {
+define(['backbone', 'underscore', '../models/visualisation', './element', 'text!../templates/visualisation.html'],
+    function(Backbone, _, Visualisation, ElementView, visualisationEmbedTemplate) {
     'use strict';
 
     var VisualisationEmbedView = Backbone.View.extend({
 
         template: _.template(visualisationEmbedTemplate),
         templateDefaults: {},
-        msnry: null,
 
         // Views for visualisation elements
         elementsViews: {},
@@ -47,19 +46,6 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
             this.resetElements();
         },
 
-        layout: function() {
-            if (_.size(this.elementsViews) === this.model.elements.length) {
-                if (this.msnry === null) {
-                    this.msnry = new Masonry(this.$elements.get(0), {
-                        columnWidth: 10,
-                        itemSelector: '.element'
-                    });
-                }
-                this.msnry.reloadItems();
-                this.msnry.layout();
-            }
-        },
-
         /**
          * Render all visualisation elements
          */
@@ -72,7 +58,6 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
          */
         resetElements: function() {
             this.model.elements.forEach(this.addElement, this);
-            this.layout();
         },
 
         /**
@@ -108,7 +93,6 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
          */
         renderElement: function(element) {
             this.elementsViews[element.id].render();
-            this.layout();
         },
 
         /**

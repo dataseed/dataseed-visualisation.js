@@ -89,8 +89,6 @@ require.config({
         // Markdown.js
         markdown: '../components/markdown/lib/markdown',
 
-        // Masonry.js
-        masonry: '../components/masonry',
         outlayer: '../components/outlayer',
         eventie: '../components/eventie',
         'doc-ready': '../components/doc-ready',
