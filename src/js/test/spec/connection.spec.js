@@ -1,19 +1,21 @@
-describe('A connection model', function() {
+require(['models/dataset', 'models/dataset/connection'], function(Dataset, Connection) {
 
-    var dataset;
+    describe('A connection model', function() {
 
-    beforeEach(function(done) {
-        require(['models/dataset'], function(Dataset) {
+        var dataset;
+
+        beforeEach(function() {
+            // Create a new dataset model
             dataset = new Dataset({
                     id: 'test01',
                     visualisation_id: 'test02'
                 });
-            done();
-        });
-    });
 
-    it('should construct API URLs correctly for dimensions', function(done) {
-        require(['models/dataset/connection'], function(Connection) {
+            // Don't make HTTP requests
+            Connection.prototype.fetch = function() {};
+        });
+
+        it('should construct API URLs correctly for dimensions', function() {
             var conn = new Connection({
                     dataset: dataset,
                     type: 'dimensions',
@@ -21,13 +23,10 @@ describe('A connection model', function() {
                     measure: 'test04',
                     aggregation: 'sum'
                 });
-            expect(conn.url()).toEqual('/api/datasets/test01/dimensions/test03?measure=test04&aggregation=sum');
-            done();
+            expect(conn.url()).toEqual('/api/datasets/test01/dimensions/test03?aggregation=sum&measure=test04');
         });
-    });
 
-    it('should construct API URLs correctly for dimensions with a cut', function(done) {
-        require(['models/dataset/connection'], function(Connection) {
+        it('should construct API URLs correctly for dimensions with a cut', function() {
             var conn = new Connection({
                     dataset: dataset,
                     type: 'dimensions',
@@ -38,13 +37,10 @@ describe('A connection model', function() {
                         test06: 'test07'
                     }
                 });
-            expect(conn.url()).toEqual('/api/datasets/test01/dimensions/test04?test06=test07&measure=test05&aggregation=sum');
-            done();
+            expect(conn.url()).toEqual('/api/datasets/test01/dimensions/test04?test06=test07&aggregation=sum&measure=test05');
         });
-    });
 
-    it('should construct API URLs correctly for observations', function(done) {
-        require(['models/dataset/connection'], function(Connection) {
+        it('should construct API URLs correctly for observations', function() {
             var conn = new Connection({
                     dataset: dataset,
                     type: 'observations',
@@ -52,13 +48,10 @@ describe('A connection model', function() {
                     measure: 'test09',
                     aggregation: 'sum'
                 });
-            expect(conn.url()).toEqual('/api/datasets/test01/observations/test08?measure=test09&aggregation=sum');
-            done();
+            expect(conn.url()).toEqual('/api/datasets/test01/observations/test08?aggregation=sum&measure=test09');
         });
-    });
 
-    it('should construct API URLs correctly for observations with a cut', function(done) {
-        require(['models/dataset/connection'], function(Connection) {
+        it('should construct API URLs correctly for observations with a cut', function() {
             var conn = new Connection({
                     dataset: dataset,
                     type: 'dimensions',
@@ -69,13 +62,10 @@ describe('A connection model', function() {
                         test12: 'test13'
                     }
                 });
-            expect(conn.url()).toEqual('/api/datasets/test01/dimensions/test10?test12=test13&measure=test11&aggregation=sum');
-            done();
+            expect(conn.url()).toEqual('/api/datasets/test01/dimensions/test10?test12=test13&aggregation=sum&measure=test11');
         });
-    });
 
-    it('should return dimension values correctly', function(done) {
-        require(['models/dataset/connection'], function(Connection) {
+        it('should return dimension values correctly', function() {
             var data = {
                     id01: {
                         id: 'id01',
@@ -97,12 +87,9 @@ describe('A connection model', function() {
             for (var key in data) {
                 expect(conn.getValue(key)).toBe(data[key]);
             }
-            done();
         });
-    });
 
-    it('should return observations correctly', function(done) {
-        require(['models/dataset/connection'], function(Connection) {
+        it('should return observations correctly', function() {
             var data = [
                     {
                         id: 'id01',
@@ -124,12 +111,9 @@ describe('A connection model', function() {
             for (var i = 0; i < data.length; i++) {
                 expect(conn.getValue(i)).toBe(data[i]);
             }
-            done();
         });
-    });
 
-    it('should sum a total of observations correctly', function(done) {
-        require(['models/dataset/connection'], function(Connection) {
+        it('should sum a total of observations correctly', function() {
             var data = [
                     {
                         id: 'id01',
@@ -153,8 +137,8 @@ describe('A connection model', function() {
                     test18: data
                 });
             expect(conn.getTotal()).toBe(2000.0);
-            done();
         });
+
     });
 
 });

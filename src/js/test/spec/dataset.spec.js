@@ -1,18 +1,16 @@
-describe('A dataset model', function() {
+define(['models/dataset'], function(Dataset) {
 
-    it('should construct API URLs correctly', function(done) {
-        require(['models/dataset'], function(Dataset) {
+    describe('A dataset model', function() {
+
+        it('should construct API URLs correctly', function() {
             var dataset = new Dataset({
                     id: 'test01',
                     visualisation_id: 'test02'
                 });
             expect(dataset.url()).toBe('/api/datasets/test01');
-            done();
         });
-    });
 
-    it('should return the correct cut', function(done) {
-        require(['models/dataset'], function(Dataset) {
+        it('should return the correct cut', function() {
             var cut = {
                     test04: 'test05',
                     test05: '6'
@@ -30,12 +28,9 @@ describe('A dataset model', function() {
             for (var key in cut) {
                 expect(dataset.getCut(key)).toBe(cut[key]);
             }
-            done();
         });
-    });
 
-    it('should return the correct cut status', function(done) {
-        require(['models/dataset'], function(Dataset) {
+        it('should return the correct cut status', function() {
             var dataset = new Dataset({
                     id: 'test07',
                     visualisation_id: 'test08',
@@ -45,12 +40,9 @@ describe('A dataset model', function() {
                 });
             expect(dataset.isCut('test09')).toEqual(true);
             expect(dataset.isCut('test99')).toEqual(false);
-            done();
         });
-    });
 
-    it('should correctly check for a specific cut ID', function(done) {
-        require(['models/dataset'], function(Dataset) {
+        it('should correctly check for a specific cut ID', function() {
             var dataset = new Dataset({
                     id: 'test11',
                     visualisation_id: 'test12',
@@ -61,8 +53,8 @@ describe('A dataset model', function() {
             expect(dataset.hasCutId('test13', 'test14')).toEqual(true);
             expect(dataset.hasCutId('test13', 'test04')).toEqual(false);
             expect(dataset.hasCutId('test03', 'test04')).toEqual(false);
-            done();
         });
+
     });
 
 });

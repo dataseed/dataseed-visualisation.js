@@ -55,47 +55,47 @@ require.config({
     },
     paths: {
         // RequireJS Text Plugin
-        text: '../components/requirejs-text/text',
+        text: 'components/requirejs-text/text',
 
         // jQuery
-        jquery: '../components/jquery/jquery.min',
+        jquery: 'components/jquery/jquery.min',
 
         // Underscore (Lo-Dash - http://lodash.com)
-        underscore: '../components/lodash/dist/lodash.underscore.min',
+        underscore: 'components/lodash/dist/lodash.underscore.min',
 
         // Backbone
-        backbone: '../components/backbone/backbone-min',
+        backbone: 'components/backbone/backbone-min',
 
         // D3
-        d3: '../components/d3/d3',
+        d3: 'components/d3/d3',
 
         // Highcharts
-        highcharts: '../components/highcharts.com/js/highcharts.src',
-        highcharts_more: '../components/highcharts.com/js/highcharts-more.src',
+        highcharts: 'components/highcharts.com/js/highcharts.src',
+        highcharts_more: 'components/highcharts.com/js/highcharts-more.src',
 
         // Tipsy tooltips
-        tipsy: '../components/tipsy/src/javascripts/jquery.tipsy',
+        tipsy: 'components/tipsy/src/javascripts/jquery.tipsy',
 
         // Bootstrap JS
-        bootstrap_transition: '../components/bootstrap/js/bootstrap-transition',
-        bootstrap_collapse: '../components/bootstrap/js/bootstrap-collapse',
-        bootstrap_dropdown: '../components/bootstrap/js/bootstrap-dropdown',
-        bootstrap_modal: '../components/bootstrap/js/bootstrap-modal',
-        bootstrap_alert: '../components/bootstrap/js/bootstrap-alert',
+        bootstrap_transition: 'components/bootstrap/js/bootstrap-transition',
+        bootstrap_collapse: 'components/bootstrap/js/bootstrap-collapse',
+        bootstrap_dropdown: 'components/bootstrap/js/bootstrap-dropdown',
+        bootstrap_modal: 'components/bootstrap/js/bootstrap-modal',
+        bootstrap_alert: 'components/bootstrap/js/bootstrap-alert',
 
         // Spinner
-        spin: '../components/spin/spin',
+        spin: 'components/spin/spin',
 
         // Markdown.js
-        markdown: '../components/markdown/lib/markdown',
+        markdown: 'components/markdown/lib/markdown',
 
-        outlayer: '../components/outlayer',
-        eventie: '../components/eventie',
-        'doc-ready': '../components/doc-ready',
-        eventEmitter: '../components/eventEmitter',
-        'get-size': '../components/get-size',
-        'get-style-property': '../components/get-style-property',
-        'matches-selector': '../components/matches-selector'
+        outlayer: 'components/outlayer',
+        eventie: 'components/eventie',
+        'doc-ready': 'components/doc-ready',
+        eventEmitter: 'components/eventEmitter',
+        'get-size': 'components/get-size',
+        'get-style-property': 'components/get-style-property',
+        'matches-selector': 'components/matches-selector'
 
     }
 });
