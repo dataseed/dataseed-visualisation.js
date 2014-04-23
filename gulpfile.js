@@ -1,7 +1,7 @@
 var gulp = require('gulp'),
     _ = require('underscore'),
     jshint = require('gulp-jshint'),
-    shell = require('gulp-shell'),
+    karma = require('gulp-karma'),
     rjs = require('gulp-requirejs'),
     uglify = require('gulp-uglify'),
     less = require('gulp-less'),
@@ -13,7 +13,7 @@ var conf = {
         rjs: {
             baseUrl: 'src/js',
             mainConfigFile: 'src/js/config.js',
-            name: '../components/almond/almond',
+            name: 'components/almond/almond',
             include: ['app'],
             insertRequire: ['app'],
             almond: true,
@@ -32,7 +32,10 @@ var conf = {
 
 // Lint JS
 gulp.task('lint', function() {
-    return gulp.src(conf.js.rjs.baseUrl + '/**/*.js')
+    return gulp.src([
+            conf.js.rjs.baseUrl + '/**/*.js',
+            '!' + conf.js.rjs.baseUrl + '/components/**/*.js'
+        ])
         .pipe(jshint({
             sub: true
         }))
@@ -40,7 +43,16 @@ gulp.task('lint', function() {
 });
 
 // Test JS
-gulp.task('test', shell.task(['phantomjs test/run-jasmine.js test/index.html']))
+gulp.task('test', function() {
+    return gulp.src('test/spec/*.js')
+        .pipe(karma({
+            configFile: 'karma.conf.js',
+            action: 'run'
+        }))
+        .on('error', function(err) {
+            throw err;
+        });
+});
 
 // Compile JS (d3)
 gulp.task('js-d3', function() {
