@@ -28,6 +28,6 @@
     "vows": "^0.7.0"
   },
   "scripts": {
-    "test": "gulp test"
+    "test": "./node_modules/karma/bin/karma start --single-run --browsers PhantomJS,Firefox"
   }
 }
