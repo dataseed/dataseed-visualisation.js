@@ -26,15 +26,16 @@ define(['backbone', 'underscore', '../../lib/format'],
         },
 
         getDimensionAttrs: function (dimension) {
-            var defaultSort = {"attribute": "total", "direction": "desc"},
-                sort = !_.isUndefined(dimension.sort) ? _.extend({}, defaultSort, dimension.sort) : defaultSort,
+            var defaultSort = {"total": "desc"},
+                sort = !_.isUndefined(dimension.sort) ? dimension.sort : defaultSort,
                 id = dimension.field.id,
-                values = _.sortBy(this.model.getLabels(id), sort.attribute);
+                // At the moment we can sort only on one attribute.
+                values = _.sortBy(this.model.getLabels(id), _.keys(sort)[0]);
 
             return {
                 'id': id,
                 // Sorting
-                'values': (sort.direction === "desc") ? values.reverse() : values,
+                'values': (sort[_.keys(sort)[0]] === "desc") ? values.reverse() : values,
                 'hierarchy': this.visualisation.dataset.getDimensionHierarchy(id),
                 'dataset_cut': this.visualisation.dataset.getCut(),
                 'required': _.isBoolean(dimension.required) ? dimension.required : false
