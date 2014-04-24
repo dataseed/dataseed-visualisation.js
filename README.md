@@ -48,7 +48,7 @@ A build process is provided that will compile and minify the JS and LESS in /src
 3. ```npm install```
 4. ```npm install -g bower```
 5. ```bower install```
-6. ```gulp build```
+6. ```gulp```
 
 
 ## Developer API
