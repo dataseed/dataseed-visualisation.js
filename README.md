@@ -1,5 +1,7 @@
 # Dataseed Visualisation
 
+[![Build Status](https://travis-ci.org/dataseed/dataseed-visualisation.svg)](https://travis-ci.org/dataseed/dataseed-visualisation)
+
 Dataseed is an open platform for data visualisation, exploration and analysis. For more information and a live demo see [http://getdataseed.com](http://getdataseed.com).
 
 This open-source toolkit allows you to create custom visualisations driven by our back-end. Dataseed's back-end supports large datasets, real-time data streams, on-the-fly aggregation (OLAP), and statistical operations.  You can import data via a RESTful API, or by uploading spreadsheets through the UI.
@@ -44,8 +46,9 @@ A build process is provided that will compile and minify the JS and LESS in /src
 1. ```git clone git@github.com:dataseed/dataseed-visualisation.git```
 2. ```cd dataseed-visualisation```
 3. ```npm install```
-4. ```bower install```
-5. ```grunt build```
+4. ```npm install -g bower```
+5. ```bower install```
+6. ```gulp```
 
 
 ## Developer API
