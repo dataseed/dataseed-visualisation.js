@@ -16,6 +16,7 @@
     "less": "cloudhead/less.js#1.6.3",
     "spin": "fgnass/spin.js",
     "markdown": "0.4.0",
-    "masonry": "desandro/masonry#v3.1.4"
+    "masonry": "desandro/masonry#v3.1.4",
+    "jasmine-jquery": "~2.0.3"
   }
 }

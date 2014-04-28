@@ -47,7 +47,7 @@ define(['models/dataset', 'models/dataset/connection', 'models/visualisation/ele
                     }
                 });
 
-            spyOn(this.dataset, 'addCut')
+            spyOn(this.dataset, 'addCut');
             this.dataset.visualisation.addElement(element);
 
             element.addCut('val123');
@@ -69,7 +69,7 @@ define(['models/dataset', 'models/dataset/connection', 'models/visualisation/ele
                     }
                 });
 
-            spyOn(this.dataset, 'addCut')
+            spyOn(this.dataset, 'addCut');
             this.dataset.visualisation.addElement(element);
 
             element.addCut('val123');
@@ -94,8 +94,8 @@ define(['models/dataset', 'models/dataset/connection', 'models/visualisation/ele
                     }
                 });
 
-            spyOn(this.dataset, 'addCut')
-            spyOn(this.dataset, 'removeCut')
+            spyOn(this.dataset, 'addCut');
+            spyOn(this.dataset, 'removeCut');
             this.dataset.visualisation.addElement(element);
 
             element.addCut('val123');
