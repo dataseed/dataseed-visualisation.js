@@ -10,6 +10,10 @@ var gulp = require('gulp'),
 // Configuration
 var conf = {
     js: {
+        test: {
+            config: 'karma.conf.js',
+            files: 'test/spec/**/*.js'
+        },
         rjs: {
             baseUrl: 'src/js',
             mainConfigFile: 'src/js/config.js',
@@ -44,14 +48,23 @@ gulp.task('lint', function() {
 
 // Test JS
 gulp.task('test', function() {
-    return gulp.src('test/spec/*.js')
+    return gulp.src(conf.js.test.files)
         .pipe(karma({
-            configFile: 'karma.conf.js',
+            configFile: conf.js.test.config,
             action: 'run'
         }))
         .on('error', function(err) {
             throw err;
         });
+});
+
+// Test JS
+gulp.task('watch', function() {
+    return gulp.src(conf.js.test.files)
+        .pipe(karma({
+            configFile: conf.js.test.config,
+            action: 'watch'
+        }));
 });
 
 // Compile JS (d3)
