@@ -2,11 +2,9 @@ define(['models/dataset', 'models/dataset/connection', 'models/visualisation/ele
 
     describe('An element model', function() {
 
-        var dataset, visualisation;
-
         beforeEach(function() {
             // Create a new dataset model
-            dataset = new Dataset({
+            this.dataset = new Dataset({
                     id: 'test01',
                     visualisation_id: 'test02'
                 });
@@ -18,8 +16,8 @@ define(['models/dataset', 'models/dataset/connection', 'models/visualisation/ele
         it('should construct API URLs correctly', function() {
             var element = new Element({
                     id: 'test03',
-                    dataset: dataset,
-                    visualisation: dataset.visualisation
+                    dataset: this.dataset,
+                    visualisation: this.dataset.visualisation
                 });
             expect(element.url()).toBe('/api/datasets/test01/visualisations/test02/elements/test03');
         });
@@ -27,8 +25,8 @@ define(['models/dataset', 'models/dataset/connection', 'models/visualisation/ele
         it('should return the correct measure label', function() {
             var element = new Element({
                     id: 'test03',
-                    dataset: dataset,
-                    visualisation: dataset.visualisation,
+                    dataset: this.dataset,
+                    visualisation: this.dataset.visualisation,
                     measure_label: 'Test Label'
                 });
             expect(element.getMeasureLabel()).toBe('Test Label');
@@ -37,8 +35,8 @@ define(['models/dataset', 'models/dataset/connection', 'models/visualisation/ele
         it('should add a cut correctly', function() {
             var element = new Element({
                     id: 'test03',
-                    dataset: dataset,
-                    visualisation: dataset.visualisation,
+                    dataset: this.dataset,
+                    visualisation: this.dataset.visualisation,
                     dimensions: [{
                         field: {
                             id: 'test04'
@@ -49,18 +47,18 @@ define(['models/dataset', 'models/dataset/connection', 'models/visualisation/ele
                     }
                 });
 
-            spyOn(dataset, 'addCut')
-            dataset.visualisation.addElement(element);
+            spyOn(this.dataset, 'addCut')
+            this.dataset.visualisation.addElement(element);
 
             element.addCut('val123');
-            expect(dataset.addCut).toHaveBeenCalledWith({test04: 'val123'});
+            expect(this.dataset.addCut).toHaveBeenCalledWith({test04: 'val123'});
         });
 
         it('should update a cut correctly', function() {
             var element = new Element({
                     id: 'test03',
-                    dataset: dataset,
-                    visualisation: dataset.visualisation,
+                    dataset: this.dataset,
+                    visualisation: this.dataset.visualisation,
                     dimensions: [{
                         field: {
                             id: 'test04'
@@ -71,21 +69,21 @@ define(['models/dataset', 'models/dataset/connection', 'models/visualisation/ele
                     }
                 });
 
-            spyOn(dataset, 'addCut')
-            dataset.visualisation.addElement(element);
+            spyOn(this.dataset, 'addCut')
+            this.dataset.visualisation.addElement(element);
 
             element.addCut('val123');
-            expect(dataset.addCut).toHaveBeenCalledWith({test04: 'val123'});
+            expect(this.dataset.addCut).toHaveBeenCalledWith({test04: 'val123'});
 
             element.addCut('val456');
-            expect(dataset.addCut).toHaveBeenCalledWith({test04: 'val456'});
+            expect(this.dataset.addCut).toHaveBeenCalledWith({test04: 'val456'});
         });
 
         it('should remove a cut correctly', function() {
             var element = new Element({
                     id: 'test03',
-                    dataset: dataset,
-                    visualisation: dataset.visualisation,
+                    dataset: this.dataset,
+                    visualisation: this.dataset.visualisation,
                     dimensions: [{
                         field: {
                             id: 'test04'
@@ -96,15 +94,15 @@ define(['models/dataset', 'models/dataset/connection', 'models/visualisation/ele
                     }
                 });
 
-            spyOn(dataset, 'addCut')
-            spyOn(dataset, 'removeCut')
-            dataset.visualisation.addElement(element);
+            spyOn(this.dataset, 'addCut')
+            spyOn(this.dataset, 'removeCut')
+            this.dataset.visualisation.addElement(element);
 
             element.addCut('val123');
-            expect(dataset.addCut).toHaveBeenCalledWith({test04: 'val123'});
+            expect(this.dataset.addCut).toHaveBeenCalledWith({test04: 'val123'});
 
             element.removeCut();
-            expect(dataset.removeCut).toHaveBeenCalledWith(['test04']);
+            expect(this.dataset.removeCut).toHaveBeenCalledWith(['test04']);
         });
 
     });

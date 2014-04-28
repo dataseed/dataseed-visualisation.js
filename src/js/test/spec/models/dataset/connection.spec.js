@@ -2,11 +2,9 @@ require(['models/dataset', 'models/dataset/connection'], function(Dataset, Conne
 
     describe('A connection model', function() {
 
-        var dataset;
-
         beforeEach(function() {
             // Create a new dataset model
-            dataset = new Dataset({
+            this.dataset = new Dataset({
                     id: 'test01',
                     visualisation_id: 'test02'
                 });
@@ -17,7 +15,7 @@ require(['models/dataset', 'models/dataset/connection'], function(Dataset, Conne
 
         it('should construct API URLs correctly for dimensions', function() {
             var conn = new Connection({
-                    dataset: dataset,
+                    dataset: this.dataset,
                     type: 'dimensions',
                     dimension: 'test03',
                     measure: 'test04',
@@ -28,7 +26,7 @@ require(['models/dataset', 'models/dataset/connection'], function(Dataset, Conne
 
         it('should construct API URLs correctly for dimensions with a cut', function() {
             var conn = new Connection({
-                    dataset: dataset,
+                    dataset: this.dataset,
                     type: 'dimensions',
                     dimension: 'test04',
                     measure: 'test05',
@@ -42,7 +40,7 @@ require(['models/dataset', 'models/dataset/connection'], function(Dataset, Conne
 
         it('should construct API URLs correctly for observations', function() {
             var conn = new Connection({
-                    dataset: dataset,
+                    dataset: this.dataset,
                     type: 'observations',
                     dimension: 'test08',
                     measure: 'test09',
@@ -53,7 +51,7 @@ require(['models/dataset', 'models/dataset/connection'], function(Dataset, Conne
 
         it('should construct API URLs correctly for observations with a cut', function() {
             var conn = new Connection({
-                    dataset: dataset,
+                    dataset: this.dataset,
                     type: 'dimensions',
                     dimension: 'test10',
                     measure: 'test11',
@@ -77,7 +75,7 @@ require(['models/dataset', 'models/dataset/connection'], function(Dataset, Conne
                     }
                 },
                 conn = new Connection({
-                    dataset: dataset,
+                    dataset: this.dataset,
                     type: 'dimensions',
                     dimension: 'test14',
                     measure: 'test15',
@@ -101,7 +99,7 @@ require(['models/dataset', 'models/dataset/connection'], function(Dataset, Conne
                     }
                 ],
                 conn = new Connection({
-                    dataset: dataset,
+                    dataset: this.dataset,
                     type: 'dimensions',
                     dimension: 'test16',
                     measure: 'test17',
@@ -129,7 +127,7 @@ require(['models/dataset', 'models/dataset/connection'], function(Dataset, Conne
                     }
                 ],
                 conn = new Connection({
-                    dataset: dataset,
+                    dataset: this.dataset,
                     type: 'dimensions',
                     dimension: 'test18',
                     measure: 'test19',
