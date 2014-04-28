@@ -70,8 +70,8 @@ require.config({
         d3: 'components/d3/d3',
 
         // Highcharts
-        highcharts: 'components/highcharts.com/js/highcharts.src',
-        highcharts_more: 'components/highcharts.com/js/highcharts-more.src',
+        highcharts: 'components/highcharts/highcharts.src',
+        highcharts_more: 'components/highcharts/highcharts-more.src',
 
         // Tipsy tooltips
         tipsy: 'components/tipsy/src/javascripts/jquery.tipsy',
