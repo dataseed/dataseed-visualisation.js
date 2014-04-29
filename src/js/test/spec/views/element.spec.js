@@ -43,9 +43,7 @@ define(['jquery', 'models/dataset', 'models/visualisation/element', 'views/eleme
 
         it('should not render before the model has loaded', function() {
             this.view.render();
-
-            expect(this.view.el).toBeMatchedBy('.element.barElement.span9');
-            expect(this.view.el).not.toContainElement('div');
+            expect(this.view.el).toBeEmpty();
         });
 
         it('should be shown/hidden by the "display" property', function() {
@@ -62,7 +60,7 @@ define(['jquery', 'models/dataset', 'models/visualisation/element', 'views/eleme
             this.view.render();
 
             expect(this.view.el).toBeMatchedBy('.hide');
-            expect(this.view.el).not.toContainElement('div');
+            expect(this.view.el).toBeEmpty();
 
             this.element.set({
                 display: true
@@ -70,7 +68,7 @@ define(['jquery', 'models/dataset', 'models/visualisation/element', 'views/eleme
             this.view.render();
 
             expect(this.view.el).not.toBeMatchedBy('.hide');
-            expect(this.view.el).toContainElement('div');
+            expect(this.view.el).not.toBeEmpty();
         });
 
         it('should render correctly', function() {
@@ -83,6 +81,7 @@ define(['jquery', 'models/dataset', 'models/visualisation/element', 'views/eleme
             this.element.loaded = 2;
             this.view.render();
 
+            expect(this.view.el).toBeMatchedBy('.element.barElement.span9');
             expect(this.view.el).toContainElement('svg');
         });
 
