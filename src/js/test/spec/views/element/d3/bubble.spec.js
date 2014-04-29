@@ -60,7 +60,7 @@ define(['jquery', 'models/dataset', 'models/visualisation/element', 'views/eleme
             expect(this.view.el).not.toContainElement('text.scaleLabel');
         });
 
-        it('should render bars and labels correctly', function() {
+        it('should render bubbles and labels correctly', function() {
             this.element.observations[0].set({
                 test04: [
                     {
