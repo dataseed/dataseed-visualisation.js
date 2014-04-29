@@ -18,6 +18,9 @@ define(['./chart', 'underscore', 'd3'], function(ChartView, _, d3) {
             ChartView.prototype.render.apply(this, arguments);
 
             var values = this.model.getObservations();
+            if (values.length < 1) {
+                return this;
+            }
 
             var format = d3.format(',d');
 
@@ -40,7 +43,7 @@ define(['./chart', 'underscore', 'd3'], function(ChartView, _, d3) {
 
             var nodes = bubble.nodes(values)
                 .filter(function (d) {
-                    return (d.id !== undefined);
+                    return (!_.isUndefined(d.id));
                 });
 
             // Add bubbles

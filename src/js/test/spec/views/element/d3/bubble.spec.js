@@ -1,6 +1,6 @@
-define(['jquery', 'models/dataset', 'models/visualisation/element', 'views/element/d3/bar'], function($, Dataset, Element, BarChartView) {
+define(['jquery', 'models/dataset', 'models/visualisation/element', 'views/element/d3/bubble'], function($, Dataset, Element, BubbleChartView) {
 
-    describe('A bar chart view', function() {
+    describe('A bubble chart view', function() {
 
         beforeEach(function() {
             this.$el = $('<div style="width: 800px; height: 600px;"/>');
@@ -20,8 +20,8 @@ define(['jquery', 'models/dataset', 'models/visualisation/element', 'views/eleme
                     id: 'test03',
                     dataset: this.dataset,
                     visualisation: this.dataset.visualisation,
-                    type: 'bar',
-                    width: 3,
+                    type: 'bubble',
+                    width: 1,
                     display: true,
                     dimensions: [{
                         field: {
@@ -31,10 +31,10 @@ define(['jquery', 'models/dataset', 'models/visualisation/element', 'views/eleme
                     measure: {
                         id: 'test05'
                     },
-                    label: 'Test Bar Chart'
+                    label: 'Test Bubble Chart'
                 });
 
-            this.view = new BarChartView({
+            this.view = new BubbleChartView({
                     parent: this.$el,
                     model: this.element,
                     visualisation: this.dataset.visualisation
@@ -65,11 +65,11 @@ define(['jquery', 'models/dataset', 'models/visualisation/element', 'views/eleme
                 test04: [
                     {
                         id: 'id01',
-                        total: 1234
+                        total: 1234000
                     },
                     {
                         id: 'id02',
-                        total: 5678
+                        total: 5678000
                     }
                 ]
             }, {
@@ -92,14 +92,14 @@ define(['jquery', 'models/dataset', 'models/visualisation/element', 'views/eleme
             this.view.render();
 
             expect(this.view.el).toContainElement('svg');
-            expect(this.view.el).toContainElement('rect');
+            expect(this.view.el).toContainElement('circle');
             expect(this.view.el).toContainElement('text.chartLabel');
             expect(this.view.el).toContainElement('text.scaleLabel');
 
-            expect(this.view.$el.find('rect').length).toEqual(2);
+            expect(this.view.$el.find('circle:not(.scaleBubble)').length).toEqual(2);
             expect(this.view.$el.find('text.chartLabel').length).toEqual(2);
 
-            expect(this.view.el).toContainText('Test Bar Chart');
+            expect(this.view.el).toContainText('Test Bubble Chart');
             expect(this.view.el).toContainText('Test Label 01');
             expect(this.view.el).toContainText('Test Label 02');
         });

@@ -23,6 +23,10 @@ define(['./chart', 'underscore', 'd3'],
             // Calculate bar widths and heights
             this.barWidth = this.width - (this.gutterLeft * 2);
             var data = _.map(this.model.getObservations(), function (d) { return d.total; });
+            if (data.length < 1) {
+                return this;
+            }
+
             var height = this.barHeight * data.length;
 
             this.scale = d3.scale.linear()

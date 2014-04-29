@@ -82,7 +82,6 @@ define(['jquery', 'models/dataset', 'models/visualisation/element', 'views/eleme
             this.view.render();
 
             expect(this.view.el).toBeMatchedBy('.element.barElement.span9');
-            expect(this.view.el).toContainElement('svg');
         });
 
     });
