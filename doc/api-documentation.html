@@ -980,7 +980,7 @@ require.config({
 
         <h5>Request</h5>
 
-        <code class="shell prettyprint">curl -H'Accept: application/json' http://getdataseed.com/api/datasets/mortality/dimensions/gender</code>
+        <code class="shell prettyprint">curl -H'Accept: application/json' https://getdataseed.com/api/datasets/mortality/dimensions/gender</code>
 
         <h5>Response</h5>
 
@@ -1003,19 +1003,19 @@ require.config({
 
         <h5>Request</h5>
 
-        <code class="shell prettyprint">curl -XPOST -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' http://getdataseed.com/api/datasets/mortality/dimensions/gender</code>
+        <code class="shell prettyprint">curl -XPOST -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://getdataseed.com/api/datasets/mortality/dimensions/gender</code>
 
         <pre><code class="json prettyprint">{
-    "gender": {
-        "F": {
+    "values": [
+        {
             "id": "F",
             "label": "Female"
         },
-        "M": {
+        {
             "id": "M",
             "label": "Male"
         }
-    }
+    ]
 }</code></pre>
 
         <h5>Response</h5>
@@ -1029,15 +1029,15 @@ require.config({
 
         <h5>Request</h5>
 
-        <code class="shell prettyprint">curl -XPUT -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' http://getdataseed.com/api/datasets/mortality/dimensions/gender</code>
+        <code class="shell prettyprint">curl -XPUT -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://getdataseed.com/api/datasets/mortality/dimensions/gender</code>
 
         <pre><code class="json prettyprint">{
-    "gender": {
-        "F": {
+    "values": [
+        {
             "id": "F",
             "label": "Female"
         }
-    }
+    ]
 }</code></pre>
 
         <h5>Response</h5>
@@ -1051,7 +1051,7 @@ require.config({
 
         <h5>Request</h5>
 
-        <code class="shell prettyprint">curl -XDELETE -u'dataseed@example.com:password' -H'Accept: application/json' http://getdataseed.com/api/datasets/mortality/dimensions/gender</code>
+        <code class="shell prettyprint">curl -XDELETE -u'dataseed@example.com:password' -H'Accept: application/json' https://getdataseed.com/api/datasets/mortality/dimensions/gender</code>
 
         <h5>Response</h5>
 
@@ -1074,7 +1074,7 @@ require.config({
 
         <h5>Request</h5>
 
-        <code class="shell prettyprint">curl -H'Accept: application/json' http://getdataseed.com/api/datasets/mortality/observations/gender?aggregation=sum&amp;measure=value</code>
+        <code class="shell prettyprint">curl -H'Accept: application/json' https://getdataseed.com/api/datasets/mortality/observations/gender?aggregation=sum&amp;measure=value</code>
 
         <h5>Response</h5>
 
@@ -1097,7 +1097,7 @@ require.config({
 
         <h5>Request</h5>
 
-        <code class="shell prettyprint">curl -XPOST -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' http://getdataseed.com/api/datasets/mortality/observations</code>
+        <code class="shell prettyprint">curl -XPOST -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://getdataseed.com/api/datasets/mortality/observations/</code>
 
         <pre><code class="json prettyprint">{
     "observations": [
@@ -1127,7 +1127,7 @@ require.config({
 
         <h5>Request</h5>
 
-        <code class="shell prettyprint">curl -XPUT -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' http://getdataseed.com/api/datasets/mortality/observations</code>
+        <code class="shell prettyprint">curl -XPUT -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://getdataseed.com/api/datasets/mortality/observations</code>
 
         <pre><code class="json prettyprint">{
     "observations": [
@@ -1157,7 +1157,7 @@ require.config({
 
         <h5>Request</h5>
 
-        <code class="shell prettyprint">curl -XDELETE -u'dataseed@example.com:password' -H'Accept: application/json' http://getdataseed.com/api/datasets/mortality/observations</code>
+        <code class="shell prettyprint">curl -XDELETE -u'dataseed@example.com:password' -H'Accept: application/json' https://getdataseed.com/api/datasets/mortality/observations</code>
 
         <h5>Response</h5>
 
