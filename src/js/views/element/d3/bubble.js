@@ -3,28 +3,28 @@ define(['./chart', 'underscore', 'd3'], function(ChartView, _, d3) {
 
     var BubbleChartView = ChartView.extend({
 
-        scaleGutterLeft: 5,
-        scaleGutterTop: 10,
-
-        scaleTicks: 5,
-        scaleMargin: 10,
-
-        scaleRadius: 0,
-
-        numberOfBubbles: 0,
+        scaleMarginX: 5,
+        scaleMarginY: 10,
 
         render: function() {
+
             // Setup chart
             ChartView.prototype.render.apply(this, arguments);
 
+            // Get observations
             var values = this.model.getObservations();
             if (values.length < 1) {
                 return this;
             }
 
-            var format = d3.format(',d');
+            // Add chart
+            var chart = d3.select(this.chartContainerEl).append('svg')
+                .attr('width', this.width)
+                .attr('class', 'bubbleChart')
+                .classed('inactive', _.bind(this.model.isCut, this.model));
 
-            var bubble = d3.layout.pack()
+            // Layout observations as bubbles
+            var nodes = d3.layout.pack()
                 .children(function(d) {
                     return d;
                 })
@@ -32,22 +32,15 @@ define(['./chart', 'underscore', 'd3'], function(ChartView, _, d3) {
                     return d.total;
                 })
                 .sort(null)
-                .size([this.width, this.width]);
-
-            var chart = d3.select(this.chartContainerEl).append('svg')
-                .attr('width', this.width)
-                .attr('class', 'bubbleChart')
-                .classed('inactive', _.bind(this.model.isCut, this.model));
-
-            var vis = chart.append('g');
-
-            var nodes = bubble.nodes(values)
+                .size([this.width, this.width])
+                .nodes(values)
                 .filter(function (d) {
                     return (!_.isUndefined(d.id));
                 });
 
             // Add bubbles
-            var node = vis.selectAll('g.node')
+            var bubbles = chart.append('g')
+                .selectAll('g.node')
                     .data(nodes)
                 .enter().append('svg:g')
                     .attr('class', 'node')
@@ -55,12 +48,12 @@ define(['./chart', 'underscore', 'd3'], function(ChartView, _, d3) {
                     .attr('transform', function(d) { return 'translate(' + d.x + ',' + d.y + ')'; })
                     .on('click', _.bind(this.featureClick, this));
 
-            node.append('circle')
+            bubbles.append('circle')
                 .attr('r', function(d) { return d.r; })
                 .style('fill', this.getStyle('featureFill'))
                 .style('stroke', this.getStyle('featureStroke'));
 
-            node.append('text')
+            bubbles.append('text')
                 .attr('class', 'chartLabel')
                 .attr('text-anchor', 'middle')
                 .attr('dy', '.3em')
@@ -70,108 +63,61 @@ define(['./chart', 'underscore', 'd3'], function(ChartView, _, d3) {
             // Attach tooltips
             this.attachTooltips('g');
 
-            // Add scale
+            // Get chart height
             var chartHeight = d3.max(nodes, function(d) { return d.y + d.r; });
 
-            var chartScale = chart.append('g')
-                .attr('transform', 'translate(0,' + chartHeight + ')');
-
-            // Add dividing line
-            chartScale.append('line')
-                .attr('class', 'scale')
-                .attr('y1', this.scaleGutterTop)
-                .attr('y2', this.scaleGutterTop)
-                .attr('x1', this.scaleGutterLeft)
-                .attr('x2', this.width - this.scaleGutterLeft);
-
-            // Calculate scale and "ticks" (i.e. the scale bubbles)
+            // Get scale (map input domain to output range)
             this.scale = d3.scale.linear()
                 .domain([
                     d3.min(nodes, this.getMeasure),
                     d3.max(nodes, this.getMeasure)
                 ])
                 .range([
-                    d3.min(nodes, this.getSize),
-                    d3.max(nodes, this.getSize)
+                    d3.min(nodes, this.getArea),
+                    d3.max(nodes, this.getArea)
                 ]);
-            var ticks = this.scale.ticks(this.scaleTicks);
 
-            // Sets a value for the tick scale if all nodes are the same size
-            if(ticks.length < 1) {
-                ticks[0] = this.getMeasure(nodes[0]);
-            }
+            // Calculate scale bubbles
+            var scaleBubbles, scaleWidth, i = 5;
+            do {
 
-            if (ticks[0] === 0) {
-                ticks.shift();
-            }
-            // Calculate width and height of scale
-            var scaleWidth;
-            // Printed scale ticks
-            var tickSize = [];
-            // Copy of the original ticks array
-            var ticksTemp = ticks.slice(0);
-            for(var i = 0; i <= ticksTemp.length; i++) {
-                // First iteration
-                if(i === 0) {
-                    tickSize.push(ticksTemp.pop());
-                    tickSize.push(ticksTemp.pop());
-                    scaleWidth = _.reduce(tickSize, _.bind(this.getScaleItemSize, this), 0);
-                    if(scaleWidth > this.width + 20) {
-                        tickSize.pop();
-                    }
-                }
-                tickSize.push(ticksTemp.pop());
-                scaleWidth = _.reduce(tickSize, _.bind(this.getScaleItemSize, this), 0);
-                if(scaleWidth > this.width + 20) {
-                    tickSize.pop();
-                }
-                //removes undefined values from the array
-                tickSize = tickSize.filter(Number);
-                scaleWidth = _.reduce(tickSize, _.bind(this.getScaleItemSize, this), 0);
-            }
+                // Get scale "ticks" i.e. the scale bubbles
+                scaleBubbles = this.scale.ticks(i);
 
-            // Get the number of bubbles in the scale
-            this.numberOfBubbles = tickSize.length;
+                // Caculate scale width
+                scaleWidth = _.reduce(scaleBubbles, this.getScaleWidth, 0, this);
 
-            // Reverse the scale ticks to accending order
-            tickSize.reverse();
+            } while(--i > 0 && scaleWidth > this.width);
 
-            var scaleHeight = this.scaleGutterTop + (this.scale(ticks[ticks.length-1]) * 2);
-
-            this.scalePosY = (scaleHeight / 2) + (this.scaleGutterTop * 2);
+            // Set scale item positions for the getScalePosition() method
             this.scalePosX = (this.width - scaleWidth) / 2;
+            this.scalePosY = this.scaleMarginY + this.getRadius(scaleBubbles[scaleBubbles.length-1]);
 
-            // Add scale bubble containers
-            var scaleItems = chartScale.selectAll('.scaleItem')
-                    .data(tickSize)
+            // Add scale
+            var scaleItems = chart.append('g')
+                    .attr('transform', 'translate(0,' + chartHeight + ')')
+                .selectAll('.scaleItem')
+                    .data(scaleBubbles)
                 .enter().append('g')
                     .attr('transform', _.bind(this.getScalePosition, this));
 
             // Add scale bubbles
             scaleItems.append('circle')
-                .attr('class', 'scaleBubble')
-                .style('stroke', this.getStyle('scaleFeature'))
-                .style('fill', 'transparent')
-                .attr('r', this.scale);
+                    .attr('class', 'scaleBubble')
+                    .style('fill', 'transparent')
+                    .style('stroke', this.getStyle('scaleFeature'))
+                    .attr('r', _.bind(this.getRadius, this));
 
-            // Add scale bubbles' labels
+            // Add scale bubble labels
             scaleItems.append('text')
-                .attr('class', 'scaleLabel')
-                .attr('text-anchor', 'middle')
-                .attr('y', (scaleHeight / 2) + this.scaleMargin)
-                .style('fill', this.getStyle('scaleLabel'))
-                .text(this.numFormatScale);
+                    .attr('class', 'scaleLabel')
+                    .attr('text-anchor', 'middle')
+                    .attr('y', this.scalePosY + this.scaleMarginY)
+                    .style('fill', this.getStyle('scaleLabel'))
+                    .text(this.numFormatScale);
 
-            // Add measure text
-            chartScale.append('text')
-                .attr('text-anchor', 'middle')
-                .attr('x', (this.width - (this.scaleGutterLeft * 2)) / 2)
-                .attr('y', scaleHeight + (this.scaleMargin * 5))
-                .style('fill', this.getStyle('measureLabel'))
-                .text(this.model.getMeasureLabel());
-
-            // Set chart height
-            chart.attr('height', chartHeight + scaleHeight + (this.scaleGutterTop * 6));
+            // Set element height to chart height + scale height
+            chart.attr('height', chartHeight + (this.scalePosY * 2) + (this.scaleMarginY * 2));
 
             // Update container size
             this.updateSize();
@@ -203,41 +149,36 @@ define(['./chart', 'underscore', 'd3'], function(ChartView, _, d3) {
         },
 
         /**
-         * Get size
+         * Get bubble area from radius
+         * a = πr²
          */
-        getSize: function(d) {
-            return d.r;
+        getArea: function(d) {
+            return Math.PI * Math.pow(d.r, 2);
         },
 
         /**
-         * Get a scale bubble's size
+         * Get bubble radius from observation value
+         * r = √a/π
          */
-        getScaleItemSize: function(memo, radius) {
-            return memo + (this.scale(radius) * 2) + (this.scaleMargin * 2);
+        getRadius: function(total) {
+            return Math.sqrt(this.scale(total) / Math.PI);
         },
 
         /**
-         * Get a scale bubble's position
+         * Get the width of a scale "tick" (bubble)
          */
-        getScalePosition: function(d, i) {
-            // Calculate scale bubble's radius
-            var radius = this.scale(d);
-            // Second scale bubbles
-            if (i > 0) {
-                this.scalePosX += radius + this.scaleRadius + 5;
-            // first scale bubbles
-            } else {
-                if(this.numberOfBubbles > 2) {
-                    this.scalePosX += radius + 30;
-                } else {
-                    this.scalePosX += radius + 10;
-                }
-            }
-            // Storing the radius of the previous scale bubble
-            this.scaleRadius = radius;
+        getScaleWidth: function(memo, tick) {
+            return memo + (this.getRadius(tick) * 2) + this.scaleMarginX;
+        },
 
-            // Move scale bubble/label to correct position
-            return 'translate(' + this.scalePosX + ',' + this.scalePosY + ')';
+        /**
+         * Get a scale bubble's position and increment the X position for the next bubble
+         */
+        getScalePosition: function(total, i) {
+            var radius = this.getRadius(total),
+                x = this.scalePosX + radius;
+            this.scalePosX += (radius * 2) + this.scaleMarginX;
+            return 'translate(' + x + ',' + this.scalePosY + ')';
         }
 
     });
