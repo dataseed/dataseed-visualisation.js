@@ -1,4 +1,5 @@
-define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element', 'views/element/d3/bar'], function($, Dataset, Connection, Element, BarChartView) {
+define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element', 'views/element/d3/bar'],
+    function($, Dataset, Connection, Element, BarChartView) {
 
     describe('A bar chart view', function() {
 

@@ -1,8 +1,11 @@
-define(['jquery', 'models/dataset', 'models/visualisation/element', 'views/element/d3/bubble'], function($, Dataset, Element, BubbleChartView) {
+define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element', 'views/element/d3/bubble'],
+    function($, Dataset, Connection, Element, BubbleChartView) {
 
     describe('A bubble chart view', function() {
 
         beforeEach(function() {
+            Connection.prototype.fetch = function() {};
+
             this.$el = $('<div style="width: 800px; height: 600px;"/>');
 
             this.dataset = new Dataset({
