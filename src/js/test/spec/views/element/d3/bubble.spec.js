@@ -58,9 +58,6 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
             this.view.render();
 
             expect(this.view.el).not.toContainElement('svg');
-            expect(this.view.el).not.toContainElement('rect');
-            expect(this.view.el).not.toContainElement('text.chartLabel');
-            expect(this.view.el).not.toContainElement('text.scaleLabel');
         });
 
         it('should render bubbles and labels correctly', function(done) {

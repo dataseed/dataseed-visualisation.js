@@ -1,7 +1,7 @@
-define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element', 'views/element/d3/bar'],
-    function($, Dataset, Connection, Element, BarChartView) {
+define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element', 'views/element/d3/line'],
+    function($, Dataset, Connection, Element, LineChartView) {
 
-    describe('A bar chart view', function() {
+    describe('A line chart view', function() {
 
         beforeEach(function() {
             Connection.prototype.fetch = function() {};
@@ -23,7 +23,7 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
                     id: 'test03',
                     dataset: this.dataset,
                     visualisation: this.dataset.visualisation,
-                    type: 'bar',
+                    type: 'line',
                     width: 3,
                     display: true,
                     dimensions: [{
@@ -34,10 +34,10 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
                     measure: {
                         id: 'test05'
                     },
-                    label: 'Test Bar Chart'
+                    label: 'Test Line Chart'
                 });
 
-            this.view = new BarChartView({
+            this.view = new LineChartView({
                     parent: this.$el,
                     model: this.element,
                     visualisation: this.dataset.visualisation
@@ -92,14 +92,15 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
             this.view.render();
 
             expect(this.view.el).toContainElement('svg');
-            expect(this.view.el).toContainElement('rect');
-            expect(this.view.el).toContainElement('text.chartLabel');
-            expect(this.view.el).toContainElement('text.scaleLabel');
+            expect(this.view.el).toContainElement('g.axis.x');
+            expect(this.view.el).toContainElement('g.axis.y');
+            expect(this.view.el).toContainElement('path.line');
+            expect(this.view.el).toContainElement('circle');
 
-            expect(this.view.$el.find('rect').length).toEqual(2);
-            expect(this.view.$el.find('text.chartLabel').length).toEqual(2);
+            expect(this.view.$el.find('path.line').length).toEqual(1);
+            expect(this.view.$el.find('circle').length).toEqual(2);
 
-            expect(this.view.el).toContainText('Test Bar Chart');
+            expect(this.view.el).toContainText('Test Line Chart');
             expect(this.view.el).toContainText('Test Label 01');
             expect(this.view.el).toContainText('Test Label 02');
 
