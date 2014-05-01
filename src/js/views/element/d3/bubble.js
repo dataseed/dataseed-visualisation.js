@@ -81,8 +81,8 @@ define(['./chart', 'underscore', 'd3'], function(ChartView, _, d3) {
             var scaleBubbles, scaleWidth, i = 5;
             do {
 
-                // Get scale "ticks" i.e. the scale bubbles
-                scaleBubbles = this.scale.ticks(i);
+                // Get scale "ticks" (the scale bubbles), filtering out values of 0
+                scaleBubbles = _.filter(this.scale.ticks(i));
 
                 // Caculate scale width
                 scaleWidth = _.reduce(scaleBubbles, this.getScaleWidth, 0, this);
