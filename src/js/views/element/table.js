@@ -15,12 +15,14 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
         sortProperty: 'total',
         sortDirection: -1,
 
+        validParent: /\d+/,
+
         render: function() {
             var attrs = _.extend({
-                'values': this.getTableValues(),
-                'cut': this.model.getCut(),
-                'sortProperty': this.sortProperty,
-                'sortDirection': this.sortDirection
+                values: this.getTableValues(),
+                cut: this.model.getCut(),
+                sortProperty: this.sortProperty,
+                sortDirection: this.sortDirection
             }, this.model.attributes);
 
             this.$el.html(this.template(attrs));
@@ -30,7 +32,7 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
         },
 
         featureClick: function (index) {
-            if (this.model.get("interactive") === false) {
+            if (this.model.get('interactive') === false) {
                 return;
             }
 
@@ -48,13 +50,12 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
             } else {
                 // the dimension is hierarchical: this featureClick should
                 // handle the drill up/down
-                var levelField = dimensionHierarchy['level_field'],
+                var levelField = dimensionHierarchy.level_field,
                     level = this.model.getObservation(index)[levelField],
-                    cutValue = this.model.getObservation(index).id,
-                    validParent_re = /\d+/;
+                    cutValue = this.model.getObservation(index).id;
 
-                if (validParent_re.test(cutValue)) {
-                    this.model.visualisation.drillDown(dimension, level, validParent_re.exec(cutValue)[0]);
+                if (this.validParent.test(cutValue)) {
+                    this.model.visualisation.drillDown(dimension, level, this.validParent.exec(cutValue)[0]);
                 }
             }
             this.resetFeatures();
@@ -67,11 +68,11 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
                 .map(function(value, index) {
                     //_.extend used to add more objects to the value object
                     return {
-                        'index': index,
-                        'id': value['id'],
-                        'total': value['total'],
-                        'totalFormat': format.num(value['total']),
-                        'label': this.model.getLabel(value)['label']
+                        index: index,
+                        id: value.id,
+                        total: value.total,
+                        totalFormat: format.num(value.total),
+                        label: this.model.getLabel(value).label
                     };
                 }, this)
                 //sort the object by the current sorting property

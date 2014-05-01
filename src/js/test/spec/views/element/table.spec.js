@@ -1,7 +1,7 @@
-define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element', 'views/element/d3/line'],
-    function($, Dataset, Connection, Element, LineChartView) {
+define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element', 'views/element/table'],
+    function($, Dataset, Connection, Element, TableChartView) {
 
-    describe('A line chart view', function() {
+    describe('A table element view', function() {
 
         beforeEach(function() {
             Connection.prototype.fetch = function() {};
@@ -34,10 +34,10 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
                     measure: {
                         id: 'test05'
                     },
-                    label: 'Test Line Chart'
+                    label: 'Test Table Chart'
                 });
 
-            this.view = new LineChartView({
+            this.view = new TableChartView({
                     parent: this.$el,
                     model: this.element,
                     visualisation: this.dataset.visualisation
@@ -57,10 +57,10 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
             });
             this.view.render();
 
-            expect(this.view.el).not.toContainElement('svg');
+            expect(this.view.el).not.toContainElement('table');
         });
 
-        it('should render lines and points correctly', function(done) {
+        it('should render rows correctly', function() {
             this.element.observations[0].set({
                 test04: [
                     {
@@ -91,31 +91,15 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
             });
             this.view.render();
 
-            expect(this.view.el).toContainElement('svg');
-            expect(this.view.el).toContainElement('g.axis.x');
-            expect(this.view.el).toContainElement('g.axis.y');
-            expect(this.view.el).toContainElement('path.line');
-            expect(this.view.el).toContainElement('circle');
+            expect(this.view.el).toContainElement('table');
+            expect(this.view.el).toContainElement('th');
+            expect(this.view.el).toContainElement('tr.table-row');
 
-            expect(this.view.$el.find('path.line').length).toEqual(1);
-            expect(this.view.$el.find('circle').length).toEqual(2);
+            expect(this.view.$el.find('tr.table-row').length).toEqual(2);
 
-            expect(this.view.el).toContainText('Test Line Chart');
+            expect(this.view.el).toContainText('Test Table Chart');
             expect(this.view.el).toContainText('Test Label 01');
             expect(this.view.el).toContainText('Test Label 02');
-
-            // Performance tests
-            if (!window.__telemetry__) {
-                done();
-                return;
-            }
-
-            window.__telemetry__(function(results) {
-                expect(results.load_time_ms).toBeLessThan(1000);
-                expect(results.dom_content_loaded_time_ms).toBeLessThan(1000);
-                expect(results.first_paint).toBeLessThan(1000);
-                done();
-            });
         });
 
     });

@@ -5,6 +5,7 @@
 </div>
 <h2><%- label %></h2>
 <div class="chart-container">
+    <% if (values.length > 0) { %>
 	<table class="table">
 		<tr>
 			<th class="table-chevron-left">
@@ -21,4 +22,5 @@
 			</tr>
 		<% }); %>
 	</table>
+    <% } %>
 </div>
