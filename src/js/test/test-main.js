@@ -1,5 +1,5 @@
 var allTestFiles = [];
-var IS_TEST = /(spec|test)\.js$/i;
+var IS_TEST = /\.spec\.js$/i;
 var IS_COMPONENT = /^\/base\/components/i;
 
 var pathToModule = function(path) {

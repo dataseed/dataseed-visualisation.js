@@ -60,7 +60,7 @@ define(['jquery', 'models/dataset', 'models/visualisation/element', 'views/eleme
             expect(this.view.el).not.toContainElement('text.scaleLabel');
         });
 
-        it('should render bubbles and labels correctly', function() {
+        it('should render bubbles and labels correctly', function(done) {
             this.element.observations[0].set({
                 test04: [
                     {
@@ -102,6 +102,19 @@ define(['jquery', 'models/dataset', 'models/visualisation/element', 'views/eleme
             expect(this.view.el).toContainText('Test Bubble Chart');
             expect(this.view.el).toContainText('Test Label 01');
             expect(this.view.el).toContainText('Test Label 02');
+
+            // Performance tests
+            if (!window.__telemetry__) {
+                done();
+                return;
+            }
+
+            window.__telemetry__(function(results) {
+                expect(results.load_time_ms).toBeLessThan(1000);
+                expect(results.dom_content_loaded_time_ms).toBeLessThan(1000);
+                expect(results.first_paint).toBeLessThan(1000);
+                done();
+            });
         });
 
     });

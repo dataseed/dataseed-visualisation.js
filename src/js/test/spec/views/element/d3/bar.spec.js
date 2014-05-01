@@ -1,8 +1,10 @@
-define(['jquery', 'models/dataset', 'models/visualisation/element', 'views/element/d3/bar'], function($, Dataset, Element, BarChartView) {
+define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element', 'views/element/d3/bar'], function($, Dataset, Connection, Element, BarChartView) {
 
     describe('A bar chart view', function() {
 
         beforeEach(function() {
+            Connection.prototype.fetch = function() {};
+
             this.$el = $('<div style="width: 800px; height: 600px;"/>');
 
             this.dataset = new Dataset({
@@ -60,7 +62,7 @@ define(['jquery', 'models/dataset', 'models/visualisation/element', 'views/eleme
             expect(this.view.el).not.toContainElement('text.scaleLabel');
         });
 
-        it('should render bars and labels correctly', function() {
+        it('should render bars and labels correctly', function(done) {
             this.element.observations[0].set({
                 test04: [
                     {
@@ -102,8 +104,20 @@ define(['jquery', 'models/dataset', 'models/visualisation/element', 'views/eleme
             expect(this.view.el).toContainText('Test Bar Chart');
             expect(this.view.el).toContainText('Test Label 01');
             expect(this.view.el).toContainText('Test Label 02');
+
+            // Performance tests
+            if (!window.__telemetry__) {
+                done();
+                return;
+            }
+
+            window.__telemetry__(function(results) {
+                expect(results.load_time_ms).toBeLessThan(1000);
+                expect(results.dom_content_loaded_time_ms).toBeLessThan(1000);
+                expect(results.first_paint).toBeLessThan(1000);
+                done();
+            });
         });
 
     });
-
 });
