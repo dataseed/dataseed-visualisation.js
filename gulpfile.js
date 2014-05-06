@@ -11,7 +11,8 @@ var gulp = require('gulp'),
 var conf = {
     js: {
         test: {
-            config: 'karma.conf.js',
+            config: 'src/js/test/karma.conf.js',
+            perfConfig: 'src/js/test/karma.perf.conf.js',
             files: 'test/spec/**/*.js'
         },
         rjs: {
@@ -58,13 +59,25 @@ gulp.task('test', function() {
         });
 });
 
-// Test JS
+// Test JS (watch)
 gulp.task('watch', function() {
     return gulp.src(conf.js.test.files)
         .pipe(karma({
             configFile: conf.js.test.config,
             action: 'watch'
         }));
+});
+
+// Performance Test JS
+gulp.task('test-perf', function() {
+    return gulp.src(conf.js.test.files)
+        .pipe(karma({
+            configFile: conf.js.test.perfConfig,
+            action: 'run'
+        }))
+        .on('error', function(err) {
+            throw err;
+        });
 });
 
 // Compile JS (d3)

@@ -26,6 +26,10 @@ define(['./chart', 'underscore', 'd3'],
                 };
             }, this);
 
+            if (data.length < 1) {
+                return this;
+            }
+
             // The height is calculated as (a sort of) log regression:
             // it will not be so big when we have a lot of data and not so
             // low when we have few data
