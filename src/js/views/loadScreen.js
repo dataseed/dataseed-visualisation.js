@@ -24,7 +24,7 @@ define(['backbone', 'underscore', 'spin'], function(Backbone, _, Spinner) {
         },
 
         initialize: function(opts) {
-            this.spinner = new Spinner(_.extend(this.defaultOptions, opts));
+            this.spinner = new Spinner(_.extend({}, this.defaultOptions, opts));
             this.render();
         },
 
