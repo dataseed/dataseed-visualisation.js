@@ -34,7 +34,7 @@ define(['backbone', '../models/dataset/connection'],
                     return opts['type'] + ':' + opts['dimension'];
 
                 case 'observations':
-                    return opts['type'] + ':' + opts['dimension'] + ':' + opts['measure'];
+                    return opts['type'] + ':' + opts['dimension'] + ':' + opts['measure'] + ':' + opts['aggregation'];
 
                 default:
                     return _.uniqueId('conn_');
