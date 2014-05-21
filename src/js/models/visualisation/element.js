@@ -3,6 +3,15 @@ function (Backbone, _) {
     'use strict';
 
     var Element = Backbone.Model.extend({
+        /**
+         * Generic Element model.
+         *
+         * models.Visualisation.reset() sets element models in its
+         * ElementsCollection from visualisation "elements" attribute. The
+         * polymorphic collections.ElementsCollections is responsible of
+         * instantiating the proper child Element model from the visualisation
+         * "elements" type attribute
+         */
 
         validParent: /\d+/,
 
@@ -19,9 +28,14 @@ function (Backbone, _) {
             this.dataset = options['dataset'];
             this.visualisation = options['visualisation'];
 
-            // Get dimensions and observations models
+            // Get dimensions and observations connections models
             this.dimensions = [];
             this.observations = [];
+
+            if(this.get('display') === false){
+                // No need to add connections for a hidden element
+                return;
+            }
 
             _.each(this.get('dimensions'), function (opts) {
                 if (_.isUndefined(opts['field']['id'])) {

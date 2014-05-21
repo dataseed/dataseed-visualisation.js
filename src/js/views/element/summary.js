@@ -9,7 +9,6 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
         initialize: function(options) {
             // Bind to element models
             this.visualisation = options['visualisation'];
-            this.visualisation.elements.bind('ready', this.render, this);
         },
 
         render: function() {
@@ -20,13 +19,20 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
         getSummaryText: function() {
 
             var summaryText,
-                measure = this.model.getMeasureLabel();
+                measure = this.model.getMeasureLabel(),
+                total = format.num(this.model.getData());
 
-            if (this.model.dimensions.length > 0) {
+            // Basic summary. It will be used if the element has no dimensions.
+            summaryText = _.escape(measure) + ': ' + total;
+            this.$el.removeClass('full');
 
-                // Get aggregate total
-                var dimensions = _(this.model.get('dimensions')).chain(),
-                    total = format.num(this.model.getTotal());
+            if (this.model.get('dimensions').length > 0) {
+                /*
+                 * Build a summary text taking into account the dimensions'
+                 * text_format and text_default attributes
+                 */
+
+                var dimensions = _(this.model.get('dimensions')).chain();
 
                 // Check if summary text has been provided
                 if (dimensions.pluck('text_default').reject(_.isEmpty).size().value() > 0) {
@@ -55,19 +61,10 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
                     // Build full summary text
                     summaryText = summary.value().join(' ');
                     this.$el.addClass('full');
-
-                } else {
-
-                    // Use basic summary
-                    summaryText = _.escape(measure) + ': ' + total;
-                    this.$el.removeClass('full');
-
                 }
-
             }
 
             return summaryText;
-
         }
 
     });

@@ -92,7 +92,9 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
          * Render an individual element
          */
         renderElement: function(element) {
-            this.elementsViews[element.id].render();
+            if(element.get('display') !== false){
+                this.elementsViews[element.id].render();
+            }
         },
 
         /**

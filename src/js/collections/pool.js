@@ -1,31 +1,37 @@
-define(['backbone', '../models/dataset/connection'],
-        function(Backbone, Connection) {
+define(['backbone', '../models/dataset/connection', '../models/dataset/dimensionalConnection' ],
+        function(Backbone, Connection, FacetedConnection) {
     'use strict';
 
     var ConnectionPool = Backbone.Collection.extend({
 
-        model: Connection,
+        // Polymorphic Connection models
+        // http://backbonejs.org/#Collection-model
+        model: function (attrs, options) {
+            if (_.isUndefined(attrs['dimension'])) {
+                return new Connection(attrs, options);
+            }
+            return new FacetedConnection(attrs, options);
+
+        },
 
         initialize: function(models, options) {
             this.dataset = options['dataset'];
             this.defaultCut = options['defaultCut'];
         },
 
-        getConnection: function(opts) {
-            var id = this.getConnectionId(opts),
-                conn = this.get(id);
+        getConnection: function (opts) {
+            var id = this.getConnectionId(opts);
 
-            if (_.isUndefined(conn)) {
+            if (_.isUndefined(this.get(id))) {
                 var defaults = {
                     id: id,
                     dataset: this.dataset,
                     cut: this.defaultCut
                 };
-                conn = new Connection(_.extend(defaults, opts));
-                this.add(conn);
+                this.add(_.extend(defaults, opts));
             }
 
-            return conn;
+            return this.get(id);
         },
 
         getConnectionId: function(opts) {
@@ -34,7 +40,11 @@ define(['backbone', '../models/dataset/connection'],
                     return opts['type'] + ':' + opts['dimension'];
 
                 case 'observations':
-                    return opts['type'] + ':' + opts['dimension'] + ':' + opts['measure'] + ':' + opts['aggregation'];
+                    var dim = (!_.isUndefined(opts['dimension']))?
+                        opts['dimension']:
+                        'NODIM';
+
+                    return  opts['type'] + ':' + dim + ':' + opts['measure'] + ':' + opts['aggregation'];
 
                 default:
                     return _.uniqueId('conn_');

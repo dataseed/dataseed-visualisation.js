@@ -5,7 +5,7 @@ define(['backbone', 'underscore'],
     var Connection = Backbone.Model.extend({
 
         url: function() {
-            var url = '/api/datasets/' + this.dataset.get('id') + '/' + this.get('type') + '/' + this.get('dimension'),
+            var url = '/api/datasets/' + this.dataset.get('id') + '/' + this.get('type') + '/',
                 params = _.extend({}, this.get('cut'), {'aggregation': this.get('aggregation')});
 
             if (!_.isNull(this.get('measure'))) {
@@ -49,32 +49,8 @@ define(['backbone', 'underscore'],
          * Get data
          */
         getData: function() {
-            return this.get(this.get('dimension'));
+            return this.get('total');
         },
-
-        /**
-         * Get the specified value
-         */
-        getValue: function(k) {
-            return this.getData()[k];
-        },
-
-        /**
-         * Sum the values for this dimension
-         */
-        getTotal: function() {
-            var dimension = this.get('dimension'),
-                currentCut = null;
-            if (this.dataset.isCut(dimension)) {
-                currentCut = this.dataset.getCut(dimension);
-            }
-            return _.reduce(this.getData(), function(m, v) {
-                if (currentCut === null || currentCut === v.id) {
-                    return m + v.total;
-                }
-                return m;
-            }, 0);
-        }
 
     });
 

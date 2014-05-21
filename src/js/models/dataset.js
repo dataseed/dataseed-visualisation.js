@@ -117,12 +117,19 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
                 // Update cut on every field connection
                 conn.set('cut', this.cut);
 
-                var dimension = conn.get('dimension'),
-                    type = conn.get('type'),
-                    update = this.fields.get(dimension).get('update_dimension');
+                var fetchConn = true;
 
-                if ((_.size(cut) > 1 || !_.has(cut, dimension)) && (type != 'dimensions' || update === true)) {
+                if (!_.isUndefined(conn.get('dimension'))) {
+                    var dimension = conn.get('dimension'),
+                        type = conn.get('type'),
+                        update = this.fields.get(dimension).get('update_dimension');
+
                     // Re-fetch if the field *isn't* included in the updated cut
+                    fetchConn = (_.size(cut) > 1 || !_.has(cut, dimension)) && (type != 'dimensions' || update === true);
+                }
+
+                // Re-fetch the connection or just initiate a re-render.
+                if(fetchConn){
                     conn.fetch();
                 } else {
                     // Otherwise, initiate a re-render
