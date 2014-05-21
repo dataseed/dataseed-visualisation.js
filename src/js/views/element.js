@@ -40,7 +40,7 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
                 this.$el.addClass('hide');
 
             // Check if this element's data is loaded
-            } else if (this.model.isLoaded()) {
+            } else if (this.model.connectionsAllSynched()) {
 
                 // Check if a chart view exists and is of the correct type
                 if (!(this.element && this.element instanceof this.elementTypes[type])) {

@@ -17,7 +17,6 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
         },
 
         getSummaryText: function() {
-
             var summaryText,
                 measure = this.model.getMeasureLabel(),
                 total = format.num(this.model.getData());

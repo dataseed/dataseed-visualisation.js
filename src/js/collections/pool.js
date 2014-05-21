@@ -1,5 +1,5 @@
 define(['backbone', '../models/dataset/connection', '../models/dataset/dimensionalConnection' ],
-        function(Backbone, Connection, FacetedConnection) {
+        function(Backbone, Connection, DimensionalConnection) {
     'use strict';
 
     var ConnectionPool = Backbone.Collection.extend({
@@ -10,7 +10,7 @@ define(['backbone', '../models/dataset/connection', '../models/dataset/dimension
             if (_.isUndefined(attrs['dimension'])) {
                 return new Connection(attrs, options);
             }
-            return new FacetedConnection(attrs, options);
+            return new DimensionalConnection(attrs, options);
 
         },
 

@@ -15,15 +15,29 @@ function (Backbone, _) {
 
         validParent: /\d+/,
 
-        loaded: 0,
+        synchedConnections: 0,
 
         url: function () {
             return '/api/datasets/' + this.dataset.get('id') + '/visualisations/' + this.visualisation.get('id') + '/elements/' + this.get('id');
         },
 
         initialize: function (options) {
-            this.bind('change', this.change, this);
+            this.setUp(options);
 
+            if(this.get('display') === false){
+                // The element is hidden: no need to init connections
+                return;
+            }
+
+            // Init element's connections.
+            this.initConnections(options);
+        },
+
+        /**
+         * Set up basic element properties
+         *
+         */
+        setUp: function (options) {
             // Set dataset and visualisation models
             this.dataset = options['dataset'];
             this.visualisation = options['visualisation'];
@@ -31,12 +45,12 @@ function (Backbone, _) {
             // Get dimensions and observations connections models
             this.dimensions = [];
             this.observations = [];
+        },
 
-            if(this.get('display') === false){
-                // No need to add connections for a hidden element
-                return;
-            }
-
+        /**
+         * Init element's connections.
+         */
+        initConnections: function(){
             _.each(this.get('dimensions'), function (opts) {
                 if (_.isUndefined(opts['field']['id'])) {
                     return;
@@ -52,41 +66,51 @@ function (Backbone, _) {
                     dimension = this.dataset.pool.getConnection(_.extend({type: 'dimensions'}, values));
 
                 // Bind to sync event and keep references
-                observations.bind('sync', this.change, this);
+                observations.bind('sync', this.onConnectionSync, this);
                 this.observations.push(observations);
 
-                dimension.bind('sync', this.change, this);
+                dimension.bind('sync', this.onConnectionSync, this);
                 this.dimensions.push(dimension);
             }, this);
+
         },
 
         /**
-         * Dataset connection change event handler
+         * Dataset connection sync event handler
          */
-        change: function () {
-            this.loaded++;
-            this.trigger('ready', this);
+        onConnectionSync: function () {
+            this.synchedConnections++;
+            if(this.connectionsAllSynched()){
+                // This element is ready to be (re)rendered
+                this.trigger('element:ready', this);
+            }
+        },
+
+        /**
+         * Return this element's dimension connections that need to be updated
+         */
+        dimensionConnectionsToUpdate: function () {
+            return _.filter(this.dimensions, function (d) {
+                var datasetField = this.dataset.fields.get(d.get('dimension'));
+
+                // A dimension connection is fetched at least once (when it is
+                // initiated).
+                // When a cut is added/removed, a dimension is updated
+                // (re-fetched) only if the "update_dimension" field's attribute
+                // is true
+                return (!d.isLoaded() || (datasetField.get('update_dimension') === true));
+            }, this);
         },
 
         /**
          * Return true if all required data has loaded
          */
-        isLoaded: function () {
+        connectionsAllSynched: function () {
             // Check that all observations and dimensions have completed sync
             // and that isLoaded returns true
 
-            var dimensionsToUpdate = _.filter(this.dimensions, function (d) {
-                var datasetField = this.dataset.fields.get(d.get('dimension'));
-
-                // A dimension is fetched at least once.
-                // When a cut is added/removed, a dimension it is updated
-                // (re-fetched) only if the "update_dimension" field's attribute
-                // is true
-                return (!d.isLoaded() || (datasetField.get('update_dimension') === true));
-            }, this);
-
             return (
-                ((this.loaded % (dimensionsToUpdate.length + this.observations.length)) === 0) &&
+                (this.synchedConnections % (this.dimensionConnectionsToUpdate().length + this.observations.length) === 0) &&
                     _.reduce(this.dimensions.concat(this.observations), function (memo, conn) {
                         return (memo && conn.isLoaded());
                     }, true)

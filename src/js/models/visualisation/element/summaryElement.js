@@ -4,22 +4,7 @@ define(['backbone', 'underscore', '../element'],
 
         var SummaryElement = Element.extend({
 
-            initialize: function (options) {
-                this.bind('change', this.change, this);
-
-                // Set dataset and visualisation models
-                this.dataset = options['dataset'];
-                this.visualisation = options['visualisation'];
-
-                // Get dimensions and observations models
-                this.dimensions = [];
-                this.observations = [];
-
-                if (this.get('display') === false) {
-                    // No need to add connections for a hidden element
-                    return;
-                }
-
+            initConnections: function () {
                 var values = {
                     measure: _.isNull(this.get('measure')) ? null : this.get('measure')['id'],
                     aggregation: this.get('aggregation')
@@ -27,7 +12,7 @@ define(['backbone', 'underscore', '../element'],
 
                 var observations = this.dataset.pool.getConnection(_.extend({type: 'observations'}, values));
                 // Bind to sync event and keep references
-                observations.bind('sync', this.change, this);
+                observations.bind('sync', this.onConnectionSync, this);
                 this.observations.push(observations);
             },
 

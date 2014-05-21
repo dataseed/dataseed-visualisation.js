@@ -18,7 +18,7 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
         initialize: function(options) {
             this.model.elements.bind('add', this.createElement, this);
             this.model.elements.bind('remove', this.removeElement, this);
-            this.model.elements.bind('ready', this.renderElement, this);
+            this.model.elements.bind('element:ready', this.renderElement, this);
             this.model.elements.bind('reset', this.resetElements, this);
 
             this.model.styles.bind('ready', this.renderElements, this);
@@ -76,7 +76,6 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
          */
         addElement: function(element) {
             this.$elements.append(this.elementsViews[element.id].$el);
-            this.renderElement(element);
         },
 
         /**
@@ -89,7 +88,11 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
         },
 
         /**
-         * Render an individual element
+         * Render an individual element.
+         *
+         * This is also the handler for the 'element:ready: event which is
+         * triggered by an element model when the visualisation element is ready
+         * to be rendered (that is, all its connections have been synched)
          */
         renderElement: function(element) {
             if(element.get('display') !== false){
