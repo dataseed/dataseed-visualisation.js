@@ -35,30 +35,38 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
                 .addClass('span' + (this.model.get('width') * 3))
                 .addClass(type + 'Element');
 
-            if (!this.model.isLoaded()) {
-                return this;
-            }
-
-            // Remove existing element view
-            if (this.element) {
-                this.element.remove();
-            }
-
             // Check if this element should be displayed
             if (!this.model.get('display')) {
                 this.$el.addClass('hide');
-                return this;
+
+            // Check if this element's data is loaded
+            } else if (this.model.isLoaded()) {
+
+                // Check if a chart view exists and is of the correct type
+                if (!(this.element && this.element instanceof this.elementTypes[type])) {
+
+                    // Remove existing element view, if it exists
+                    if (this.element) {
+                        this.element.remove();
+                    }
+
+                    // Create new element view
+                    this.element = new this.elementTypes[type] ({
+                        parent: this.$el,
+                        model: this.model,
+                        visualisation: this.visualisation
+                    });
+
+                    // Add element
+                    this.$el.append(this.element.$el);
+
+                }
+
+                // Render
+                this.element.render();
+
             }
 
-            // Create element view
-            this.element = new this.elementTypes[type] ({
-                parent: this.$el,
-                model: this.model,
-                visualisation: this.visualisation
-            });
-
-            // Render element
-            this.$el.append(this.element.render().$el);
             return this;
         }
 

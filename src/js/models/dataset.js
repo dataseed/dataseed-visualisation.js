@@ -126,7 +126,7 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
                     conn.fetch();
                 } else {
                     // Otherwise, initiate a re-render
-                    conn.trigger('change');
+                    conn.trigger('sync');
                 }
 
             }, this);
