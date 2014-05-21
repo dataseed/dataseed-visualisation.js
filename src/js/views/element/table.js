@@ -107,6 +107,15 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
             return;
         },
 
+        /**
+         * Reset table chart filters button event handler
+         */
+        removeFilter: function(e) {
+            e.preventDefault();
+            this.model.removeCut();
+            this.resetFeatures();
+        },
+
         resetFeatures: function() {
             var featureFill = this.model.visualisation.styles.getStyle('featureFill', this.model);
             if (this.model.isCut()) {
