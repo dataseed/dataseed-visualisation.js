@@ -128,12 +128,13 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
                     fetchConn = (_.size(cut) > 1 || !_.has(cut, dimension)) && (type != 'dimensions' || update === true);
                 }
 
-                // Re-fetch the connection or just initiate a re-render.
+                // Re-fetch the connection or just let the observers know that
+                // this the connection is already synched, so a re-render could
+                // be initiated
                 if(fetchConn){
                     conn.fetch();
-                } else {
-                    // Otherwise, initiate a re-render
-                    conn.trigger('sync');
+                }else{
+                    conn.trigger('connection:sync', conn);
                 }
 
             }, this);

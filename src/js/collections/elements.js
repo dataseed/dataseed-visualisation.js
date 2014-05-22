@@ -17,7 +17,6 @@ define(['backbone', '../models/visualisation/element', '../models/visualisation/
 
                 if (_.isUndefined(elementTypes[attrs.type])) {
                     // Unknown subclass
-                    // TODO raise an exception or write a console message?
                     return new Element(attrs, options);
                 }
 

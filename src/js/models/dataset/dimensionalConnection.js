@@ -4,27 +4,8 @@ define(['backbone', 'underscore', './connection'],
 
     var dimensionalConnection = Connection.extend({
 
-        url: function() {
-            var url = '/api/datasets/' + this.dataset.get('id') + '/' + this.get('type') + '/' + this.get('dimension'),
-                params = _.extend({}, this.get('cut'), {'aggregation': this.get('aggregation')});
-
-            if (!_.isNull(this.get('measure'))) {
-                params['measure'] = this.get('measure');
-            }
-
-            // Bucket dimensions
-            var bucket = this.get('bucket');
-            if (this.get('type') == 'dimensions' && !_.isUndefined(bucket) && !_.isNull(bucket)) {
-                params['bucket'] = bucket;
-            }
-
-            // Add cut to query parameters
-            var urlParams = _.map(params, function (value, key, cut) { return key + '=' + value; });
-
-            // Add query parameters to URL
-            url += '?' + urlParams.join('&');
-
-            return url;
+        apiEndpoint: function () {
+            return '/api/datasets/' + this.dataset.get('id') + '/' + this.get('type') + '/' + this.get('dimension');
         },
 
         /**

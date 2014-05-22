@@ -15,7 +15,14 @@ function (Backbone, _) {
 
         validParent: /\d+/,
 
-        synchedConnections: 0,
+        _obsConnectionsSynced: 0,
+        _dimConnectionsSynced: 0,
+
+        // True if a connections sync is currently in progress.
+        _syncingConnections : false,
+
+        // True if connections have been synched at least once.
+        _connections_loaded: false,
 
         url: function () {
             return '/api/datasets/' + this.dataset.get('id') + '/visualisations/' + this.visualisation.get('id') + '/elements/' + this.get('id');
@@ -66,10 +73,10 @@ function (Backbone, _) {
                     dimension = this.dataset.pool.getConnection(_.extend({type: 'dimensions'}, values));
 
                 // Bind to sync event and keep references
-                observations.bind('sync', this.onConnectionSync, this);
+                observations.bind('connection:sync', this.onConnectionSync, this);
                 this.observations.push(observations);
 
-                dimension.bind('sync', this.onConnectionSync, this);
+                dimension.bind('connection:sync', this.onConnectionSync, this);
                 this.dimensions.push(dimension);
             }, this);
 
@@ -78,43 +85,42 @@ function (Backbone, _) {
         /**
          * Dataset connection sync event handler
          */
-        onConnectionSync: function () {
-            this.synchedConnections++;
+        onConnectionSync: function (conn) {
+
+            if(!this._syncingConnections){
+                this._syncingConnections = true;
+            }
+
+            switch (conn.get('type')) {
+                case 'observations':
+                    this._obsConnectionsSynced++;
+                    break;
+
+                case 'dimensions':
+                    this._dimConnectionsSynced++;
+                    break;
+            }
+
             if(this.connectionsAllSynched()){
                 // This element is ready to be (re)rendered
                 this.trigger('element:ready', this);
+
+                // Reset internal flags/counters
+                this._obsConnectionsSynced = 0;
+                this._dimConnectionsSynced = 0;
+                this._syncingConnections = false;
+                this._connections_loaded = true;
             }
-        },
-
-        /**
-         * Return this element's dimension connections that need to be updated
-         */
-        dimensionConnectionsToUpdate: function () {
-            return _.filter(this.dimensions, function (d) {
-                var datasetField = this.dataset.fields.get(d.get('dimension'));
-
-                // A dimension connection is fetched at least once (when it is
-                // initiated).
-                // When a cut is added/removed, a dimension is updated
-                // (re-fetched) only if the "update_dimension" field's attribute
-                // is true
-                return (!d.isLoaded() || (datasetField.get('update_dimension') === true));
-            }, this);
         },
 
         /**
          * Return true if all required data has loaded
          */
         connectionsAllSynched: function () {
-            // Check that all observations and dimensions have completed sync
-            // and that isLoaded returns true
-
-            return (
-                (this.synchedConnections % (this.dimensionConnectionsToUpdate().length + this.observations.length) === 0) &&
-                    _.reduce(this.dimensions.concat(this.observations), function (memo, conn) {
-                        return (memo && conn.isLoaded());
-                    }, true)
-                );
+            // Check that all observations and dimensions have completed sync.
+            return ( (this._connections_loaded && !this._syncingConnections) ||
+                (this._obsConnectionsSynced === this.observations.length &&
+                    this._dimConnectionsSynced === this.dimensions.length));
         },
 
         /**
