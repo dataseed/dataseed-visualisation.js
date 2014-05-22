@@ -31,10 +31,15 @@
 // VISUALISATION HEADER
 // --------------------------------------------------
 
-// Blue lines only for mortality dataset
+/*Styles for only for mortality dataset*/
 div#mortality {
+    /*Blue lines*/
     .summary-text.full {
         background: transparent url('@{dsBaseUrl}img/lines.png') no-repeat center bottom;
+    }
+
+    article.summaryElement {
+        margin-bottom: 0;
     }
 }
 
@@ -62,11 +67,12 @@ article.summaryElement {
         float: right;
         margin-right: 10px;
 
+        /*Help icon (i)*/
         a {
             display: block;
             width: 18px;
-            height: 19px;
-            padding: 3px 0 0 4px;
+            height: 18px;
+            padding: 4px 0 0 4px;
             .border-radius(12px);
             background-color: @white;
         }
@@ -74,6 +80,7 @@ article.summaryElement {
 
     .icon-info-sign {
         background-position: -120px -97px;
+        vertical-align: baseline;
     }
 }
 
@@ -121,7 +128,7 @@ article.summaryElement {
 // --------------------------------------------------
 
 .elements {
-    margin-top: 15px;
+    margin-top: 40px;
 }
 
 .element {
