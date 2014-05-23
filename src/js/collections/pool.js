@@ -7,7 +7,7 @@ define(['backbone', '../models/dataset/connection', '../models/dataset/dimension
         // Polymorphic Connection models
         // http://backbonejs.org/#Collection-model
         model: function (attrs, options) {
-            if (_.isUndefined(attrs['dimension'])) {
+            if (_.isUndefined(attrs.dimension)) {
                 return new Connection(attrs, options);
             }
             return new DimensionalConnection(attrs, options);
@@ -15,8 +15,8 @@ define(['backbone', '../models/dataset/connection', '../models/dataset/dimension
         },
 
         initialize: function(models, options) {
-            this.dataset = options['dataset'];
-            this.defaultCut = options['defaultCut'];
+            this.dataset = options.dataset;
+            this.defaultCut = options.defaultCut;
         },
 
         getConnection: function (opts) {
@@ -35,16 +35,16 @@ define(['backbone', '../models/dataset/connection', '../models/dataset/dimension
         },
 
         getConnectionId: function(opts) {
-            switch(opts['type']) {
+            switch(opts.type) {
                 case 'dimensions':
-                    return opts['type'] + ':' + opts['dimension'];
+                    return opts.type + ':' + opts.dimension;
 
                 case 'observations':
-                    var dim = (!_.isUndefined(opts['dimension']))?
-                        opts['dimension']:
+                    var dim = (!_.isUndefined(opts.dimension))?
+                        opts.dimension:
                         'NODIM';
 
-                    return  opts['type'] + ':' + dim + ':' + opts['measure'] + ':' + opts['aggregation'];
+                    return opts.type + ':' + dim + ':' + opts.measure + ':' + opts.aggregation;
 
                 default:
                     return _.uniqueId('conn_');

@@ -9,16 +9,16 @@ define(['backbone', 'underscore'], function (Backbone, _) {
 
         url: function () {
             var url = this.apiEndpoint(),
-                params = _.extend({}, this.get('cut'), {'aggregation': this.get('aggregation')});
+                params = _.extend({}, this.get('cut'), {aggregation: this.get('aggregation')});
 
             if (!_.isNull(this.get('measure'))) {
-                params['measure'] = this.get('measure');
+                params.measure = this.get('measure');
             }
 
             // Bucket dimensions
             var bucket = this.get('bucket');
             if (this.get('type') == 'dimensions' && !_.isUndefined(bucket) && !_.isNull(bucket)) {
-                params['bucket'] = bucket;
+                params.bucket = bucket;
             }
 
             // Add cut to query parameters
@@ -37,7 +37,7 @@ define(['backbone', 'underscore'], function (Backbone, _) {
          */
         initialize: function (options) {
             // Set dataset model
-            this.dataset = options['dataset'];
+            this.dataset = options.dataset;
 
             // Trigger our own connection:sync event when the connection model
             // is synched.

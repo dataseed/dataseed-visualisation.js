@@ -6,7 +6,7 @@ define(['backbone', 'underscore', '../element'],
 
             initConnections: function () {
                 var values = {
-                    measure: _.isNull(this.get('measure')) ? null : this.get('measure')['id'],
+                    measure: _.isNull(this.get('measure')) ? null : this.get('measure').id,
                     aggregation: this.get('aggregation')
                 };
 
@@ -17,7 +17,7 @@ define(['backbone', 'underscore', '../element'],
             },
 
             getData: function (dimensionId) {
-                var conn = this.getElementConnection("observations", dimensionId);
+                var conn = this.getElementConnection('observations', dimensionId);
 
                 if (!_.isUndefined(conn)) {
                     return conn.getData();

@@ -2,18 +2,17 @@ define(['backbone', '../models/visualisation/element', '../models/visualisation/
     function (Backbone, Element, SummaryElement) {
         'use strict';
 
+        // Hash to map the visualisation "elements" type attribute values to the
+        // proper Element model child objects
+        var elementTypes = {
+            summary: SummaryElement
+        };
+
         var ElementsCollection = Backbone.Collection.extend({
 
             // Polymorphic Element models
             // http://backbonejs.org/#Collection-model
             model: function (attrs, options) {
-
-                // Hash to map the visualisation "elements" type attribute values to the
-                // proper Element model child objects
-                var elementTypes =
-                {
-                    'summary': SummaryElement
-                };
 
                 if (_.isUndefined(elementTypes[attrs.type])) {
                     // Unknown subclass

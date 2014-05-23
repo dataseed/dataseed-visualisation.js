@@ -22,7 +22,6 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
             this.model.elements.bind('reset', this.resetElements, this);
 
             this.model.styles.bind('ready', this.renderElements, this);
-
         },
 
         /**
@@ -31,9 +30,7 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
         render: function() {
             // Render template
             this.$el.html(this.template(_.extend(
-                {
-                    'dataset_id': this.model.dataset.get('id')
-                },
+                { dataset_id: this.model.dataset.get('id') },
                 this.model.attributes,
                 this.templateDefaults
             )));
@@ -66,8 +63,8 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
         createElement: function(element) {
             var id = element.get('id');
             this.elementsViews[id] = new ElementView({
-                'model': element,
-                'visualisation': this.model
+                model: element,
+                visualisation: this.model
             });
         },
 

@@ -56,7 +56,7 @@ define(['jquery', 'models/dataset', 'models/visualisation/element', 'views/eleme
             this.element.dimensions[0].set({
                 test04: {}
             });
-            this.element._connections_loaded = true;
+            this.element._connectionsLoaded = true;
             this.view.render();
 
             expect(this.view.el).toBeMatchedBy('.hide');
@@ -78,7 +78,7 @@ define(['jquery', 'models/dataset', 'models/visualisation/element', 'views/eleme
             this.element.dimensions[0].set({
                 test04: {}
             });
-            this.element._connections_loaded = true;
+            this.element._connectionsLoaded = true;
             this.view.render();
 
             expect(this.view.el).toBeMatchedBy('.element.barElement.span9');

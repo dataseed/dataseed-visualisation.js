@@ -2,7 +2,7 @@ define(['backbone', 'underscore', './connection'],
         function (Backbone, _, Connection) {
     'use strict';
 
-    var dimensionalConnection = Connection.extend({
+    var DimensionalConnection = Connection.extend({
 
         apiEndpoint: function () {
             return '/api/datasets/' + this.dataset.get('id') + '/' + this.get('type') + '/' + this.get('dimension');
@@ -41,6 +41,6 @@ define(['backbone', 'underscore', './connection'],
 
     });
 
-    return dimensionalConnection;
+    return DimensionalConnection;
 
 });

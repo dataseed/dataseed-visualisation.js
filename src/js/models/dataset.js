@@ -13,17 +13,17 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
          */
         initialize: function(options) {
             // Check if visualisation was supplied in model data
-            if (!_.isUndefined(options['visualisations']) && !_.isUndefined(options['visualisations'][0])) {
+            if (!_.isUndefined(options.visualisations) && !_.isUndefined(options.visualisations[0])) {
                 this.visualisation = new Visualisation(_.extend(
-                    {'dataset': this},
-                    options['visualisations'][0]
+                    {dataset: this},
+                    options.visualisations[0]
                 ));
 
             // Check if visualisation ID was supplied
-            } else if (!_.isUndefined(options['visualisation_id'])) {
+            } else if (!_.isUndefined(options.visualisation_id)) {
                 this.visualisation = new Visualisation({
-                    'id': options['visualisation_id'],
-                    'dataset': this
+                    id: options.visualisation_id,
+                    dataset: this
                 });
 
             } else {
@@ -32,20 +32,20 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
             }
 
             // Initialise cut
-            this.cut = options['cut'] || {};
+            this.cut = options.cut || {};
 
             // Create collection for field models
             this.fields = new FieldsCollection();
 
             // Create connection pool collection
-            this.pool = new ConnectionPool(null, {dataset: this, defaultCut: options['cut']});
+            this.pool = new ConnectionPool(null, {dataset: this, defaultCut: options.cut});
         },
 
         reset: function () {
             // Set model defaults
             var defaults = {
-                'dataset': this.dataset,
-                'defaultCut': this.get('cut')
+                dataset: this.dataset,
+                defaultCut: this.get('cut')
             };
 
             // Set element models in collection from visualisation "elements" attribute
@@ -172,8 +172,8 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
                  _.isUndefined(hierarchy.available_levels.upper_bound))
                ){
                 var default_available_levels = {
-                    "lower_bound": 1,
-                    "upper_bound": hierarchy.ancestor_fields.length
+                    lower_bound: 1,
+                    upper_bound: hierarchy.ancestor_fields.length
                 };
                 hierarchy = _.extend({}, default_available_levels, hierarchy.available_levels);
             }

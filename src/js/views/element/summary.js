@@ -8,11 +8,11 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
 
         initialize: function(options) {
             // Bind to element models
-            this.visualisation = options['visualisation'];
+            this.visualisation = options.visualisation;
         },
 
         render: function() {
-            this.$el.html(this.template(_.extend({'summary': this.getSummaryText()}, this.model.attributes)));
+            this.$el.html(this.template(_.extend({summary: this.getSummaryText()}, this.model.attributes)));
             return this;
         },
 

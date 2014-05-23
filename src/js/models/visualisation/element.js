@@ -22,7 +22,7 @@ function (Backbone, _) {
         _syncingConnections : false,
 
         // True if connections have been synched at least once.
-        _connections_loaded: false,
+        _connectionsLoaded: false,
 
         url: function () {
             return '/api/datasets/' + this.dataset.get('id') + '/visualisations/' + this.visualisation.get('id') + '/elements/' + this.get('id');
@@ -46,8 +46,8 @@ function (Backbone, _) {
          */
         setUp: function (options) {
             // Set dataset and visualisation models
-            this.dataset = options['dataset'];
-            this.visualisation = options['visualisation'];
+            this.dataset = options.dataset;
+            this.visualisation = options.visualisation;
 
             // Get dimensions and observations connections models
             this.dimensions = [];
@@ -59,14 +59,14 @@ function (Backbone, _) {
          */
         initConnections: function(){
             _.each(this.get('dimensions'), function (opts) {
-                if (_.isUndefined(opts['field']['id'])) {
+                if (_.isUndefined(opts.field.id)) {
                     return;
                 }
 
                 var values = {
-                        dimension: opts['field']['id'],
-                        bucket: opts['bucket'],
-                        measure: _.isNull(this.get('measure')) ? null : this.get('measure')['id'],
+                        dimension: opts.field.id,
+                        bucket: opts.bucket,
+                        measure: _.isNull(this.get('measure')) ? null : this.get('measure').id,
                         aggregation: this.get('aggregation')
                     },
                     observations = this.dataset.pool.getConnection(_.extend({type: 'observations'}, values)),
@@ -109,7 +109,7 @@ function (Backbone, _) {
                 this._obsConnectionsSynced = 0;
                 this._dimConnectionsSynced = 0;
                 this._syncingConnections = false;
-                this._connections_loaded = true;
+                this._connectionsLoaded = true;
             }
         },
 
@@ -118,7 +118,7 @@ function (Backbone, _) {
          */
         connectionsAllSynched: function () {
             // Check that all observations and dimensions have completed sync.
-            return ( (this._connections_loaded && !this._syncingConnections) ||
+            return ( (this._connectionsLoaded && !this._syncingConnections) ||
                 (this._obsConnectionsSynced === this.observations.length &&
                     this._dimConnectionsSynced === this.dimensions.length));
         },
@@ -144,7 +144,7 @@ function (Backbone, _) {
                 }
             } else {
                 // Hierarchical dimension, handle the drill up/down
-                var level = observation[hierarchy['level_field']];
+                var level = observation[hierarchy.level_field];
                 if (this.validParent.test(observation.id)) {
                     this.dataset.drillDown(dimension, level, this.validParent.exec(observation.id)[0]);
                 }
@@ -213,12 +213,12 @@ function (Backbone, _) {
         },
 
         getLabels: function (dimensionId) {
-            return this.getElementConnectionData("dimensions", dimensionId);
+            return this.getElementConnectionData('dimensions', dimensionId);
         },
 
         getLabel: function (value, dimensionId) {
-            var label = _.extend({'label': ''}, value),
-                conn = this.getElementConnection("dimensions", dimensionId);
+            var label = _.extend({label: ''}, value),
+                conn = this.getElementConnection('dimensions', dimensionId);
 
             if (!_.isUndefined(conn) && !_.isUndefined(conn.getValue(value.id))) {
                 label = conn.getValue(value.id);
@@ -228,11 +228,11 @@ function (Backbone, _) {
         },
 
         getObservations: function (dimensionId) {
-            return this.getElementConnectionData("observations", dimensionId);
+            return this.getElementConnectionData('observations', dimensionId);
         },
 
         getObservation: function (i, dimensionId) {
-            var conn = this.getElementConnection("observations", dimensionId);
+            var conn = this.getElementConnection('observations', dimensionId);
 
             if (!_.isUndefined(conn)) {
                 return conn.getValue(i);
@@ -240,7 +240,7 @@ function (Backbone, _) {
         },
 
         getDimension: function (i, dimensionId) {
-            var conn = this.getElementConnection("dimensions", dimensionId);
+            var conn = this.getElementConnection('dimensions', dimensionId);
 
             if (!_.isUndefined(conn)) {
                 return conn.getValue(i);
@@ -248,7 +248,7 @@ function (Backbone, _) {
         },
 
         getTotal: function (dimensionId) {
-            var conn = this.getElementConnection("observations", dimensionId);
+            var conn = this.getElementConnection('observations', dimensionId);
 
             if (!_.isUndefined(conn)) {
                 return conn.getTotal();

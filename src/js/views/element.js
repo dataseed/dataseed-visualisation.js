@@ -8,22 +8,22 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
 
         elementTypes: {
             // HTML elements
-            'summary':      SummaryElementView,
-            'navigation':   NavigationElementView,
-            'filterForm':   FilterFormElementView,
-            'table':        TableChartView,
+            summary:      SummaryElementView,
+            navigation:   NavigationElementView,
+            filterForm:   FilterFormElementView,
+            table:        TableChartView,
 
             // D3/Highcharts elements
-            'bar':          BarChartView,
-            'bubble':       BubbleChartView,
-            'geo':          GeoChartView,
-            'line':         LineChartView
+            bar:          BarChartView,
+            bubble:       BubbleChartView,
+            geo:          GeoChartView,
+            line:         LineChartView
         },
 
         element: false,
 
         initialize: function(options) {
-            this.visualisation = options['visualisation'];
+            this.visualisation = options.visualisation;
         },
 
         render: function() {
