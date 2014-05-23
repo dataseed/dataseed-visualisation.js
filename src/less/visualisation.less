@@ -144,55 +144,62 @@ article.summaryElement {
         padding-top: 10px;
     }
 
+    /*Refresh icon*/
+    .icon-refresh {
+        /*background-position: -240px -24px;*/
+        vertical-align: baseline;
+        margin-top: 4px;
+    }
+
 }
 
-    .actions {
-        float: right;
-        margin: 8px 10px 0 0;
+.actions {
+    float: right;
+    margin: 8px 10px 0 0;
 
-        a .container-icon {
-            float: left;
-            width: 18px;
-            height: 21px;
-            padding: 1px 0 0 4px;
-            margin-left: 2px;
+    a .container-icon {
+        float: left;
+        width: 18px;
+        height: 21px;
+        padding: 1px 0 0 4px;
+        margin-left: 2px;
+    }
+
+    .switcher {
+        float: left;
+        margin-left: 2px;
+
+        .dropdown-toggle {
+            font-size: 11px;
+            color: @black;
         }
 
-        .switcher {
-            float: left;
-            margin-left: 2px;
-
-            .dropdown-toggle {
-                font-size: 11px;
-                color: @black;
-            }
-
-            a {
-                display: block;
-                font-family: @sansFontFamily;
-                font-size: 11px;
-            }
-
+        a {
+            display: block;
+            font-family: @sansFontFamily;
+            font-size: 11px;
         }
 
     }
 
-    // Making charts fit in containers
-    svg {
-        width: 100%;
-    }
+}
 
-    rect,
-    circle,
-    path,
-    .chartLabel {
-        cursor: pointer;
-    }
+// Making charts fit in containers
+svg {
+    width: 100%;
+}
 
-    circle.scaleBubble,
-    rect.scale {
-        cursor: auto;
-    }
+rect,
+circle,
+path,
+.chartLabel {
+    cursor: pointer;
+}
+
+circle.scaleBubble,
+rect.scale {
+    cursor: auto;
+}
 
 // TABLE CHART
 // --------------------------------------------------
