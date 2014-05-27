@@ -11,6 +11,7 @@ require(['models/dataset', 'models/dataset/connection', 'models/dataset/dimensio
 
             // Don't make HTTP requests
             Connection.prototype.fetch = function() {};
+            DimensionalConnection.prototype.fetch = function() {};
         });
 
         it('should construct API URLs for dimensions', function() {
