@@ -35,7 +35,11 @@
 div#mortality {
     /*Blue lines*/
     .summary-text.full {
-        background: transparent url('@{dsBaseUrl}img/lines.png') no-repeat center bottom;
+        background: transparent;
+        background-image: url('@{dsBaseUrl}img/blue-lines.png');
+        background-repeat: no-repeat;
+        background-position: center bottom;
+        background-size: 700px;
     }
 
     article.summaryElement {
@@ -85,7 +89,7 @@ article.summaryElement {
 }
 
 .summary-text {
-    padding: 25px 0 40px 0;
+    padding: 25px 0 32px 0;
 
     h1 {
         margin: 0;
