@@ -93,7 +93,6 @@ define(['backbone', 'underscore', '../../lib/format'],
             e.preventDefault();
             var $cut = $(e.currentTarget),
                 dimension = $cut.parents('.filter-group').data('dimension');
-            console.log(dimension, $cut.data('value'));
             if ($cut.closest('.cut-wrapper').hasClass('active')) {
                 this.visualisation.dataset.removeCut([dimension]);
             } else {
