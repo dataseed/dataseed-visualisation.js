@@ -1,51 +1,78 @@
-define(['../filter', 'underscore', 'text!../../../templates/element/navigation.html', 'bootstrap_collapse'],
-    function (FilterElementView, _, navigationTemplate) {
+define(['../filter', 'underscore', 'text!../../../templates/element/filter/navigation.html', 'text!../../../templates/element/filter/navigationDimension.html', 'bootstrap_collapse'],
+    function (FilterElementView, _, navigationTemplate, navigationDimensionTemplate) {
     'use strict';
+
+    var NavigationDimensionView = Backbone.View.extend({
+
+        template: _.template(navigationDimensionTemplate),
+
+        initialize: function(opts) {
+            this.visualisation = opts.visualisation;
+            this.navigation = opts.navigation;
+            this.dimension = opts.dimension;
+            this.index = opts.index;
+        },
+
+        render: function() {
+            var attrs = this.navigation.getDimension(this.dimension, this.index);
+            this.$el.html(this.template(_.extend({}, attrs)));
+            return this;
+        }
+
+    });
 
     var NavigationElementView = FilterElementView.extend({
 
-        template: _.template(navigationTemplate),
-
         events: {
-            'click .dimension-cut': 'toggleCut',
+            'click td a': 'toggleCut',
             'click h3 a': 'toggleAccordion'
         },
 
-        accordionState: {},
+        template: _.template(navigationTemplate),
+
+        initialize: function(options) {
+            this.visualisation = options.visualisation;
+            this.accordionState = {};
+
+            this.dimensions = _(this.model.get('dimensions')).map(function (dimension, index) {
+                return new NavigationDimensionView({
+                    visualisation: this.visualisation,
+                    navigation: this,
+                    dimension: dimension,
+                    index: index
+                });
+            }, this);
+        },
 
         render: function () {
+            this.$el.html(this.template(this.model.attributes));
+            var $accordion = this.$('.accordion');
 
-            this.$el.html(this.template(this.getElementAttrs()));
+            _.each(this.dimensions, function(dimension) {
+                $accordion.append(dimension.render().el);
+            }, this);
 
             this.$('.table a').css('color', this.visualisation.styles.getStyle('featureFill', this.model));
             this.$('.table.cut a').css('color', this.visualisation.styles.getStyle('featureFillActive', this.model));
             this.$('.table.cut .active a').css('color', this.visualisation.styles.getStyle('featureFill', this.model));
-
             return this;
         },
 
-        getDimensions: function () {
-            return _(this.model.get('dimensions')).map(function (dimension, iterator) {
+        getDimension: function (dimension, index) {
+            var attrs = this.getDimensionAttrs(dimension),
+                field = this.visualisation.dataset.fields.findWhere({id: attrs.id});
 
-                var dimensionAttrs = this.getDimensionAttrs(dimension);
-
-                var id = dimensionAttrs.id,
-                    values = dimensionAttrs.values,
-                    field = this.visualisation.dataset.fields.findWhere({'id':id});
-
-                return {
-                    'id': id,
-                    'accordion_id': this.model.get('id') + '_' + id.replace(/[^a-z0-9_\-]/gi, '_'),
-                    'label': _.isUndefined(field) ? this.model.get('label') : field.get('label'),
-                    'cut': this.model.getCut(iterator),
-                    'state': (this.accordionState[id] === true),
-                    'values': values
-                };
-
-            }, this);
+            return {
+                id: attrs.id,
+                accordion_id: this.model.get('id') + '_' + attrs.id.replace(/[^a-z0-9_\-]/gi, '_'),
+                label: _.isUndefined(field) ? this.model.get('label') : field.get('label'),
+                cut: this.model.getCut(index),
+                state: (this.accordionState[attrs.id] === true),
+                values: attrs.values
+            };
         },
 
-        toggleAccordion: function (e) {
+        toggleAccordion: function(e) {
             var id = $(e.currentTarget).parents('.accordion-group').data('dimension');
             this.accordionState[id] = (this.accordionState[id] !== true);
         }

@@ -1,4 +1,4 @@
-define(['../filter', 'underscore', 'text!../../../templates/element/filterForm.html'],
+define(['../filter', 'underscore', 'text!../../../templates/element/filter/filterForm.html'],
     function (FilterElementView, _, filterFormTemplate) {
     'use strict';
 
