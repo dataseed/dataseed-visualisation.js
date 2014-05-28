@@ -8,14 +8,16 @@
     <div id="<%- accordion_id %>" class="info-body collapse<% if (state) { %> in<% } %>">
         <table class="table<% if (!_.isUndefined(cut)) { %> cut<% } %>">
             <% _.each(values, function(value) { %>
-            <tr<% if (value.id === cut) { %> class="active"<% } %>>
-                    <td>
-                        <a href="#" class="dimension-cut" data-value="<%- value.id %>">
-                            <%- value.label %>
-                        </a>
-                    </td>
-                    <td><% if (!_.isUndefined(value.totalFormat)) {%> (<%- value.totalFormat %>) <% } %></td>
-                </tr>
+                <% if (value.total > 0) { %>
+                    <tr<% if (value.id === cut) { %> class="active"<% } %>>
+                        <td>
+                            <a href="#" class="dimension-cut" data-value="<%- value.id %>">
+                                <%- value.label %>
+                            </a>
+                        </td>
+                        <td><% if (!_.isUndefined(value.totalFormat)) {%> (<%- value.totalFormat %>) <% } %></td>
+                    </tr>
+                <% } %>
             <% }); %>
         </table>
     </div>
