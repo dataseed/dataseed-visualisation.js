@@ -14,6 +14,11 @@ define(['backbone', 'underscore', '../element'],
                 // Bind to sync event and keep references
                 observations.bind('sync', this.onConnectionSync, this);
                 this.observations.push(observations);
+
+                // Update connection sync count
+                if (observations.isLoaded()) {
+                    this._connectionsSynced.observations++;
+                }
             },
 
             getData: function (dimensionId) {
