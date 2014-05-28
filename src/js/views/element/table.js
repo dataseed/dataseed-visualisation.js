@@ -17,12 +17,26 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
 
         validParent: /\d+/,
 
+        initialize: function() {
+            // Get the total number of members in the dimenstion and multiply it by the height of a table row, to get total height
+            this.minTableHeight = this.getTableValues().length * 29;
+            // Set to min-height to 600 if total height is more or equal
+            if(this.minTableHeight >= 600) {
+                this.minTableHeight = 600;
+            }
+            // Else set min-height to default total height plus margin
+            else {
+                this.minTableHeight = this.minTableHeight + 19;
+            }
+        },
+
         render: function() {
             var attrs = _.extend({
                 values: this.getTableValues(),
                 cut: this.model.getCut(),
                 sortProperty: this.sortProperty,
-                sortDirection: this.sortDirection
+                sortDirection: this.sortDirection,
+                "minTableHeight": this.minTableHeight
             }, this.model.attributes);
 
             this.$el.html(this.template(attrs));
