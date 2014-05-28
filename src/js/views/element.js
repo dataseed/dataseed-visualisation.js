@@ -27,6 +27,11 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
         },
 
         render: function() {
+            // Ensure connections have been initialised if this element has been
+            // shown after initially being hidden
+            this.model.initConnections();
+
+            // Get element type
             var type = this.model.get('type');
 
             // Set element width and type
@@ -36,7 +41,7 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
                 .addClass(type + 'Element');
 
             // Check if this element should be displayed
-            if (!this.model.get('display')) {
+            if (this.model.get('display') !== true) {
                 this.$el.addClass('hide');
 
             // Check if this element's data is loaded

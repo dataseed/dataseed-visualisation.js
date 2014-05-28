@@ -92,9 +92,7 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
          * to be rendered (that is, all its connections have been synched)
          */
         renderElement: function(element) {
-            if(element.get('display') !== false){
-                this.elementsViews[element.id].render();
-            }
+            this.elementsViews[element.id].render();
         },
 
         /**

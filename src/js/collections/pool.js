@@ -1,5 +1,5 @@
 define(['backbone', '../models/dataset/connection', '../models/dataset/dimensionalConnection' ],
-        function(Backbone, Connection, DimensionalConnection) {
+    function(Backbone, Connection, DimensionalConnection) {
     'use strict';
 
     var ConnectionPool = Backbone.Collection.extend({
@@ -40,10 +40,7 @@ define(['backbone', '../models/dataset/connection', '../models/dataset/dimension
                     return opts.type + ':' + opts.dimension;
 
                 case 'observations':
-                    var dim = (!_.isUndefined(opts.dimension))?
-                        opts.dimension:
-                        'NODIM';
-
+                    var dim = (_.isUndefined(opts.dimension)) ? 'NODIM' : opts.dimension;
                     return opts.type + ':' + dim + ':' + opts.measure + ':' + opts.aggregation;
 
                 default:

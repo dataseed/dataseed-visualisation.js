@@ -15,11 +15,11 @@ function (Backbone, _) {
 
         validParent: /\d+/,
 
-        _obsConnectionsSynced: 0,
-        _dimConnectionsSynced: 0,
+        // True if a connections have been initialised
+        _initConnections: false,
 
         // True if a connections sync is currently in progress.
-        _syncingConnections : false,
+        _syncingConnections: false,
 
         // True if connections have been synched at least once.
         _connectionsLoaded: false,
@@ -31,13 +31,16 @@ function (Backbone, _) {
         initialize: function (options) {
             this.setUp(options);
 
-            if(this.get('display') === false){
-                // The element is hidden: no need to init connections
-                return;
-            }
+            // Track connection syncs
+            this._connectionsSynced = {
+                observations: 0,
+                dimensions: 0
+            };
 
-            // Init element's connections.
-            this.initConnections(options);
+            if (this.get('display') === true) {
+                // Only init connections if element is not hidden
+                this.initConnections(options);
+            }
         },
 
         /**
@@ -58,6 +61,10 @@ function (Backbone, _) {
          * Init element's connections.
          */
         initConnections: function(){
+            if (this._initConnections === true) {
+                return;
+            }
+
             _.each(this.get('dimensions'), function (opts) {
                 if (_.isUndefined(opts.field.id)) {
                     return;
@@ -78,39 +85,30 @@ function (Backbone, _) {
 
                 dimension.bind('connection:sync', this.onConnectionSync, this);
                 this.dimensions.push(dimension);
+
+                // Update connection sync counts
+                if (observations.isLoaded()) {
+                    this._connectionsSynced.observations++;
+                }
+
+                if (dimension.isLoaded()) {
+                    this._connectionsSynced.dimensions++;
+                }
             }, this);
 
+            this._initConnections = true;
+            this.checkConnectionSync();
         },
 
         /**
          * Dataset connection sync event handler
          */
         onConnectionSync: function (conn) {
-
             if(!this._syncingConnections){
                 this._syncingConnections = true;
             }
-
-            switch (conn.get('type')) {
-                case 'observations':
-                    this._obsConnectionsSynced++;
-                    break;
-
-                case 'dimensions':
-                    this._dimConnectionsSynced++;
-                    break;
-            }
-
-            if(this.connectionsAllSynched()){
-                // This element is ready to be (re)rendered
-                this.trigger('element:ready', this);
-
-                // Reset internal flags/counters
-                this._obsConnectionsSynced = 0;
-                this._dimConnectionsSynced = 0;
-                this._syncingConnections = false;
-                this._connectionsLoaded = true;
-            }
+            this._connectionsSynced[conn.get('type')]++;
+            this.checkConnectionSync();
         },
 
         /**
@@ -119,8 +117,23 @@ function (Backbone, _) {
         connectionsAllSynched: function () {
             // Check that all observations and dimensions have completed sync.
             return ( (this._connectionsLoaded && !this._syncingConnections) ||
-                (this._obsConnectionsSynced === this.observations.length &&
-                    this._dimConnectionsSynced === this.dimensions.length));
+                (this._connectionsSynced.observations === this.observations.length &&
+                    this._connectionsSynced.dimensions === this.dimensions.length));
+        },
+
+        checkConnectionSync: function() {
+            if(this.connectionsAllSynched()){
+                // This element is ready to be (re)rendered
+                this.trigger('element:ready', this);
+
+                // Reset internal flags/counters
+                for (var type in this._connectionsSynced) {
+                    this._connectionsSynced[type] = 0;
+                }
+
+                this._syncingConnections = false;
+                this._connectionsLoaded = true;
+            }
         },
 
         /**

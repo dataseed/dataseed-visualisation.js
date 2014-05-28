@@ -1,5 +1,5 @@
 define(['backbone', 'underscore', './connection'],
-        function (Backbone, _, Connection) {
+    function (Backbone, _, Connection) {
     'use strict';
 
     var DimensionalConnection = Connection.extend({
