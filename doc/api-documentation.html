@@ -198,11 +198,11 @@
 
         <p>Requests to the API must always specify an <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1">Accept header</a> with the <a href="http://tools.ietf.org/html/rfc4627#section-6">JSON MIME type</a> (i.e. "application/json"). So you could fetch a public dataset using:</p>
 
-        <code class="shell prettyprint">curl -H'Accept: application/json' http://getdataseed.com/api/datasets/mortality</code>
+        <code class="shell prettyprint">curl -H'Accept: application/json' https://getdataseed.com/api/datasets/mortality</code>
 
         <p>When sending data to the API you must also specify the MIME type of your request using the <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17">Content-Type header</a> header. The following example shows how to add an observation to an existing dataset:</p>
 
-        <code class="shell prettyprint">curl -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' http://getdataseed.com/api/datasets/my-dataset/observations -d'{ "observations": [ { "id": "o1234", "age": "26", "gender": "M" } ] }'</code>
+        <code class="shell prettyprint">curl -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://getdataseed.com/api/datasets/my-dataset/observations -d'{ "observations": [ { "id": "o1234", "age": "26", "gender": "M" } ] }'</code>
 
         <h4 id="api-intro-responses">Responses</h4>
 
@@ -236,7 +236,7 @@
 
         <p>So, for example, to fetch a private dataset you would do the following:</p>
 
-        <code class="shell prettyprint">curl -u'dataseed@example.com:password' -H'Accept: application/json' http://getdataseed.com/api/datasets/my-dataset</code>
+        <code class="shell prettyprint">curl -u'dataseed@example.com:password' -H'Accept: application/json' https://getdataseed.com/api/datasets/my-dataset</code>
 
         <h3 id="api-dataset">Dataset</h3>
 
@@ -244,7 +244,7 @@
 
         <h5>Request</h5>
 
-        <code class="shell prettyprint">curl -H'Accept: application/json' http://getdataseed.com/api/datasets/mortality</code>
+        <code class="shell prettyprint">curl -H'Accept: application/json' https://getdataseed.com/api/datasets/mortality</code>
 
         <h5>Response</h5>
 
@@ -321,7 +321,7 @@
 
         <h5>Request</h5>
 
-        <code class="shell prettyprint">curl -XPOST -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' http://getdataseed.com/api/datasets/</code>
+        <code class="shell prettyprint">curl -XPOST -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://getdataseed.com/api/datasets/</code>
 
         <pre><code class="json prettyprint">{
     "label": "My Vehicle Dataset",
@@ -357,7 +357,7 @@
 
         <h5>Request</h5>
 
-        <code class="shell prettyprint">curl -XPUT -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' http://getdataseed.com/api/datasets/252b529188c2bdee4c16570a133a329d</code>
+        <code class="shell prettyprint">curl -XPUT -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://getdataseed.com/api/datasets/252b529188c2bdee4c16570a133a329d</code>
 
         <pre><code class="json prettyprint">{
     "label": "My Awesome Vehicle Dataset",
@@ -375,7 +375,7 @@
 
         <h5>Request</h5>
 
-        <code class="shell prettyprint">curl -XDELETE -u'dataseed@example.com:password' -H'Accept: application/json' http://getdataseed.com/api/datasets/252b529188c2bdee4c16570a133a329d</code>
+        <code class="shell prettyprint">curl -XDELETE -u'dataseed@example.com:password' -H'Accept: application/json' https://getdataseed.com/api/datasets/252b529188c2bdee4c16570a133a329d</code>
 
         <h5>Response</h5>
 
