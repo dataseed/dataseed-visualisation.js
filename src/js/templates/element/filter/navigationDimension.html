@@ -9,7 +9,7 @@
         <table class="table<% if (!_.isUndefined(cut)) { %> cut<% } %>">
             <% _.each(values, function(value) { %>
                 <% if (value.total > 0) { %>
-                    <tr<% if (value.id === cut) { %> class="active"<% } %>>
+                    <tr class="cut-wrapper<% if (value.id === cut) { %> active<% } %>">
                         <td>
                             <a href="#" class="dimension-cut" data-value="<%- value.id %>">
                                 <%- value.label %>
