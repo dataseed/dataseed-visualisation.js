@@ -17,17 +17,16 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
 
         validParent: /\d+/,
 
+        // Chart constants
+        margin: 19,
+        rowHeight: 29,
+        maxHeight: 600,
+
+        minHeight: 0,
+
         initialize: function() {
-            // Get the total number of members in the dimenstion and multiply it by the height of a table row, to get total height
-            this.minTableHeight = this.getTableValues().length * 29;
-            // Set to min-height to 600 if total height is more or equal
-            if(this.minTableHeight >= 600) {
-                this.minTableHeight = 600;
-            }
-            // Else set min-height to default total height plus margin
-            else {
-                this.minTableHeight = this.minTableHeight + 19;
-            }
+            // Calculating the minimum height for the table chart
+            this.minHeight = Math.min((this.getTableValues().length * this.rowHeight) + this.margin, this.maxHeight);
         },
 
         render: function() {
@@ -40,6 +39,9 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
             }, this.model.attributes);
 
             this.$el.html(this.template(attrs));
+
+            // Add the fix height to the table chart
+            this.$('.chart-container').css('min-height', this.minHeight);
 
             this.resetFeatures();
             return this;
