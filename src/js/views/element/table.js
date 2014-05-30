@@ -117,14 +117,21 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
         },
 
         resetFeatures: function() {
+            // Get the colours from the model
             var featureFill = this.model.visualisation.styles.getStyle('featureFill', this.model);
+            var backgroundColour = this.model.visualisation.styles.getStyle('background', this.model);
+            var headingColour = this.model.visualisation.styles.getStyle('heading', this.model);
+
             if (this.model.isCut()) {
                 var featureFillActive = this.model.visualisation.styles.getStyle('featureFillActive', this.model);
                 this.$('.table-row a').css('color', featureFillActive);
                 this.$('.table-row[data-id="' + this.model.getCut() + '"] a').css('color', featureFill);
+                this.$('h2').css('color', headingColour);
             }
             else {
                 this.$('.table-row a').css('color', featureFill);
+                this.$('h2').css('color', headingColour);
+                $('.tableElement').css('background-color', backgroundColour);
             }
         }
 
