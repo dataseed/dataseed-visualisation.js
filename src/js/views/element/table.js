@@ -131,7 +131,7 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
             else {
                 this.$('.table-row a').css('color', featureFill);
                 this.$('h2').css('color', headingColour);
-                $('.tableElement').css('background-color', backgroundColour);
+                this.$el.parent().css('background-color', backgroundColour);
             }
         }
 
