@@ -34,8 +34,7 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
                 values: this.getTableValues(),
                 cut: this.model.getCut(),
                 sortProperty: this.sortProperty,
-                sortDirection: this.sortDirection,
-                "minTableHeight": this.minTableHeight
+                sortDirection: this.sortDirection
             }, this.model.attributes);
 
             this.$el.html(this.template(attrs));
