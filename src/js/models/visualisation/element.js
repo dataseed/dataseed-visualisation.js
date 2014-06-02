@@ -188,6 +188,13 @@ function (Backbone, _) {
         },
 
         /**
+         * Get field type for this element's dimension
+         */
+        getFieldType: function() {
+            return this.dataset.fields.get(this.getFieldId()).get('type');
+        },
+
+        /**
          * Get allowed chart types for this element's dimension
          */
         getChartTypes: function() {
