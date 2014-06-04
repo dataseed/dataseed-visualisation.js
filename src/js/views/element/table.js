@@ -27,6 +27,8 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
 
             this.$el.html(this.template(attrs));
 
+            this.resetButtonDisplay();
+
             this.resetFeatures();
             return this;
         },
@@ -114,6 +116,7 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
             e.preventDefault();
             this.model.removeCut();
             this.resetFeatures();
+            $('.tipsy').remove();
         },
 
         resetFeatures: function() {
@@ -125,6 +128,16 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
             }
             else {
                 this.$('.table-row a').css('color', featureFill);
+            }
+        },
+
+        /**
+         * Shows reset button only when there is a cut on the dimension
+         */
+        resetButtonDisplay: function() {
+            if(this.model.isCut()) {
+                this.$(".container-icon").addClass('in');
+                this.$('.remove-filter').tipsy({gravity: 's'});
             }
         }
 

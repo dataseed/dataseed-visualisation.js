@@ -10,11 +10,15 @@
     height: 19px;
     padding: 3px 0 0 4px;
     .border-radius(12px);
-    background: @grayDarker;
+    background: @dsBlue;
 
     .icon-refresh {
         background-position: -240px -25px;
     }
+}
+
+.container-icon:hover {
+    background: @dsMediumGrey;
 }
 
 // VISUALISATION
@@ -148,9 +152,17 @@ article.summaryElement {
         padding-top: 10px;
     }
 
+    /*Hiding the reset button*/
+    .container-icon.fade.in {
+        display: block;
+    }
+
+    .container-icon.fade {
+        display: none;
+    }
+
     /*Refresh icon*/
     .icon-refresh {
-        /*background-position: -240px -24px;*/
         vertical-align: baseline;
         margin-top: 4px;
     }

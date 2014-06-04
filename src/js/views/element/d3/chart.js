@@ -33,6 +33,8 @@ define(['backbone', 'underscore', 'd3', 'text!../../../templates/element/chart.h
             // Render template
             this.$el.html(this.template(this.model.attributes));
 
+            this.resetButtonDisplay();
+
             // Set custom colours
             this.$el.css('background-color', this.model.visualisation.styles.getStyle('background'));
             this.$('h2').css('color', this.model.visualisation.styles.getStyle('heading'));
@@ -54,6 +56,7 @@ define(['backbone', 'underscore', 'd3', 'text!../../../templates/element/chart.h
             e.preventDefault();
             this.model.removeCut();
             this.resetFeatures();
+            $('.tipsy').remove();
         },
 
         mouseRemoveTips : function() {
@@ -154,6 +157,16 @@ define(['backbone', 'underscore', 'd3', 'text!../../../templates/element/chart.h
             var width = html.width();
             html.remove();
             return width;
+        },
+
+        /**
+         * Shows reset button only when there is a cut on the dimension
+         */
+        resetButtonDisplay: function() {
+            if(this.model.isCut()) {
+                this.$(".container-icon").addClass('in');
+                this.$('.remove-filter').tipsy({gravity: 's'});
+            }
         }
 
     });
