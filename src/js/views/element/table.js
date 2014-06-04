@@ -17,6 +17,18 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
 
         validParent: /\d+/,
 
+        // Chart constants
+        margin: 19,
+        rowHeight: 29,
+        maxHeight: 600,
+
+        minHeight: 0,
+
+        initialize: function() {
+            // Calculating the minimum height for the table chart
+            this.minHeight = Math.min((this.getTableValues().length * this.rowHeight) + this.margin, this.maxHeight);
+        },
+
         render: function() {
             var attrs = _.extend({
                 values: this.getTableValues(),
@@ -28,6 +40,9 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
             this.$el.html(this.template(attrs));
 
             this.resetButtonDisplay();
+
+            // Add the fix height to the table chart
+            this.$('.chart-container').css('min-height', this.minHeight);
 
             this.resetFeatures();
             return this;
