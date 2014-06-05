@@ -13,13 +13,24 @@ define([], function() {
         },
 
         /**
-         * Format a date as dd/mm/yyyy
+         * Format a timestamp for the current locale
          */
-        date: function(date) {
-            var d = date.getDate(),
-                m = date.getMonth() + 1,
-                y = date.getFullYear();
-            return d + '/' + m + '/' + y;
+        dateShort: function(timestamp) {
+            return this.date(timestamp, {year: 'numeric', month: 'numeric', day: 'numeric'});
+        },
+
+        /**
+         * Format a timestamp with day and month names for the current locale
+         */
+        dateLong: function(timestamp) {
+            return this.date(timestamp, {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'});
+        },
+
+        /**
+         * Format a timestamp
+         */
+        date: function(timestamp, options) {
+            return new Date(timestamp).toLocaleDateString(undefined, options);
         }
 
     };

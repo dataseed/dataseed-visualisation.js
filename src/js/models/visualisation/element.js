@@ -1,5 +1,5 @@
-define(['backbone', 'underscore'],
-function (Backbone, _) {
+define(['backbone', 'underscore', '../../lib/format'],
+function (Backbone, _, format) {
     'use strict';
 
     var Element = Backbone.Model.extend({
@@ -65,34 +65,42 @@ function (Backbone, _) {
                 return;
             }
 
-            _.each(this.get('dimensions'), function (opts) {
+            _.each(this.get('dimensions'), function (opts, index) {
                 if (_.isUndefined(opts.field.id)) {
                     return;
                 }
 
+                // Observations
                 var values = {
                         dimension: opts.field.id,
                         bucket: opts.bucket,
                         measure: _.isNull(this.get('measure')) ? null : this.get('measure').id,
                         aggregation: this.get('aggregation')
                     },
-                    observations = this.dataset.pool.getConnection(_.extend({type: 'observations'}, values)),
-                    dimension = this.dataset.pool.getConnection(_.extend({type: 'dimensions'}, values));
+                    field_model = this.getField(index),
+                    observations = this.dataset.pool.getConnection(_.extend({type: 'observations'}, values));
 
                 // Bind to sync event and keep references
                 observations.bind('connection:sync', this.onConnectionSync, this);
                 this.observations.push(observations);
-
-                dimension.bind('connection:sync', this.onConnectionSync, this);
-                this.dimensions.push(dimension);
 
                 // Update connection sync counts
                 if (observations.isLoaded()) {
                     this._connectionsSynced.observations++;
                 }
 
-                if (dimension.isLoaded()) {
-                    this._connectionsSynced.dimensions++;
+                // Dimension values (only fetch for non date/numeric dimensions)
+                if (!_.contains(['date', 'numeric'], field_model.get('type'))) {
+                    var dimension = this.dataset.pool.getConnection(_.extend({type: 'dimensions'}, values));
+
+                    // Bind to sync event and keep references
+                    dimension.bind('connection:sync', this.onConnectionSync, this);
+                    this.dimensions.push(dimension);
+
+                    // Update connection sync counts
+                    if (dimension.isLoaded()) {
+                        this._connectionsSynced.dimensions++;
+                    }
                 }
             }, this);
 
@@ -187,19 +195,29 @@ function (Backbone, _) {
             return this.get('measure_label');
         },
 
+        getFieldId: function (index) {
+            if (_.isUndefined(index)) {
+                index = 0;
+            }
+            return this.get('dimensions')[index].field.id;
+        },
+
+        getField: function(index) {
+            return this.dataset.fields.get(this.getFieldId(index));
+        },
+
         /**
          * Get field type for this element's dimension
          */
         getFieldType: function() {
-            return this.dataset.fields.get(this.getFieldId()).get('type');
+            return this.getField().get('type');
         },
 
         /**
          * Get allowed chart types for this element's dimension
          */
         getChartTypes: function() {
-            var field = this.dataset.fields.get(this.getFieldId());
-            return _.pluck(field.get('charts'), 'type');
+            return _.pluck(this.getField().get('charts'), 'type');
         },
 
         /**
@@ -237,14 +255,26 @@ function (Backbone, _) {
         },
 
         getLabel: function (value, dimensionId) {
-            var label = _.extend({label: ''}, value),
-                conn = this.getElementConnection('dimensions', dimensionId);
+            var type = this.getFieldType();
+            if (type == 'date') {
+                return {
+                    label: format.dateLong(new Date(value['id'])),
+                    label_short: format.dateShort(new Date(value['id']))
+                };
 
-            if (!_.isUndefined(conn) && !_.isUndefined(conn.getValue(value.id))) {
-                label = conn.getValue(value.id);
+            } else if (type == 'numeric') {
+                return {label: format.num(value['id'])};
+
+            } else {
+                var label = _.extend({label: ''}, value),
+                    conn = this.getElementConnection('dimensions', dimensionId);
+
+                if (!_.isUndefined(conn) && !_.isUndefined(conn.getValue(value.id))) {
+                    label = conn.getValue(value.id);
+                }
+
+                return label;
             }
-
-            return label;
         },
 
         getObservations: function (dimensionId) {
@@ -273,13 +303,6 @@ function (Backbone, _) {
             if (!_.isUndefined(conn)) {
                 return conn.getTotal();
             }
-        },
-
-        getFieldId: function (index) {
-            if (_.isUndefined(index)) {
-                index = 0;
-            }
-            return this.get('dimensions')[index].field.id;
         },
 
         getCut: function (index) {
