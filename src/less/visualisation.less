@@ -165,7 +165,7 @@ article.summaryElement {
         font-size: 18px;
         font-weight: normal;
         margin: 0px 10px 20px 10px;
-        color: @headingsColor;
+        color: @dsMediumGrey;
         padding-top: 10px;
     }
 
@@ -322,26 +322,29 @@ rect.scale {
 
     h3 {
         margin: 0;
-        font-size: 13px;
+        font-size: 15px;
 
         a {
             display: block;
             position: relative;
-            padding: 15px;
-            color: @black;
+            padding: 15px 15px 15px 13px;
+            color: @dsMediumGrey;
             text-decoration: none;
 
             i {
-                position: absolute;
-                top: 0;
-                right: 0;
-                margin: 17px 25px 0 0;
+                background-image: url('@{dsBaseUrl}img/grey-arrow.gif');
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: 8px;
+                display: inline-block;
+                width: 10px;
+                height: 10px;
+                .rotate(90deg);
             }
-
         }
 
         .collapsed i {
-            .rotate(180deg);
+            .rotate(0deg);
         }
 
     }
