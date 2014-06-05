@@ -119,17 +119,12 @@ define(['./chart', 'underscore', 'd3'],
                 .attr('class', 'y axis')
                 .call(yAxis)
                 .append('text')
-                    .attr('y', -this.labelY)
-                    .style('text-anchor', 'end')
+                    .attr("transform", "rotate(-90)")
+                    .attr('y', 0 - (this.gutterLeft / 1.5))
+                    .attr("x", 0 - (height / 2))
+                    .attr('text-anchor', 'middle')
                     .style('fill', this.getStyle('measureLabel'))
                     .text(this.model.getMeasureLabel());
-
-            chart.append('text')
-                .attr('y', height + this.labelY)
-                .attr('text-anchor', 'middle')
-                .attr('x', (this.width - (this.gutterLeft * 2)) / 2)
-                .style('fill', this.getStyle('measureLabel'))
-                .text(this.model.get('label') + ' by ' + this.model.getMeasureLabel());
 
             // Draw the line
             chart.append('path')
