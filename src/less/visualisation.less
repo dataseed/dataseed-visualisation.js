@@ -14,6 +14,13 @@
 
     .icon-refresh {
         background-position: -240px -25px;
+        -moz-transform: rotate(145deg) scaleX(-1);
+        -o-transform: rotate(145deg) scaleX(-1);
+        -webkit-transform: rotate(145deg) scaleX(-1);
+        -ms-transform: rotate(145deg) scaleX(-1);
+        transform: rotate(145deg) scaleX(-1);
+        filter: FlipH;
+        -ms-filter: "FlipH";
     }
 }
 
@@ -125,6 +132,12 @@ article.summaryElement {
         .container-icon {
             float: right;
             margin-left: 10px;
+
+            i {
+                margin-left: -1px;
+                margin-top: -1px;
+
+            }
         }
 
     }
@@ -168,7 +181,8 @@ article.summaryElement {
     /*Refresh icon*/
     .icon-refresh {
         vertical-align: baseline;
-        margin-top: 4px;
+        margin-top: 2px;
+        margin-left: -1px;
     }
 
 }
