@@ -64,7 +64,7 @@ require.config({
         underscore: 'components/lodash/dist/lodash.underscore.min',
 
         // Backbone
-        backbone: 'components/backbone/backbone-min',
+        backbone: 'components/backbone/backbone',
 
         // D3
         d3: 'components/d3/d3',

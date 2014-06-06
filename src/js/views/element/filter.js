@@ -25,7 +25,7 @@ define(['backbone', 'underscore', '../../lib/format'],
             };
         },
 
-        getDimensionAttrs: function (dimension) {
+        getDimensionAttrs: function (dimension, index) {
             var defaultSort = {total: 'desc'},
                 sort = !_.isUndefined(dimension.sort) ? dimension.sort : defaultSort,
                 id = dimension.field.id,
@@ -35,7 +35,7 @@ define(['backbone', 'underscore', '../../lib/format'],
                             total: d.total,
                             totalFormat: format.num(d.total)
                         },
-                        this.model.getLabel(d, id)
+                        this.model.getLabel(d, index)
                     );
                 }, this);
 
@@ -53,9 +53,9 @@ define(['backbone', 'underscore', '../../lib/format'],
         },
 
         getDimensions: function () {
-            return _(this.model.get('dimensions')).map(function (dimension, iterator) {
+            return _(this.model.get('dimensions')).map(function (dimension, index) {
 
-                var dimensionAttrs = this.getDimensionAttrs(dimension);
+                var dimensionAttrs = this.getDimensionAttrs(dimension, index);
 
                 var id = dimensionAttrs.id,
                     values = dimensionAttrs.values,
@@ -78,7 +78,7 @@ define(['backbone', 'underscore', '../../lib/format'],
                     dimension_filter_id: this.model.get('id') + '_' + id.replace(/[^a-z0-9_\-]/gi, '_'),
                     label: _.isUndefined(field) ? this.model.get('label') : field.get('label'),
                     // cut set on this dimension
-                    cut: this.model.getCut(iterator),
+                    cut: this.model.getCut(index),
                     // the cut set on all the dimensions
                     dataset_cut: dataset_cut,
                     hierarchy: _.extend({}, hierarchy, {values_by_level: this.dimensionValuesByLevel}),

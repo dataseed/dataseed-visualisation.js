@@ -1,5 +1,5 @@
-define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element', 'views/element/table'],
-    function($, Dataset, Connection, Element, TableChartView) {
+define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element/dimensions', 'views/element/table'],
+    function($, Dataset, Connection, DimensionsElement, TableChartView) {
 
     describe('A table element view', function() {
 
@@ -11,15 +11,14 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
             this.dataset = new Dataset({
                     id: 'test01',
                     visualisation_id: 'test02',
-                    fields: [{
-                        id: 'test04'
-                    }, {
-                        id: 'test05'
-                    }]
+                    fields: [
+                        {id: 'test04', type: 'string'},
+                        {id: 'test05', type: 'numeric'}
+                    ]
                 });
             this.dataset.reset();
 
-            this.element = new Element({
+            this.element = new DimensionsElement({
                     id: 'test03',
                     dataset: this.dataset,
                     visualisation: this.dataset.visualisation,
@@ -45,12 +44,12 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
         });
 
         it('should not render without data', function() {
-            this.element.observations[0].set({
+            this.element._getConnection('observations').set({
                 test04: []
             }, {
                 silent: true
             });
-            this.element.dimensions[0].set({
+            this.element._getConnection('dimensions').set({
                 test04: {}
             }, {
                 silent: true
@@ -61,7 +60,7 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
         });
 
         it('should render rows correctly', function() {
-            this.element.observations[0].set({
+            this.element._getConnection('observations').set({
                 test04: [
                     {
                         id: 'id01',
@@ -75,7 +74,7 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
             }, {
                 silent: true
             });
-            this.element.dimensions[0].set({
+            this.element._getConnection('dimensions').set({
                 test04: {
                     id01: {
                         id: 'id01',

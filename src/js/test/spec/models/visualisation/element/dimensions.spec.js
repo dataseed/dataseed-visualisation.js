@@ -1,20 +1,25 @@
-define(['models/dataset', 'models/dataset/connection', 'models/visualisation/element'], function(Dataset, Connection, Element) {
+define(['models/dataset', 'models/dataset/connection', 'models/visualisation/element/dimensions'], function(Dataset, Connection, DimensionsElement) {
 
-    describe('An element model', function() {
+    describe('A dimensions element model', function() {
 
         beforeEach(function() {
             // Create a new dataset model
             this.dataset = new Dataset({
                     id: 'test01',
-                    visualisation_id: 'test02'
+                    visualisation_id: 'test02',
+                    fields: [
+                        {id: 'test04', type: 'string'},
+                        {id: 'test05', type: 'numeric'}
+                    ]
                 });
+            this.dataset.reset();
 
             // Don't make HTTP requests
             Connection.prototype.fetch = function() {};
         });
 
         it('should construct API URLs correctly', function() {
-            var element = new Element({
+            var element = new DimensionsElement({
                     id: 'test03',
                     dataset: this.dataset,
                     visualisation: this.dataset.visualisation
@@ -23,7 +28,7 @@ define(['models/dataset', 'models/dataset/connection', 'models/visualisation/ele
         });
 
         it('should return the correct measure label', function() {
-            var element = new Element({
+            var element = new DimensionsElement({
                     id: 'test03',
                     dataset: this.dataset,
                     visualisation: this.dataset.visualisation,
@@ -33,7 +38,7 @@ define(['models/dataset', 'models/dataset/connection', 'models/visualisation/ele
         });
 
         it('should add a cut correctly', function() {
-            var element = new Element({
+            var element = new DimensionsElement({
                     id: 'test03',
                     dataset: this.dataset,
                     visualisation: this.dataset.visualisation,
@@ -55,7 +60,7 @@ define(['models/dataset', 'models/dataset/connection', 'models/visualisation/ele
         });
 
         it('should update a cut correctly', function() {
-            var element = new Element({
+            var element = new DimensionsElement({
                     id: 'test03',
                     dataset: this.dataset,
                     visualisation: this.dataset.visualisation,
@@ -80,7 +85,7 @@ define(['models/dataset', 'models/dataset/connection', 'models/visualisation/ele
         });
 
         it('should remove a cut correctly', function() {
-            var element = new Element({
+            var element = new DimensionsElement({
                     id: 'test03',
                     dataset: this.dataset,
                     visualisation: this.dataset.visualisation,

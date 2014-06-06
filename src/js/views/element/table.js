@@ -53,7 +53,7 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
                 return;
             }
 
-            var dimension = this.model.getFieldId(),
+            var dimension = this.model.getField().get('id'),
                 dimensionHierarchy = this.model.visualisation.dataset.getDimensionHierarchy(dimension);
 
             if (_.isUndefined(dimensionHierarchy)) {

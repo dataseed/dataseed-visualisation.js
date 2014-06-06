@@ -27,10 +27,6 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
         },
 
         render: function() {
-            // Ensure connections have been initialised if this element has been
-            // shown after initially being hidden
-            this.model.initConnections();
-
             // Get element type
             var type = this.model.get('type');
 
@@ -44,31 +40,38 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
             if (this.model.get('display') !== true) {
                 this.$el.addClass('hide');
 
-            // Check if this element's data is loaded
-            } else if (this.model.connectionsAllSynched()) {
+            } else {
+                // Ensure model has been initialised if this element has been
+                // shown after initially being hidden
+                this.model.initConnections();
 
-                // Check if a chart view exists and is of the correct type
-                if (!(this.element && this.element instanceof this.elementTypes[type])) {
+                // Check if this element's data is loaded
+                if (this.model.isLoaded()) {
 
-                    // Remove existing element view, if it exists
-                    if (this.element) {
-                        this.element.remove();
+                    // Check if a chart view exists and is of the correct type
+                    if (!(this.element && this.element instanceof this.elementTypes[type])) {
+
+                        // Remove existing element view, if it exists
+                        if (this.element) {
+                            this.element.remove();
+                        }
+
+                        // Create new element view
+                        this.element = new this.elementTypes[type] ({
+                            parent: this.$el,
+                            model: this.model,
+                            visualisation: this.visualisation
+                        });
+
+                        // Add element
+                        this.$el.append(this.element.$el);
+
                     }
 
-                    // Create new element view
-                    this.element = new this.elementTypes[type] ({
-                        parent: this.$el,
-                        model: this.model,
-                        visualisation: this.visualisation
-                    });
-
-                    // Add element
-                    this.$el.append(this.element.$el);
+                    // Render
+                    this.element.render();
 
                 }
-
-                // Render
-                this.element.render();
 
             }
 

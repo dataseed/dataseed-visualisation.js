@@ -59,7 +59,7 @@ define(['../filter', 'underscore', 'text!../../../templates/element/filter/navig
         },
 
         getDimension: function (dimension, index) {
-            var attrs = this.getDimensionAttrs(dimension),
+            var attrs = this.getDimensionAttrs(dimension, index),
                 field = this.visualisation.dataset.fields.findWhere({id: attrs.id});
 
             return {

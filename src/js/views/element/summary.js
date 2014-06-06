@@ -19,7 +19,7 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
         getSummaryText: function() {
             var summaryText,
                 measure = this.model.getMeasureLabel(),
-                total = format.num(this.model.getData());
+                total = format.num(this.model.getObservations());
 
             // Basic summary. It will be used if the element has no dimensions.
             summaryText = _.escape(measure) + ': ' + total;

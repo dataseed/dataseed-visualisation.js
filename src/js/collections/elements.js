@@ -1,36 +1,33 @@
-define(['backbone', '../models/visualisation/element', '../models/visualisation/element/summaryElement'],
-    function (Backbone, Element, SummaryElement) {
-        'use strict';
+define(['backbone', '../models/visualisation/element/measure', '../models/visualisation/element/dimensions'],
+function (Backbone, MeasureElement, DimensionsElement) {
+    'use strict';
 
-        // Hash to map the visualisation "elements" type attribute values to the
-        // proper Element model child objects
-        var elementTypes = {
-            summary: SummaryElement
-        };
+    var elementTypes = {
+        summary: MeasureElement,
+    };
 
-        var ElementsCollection = Backbone.Collection.extend({
+    var ElementsCollection = Backbone.Collection.extend({
 
-            // Polymorphic Element models
-            // http://backbonejs.org/#Collection-model
-            model: function (attrs, options) {
-
-                if (_.isUndefined(elementTypes[attrs.type])) {
-                    // Unknown subclass
-                    return new Element(attrs, options);
-                }
-
-                return new elementTypes[attrs.type](attrs, options);
-            },
-
-            /**
-             * Save all elements in collection
-             */
-            save: function (attrs, opts) {
-                this.invoke('save', attrs, opts);
+        /**
+         * Polymorphic Element models
+         * http://backbonejs.org/#Collection-model
+         */
+        model: function (attrs, opts) {
+            if (_.isUndefined(elementTypes[attrs.type])) {
+                return new DimensionsElement(attrs, opts);
             }
+            return new elementTypes[attrs.type](attrs, opts);
+        },
 
-        });
-
-        return ElementsCollection;
+        /**
+         * Save all elements in collection
+         */
+        save: function (attrs, opts) {
+            this.invoke('save', attrs, opts);
+        }
 
     });
+
+    return ElementsCollection;
+
+});

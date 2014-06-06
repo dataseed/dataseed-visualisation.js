@@ -2,145 +2,54 @@ define(['backbone', 'underscore', '../../lib/format'],
 function (Backbone, _, format) {
     'use strict';
 
+    /**
+     * Abstract base class for element models
+     *
+     * Derived classes should implement:
+     *      initConnections(opts)
+     *      isLoaded()
+     *      _onSync()
+     *      _getField([index])
+     *      _getConnection(type, [id])
+     */
     var Element = Backbone.Model.extend({
-        /**
-         * Generic Element model.
-         *
-         * models.Visualisation.reset() sets element models in its
-         * ElementsCollection from visualisation "elements" attribute. The
-         * polymorphic collections.ElementsCollections is responsible of
-         * instantiating the proper child Element model from the visualisation
-         * "elements" type attribute
-         */
 
+        // Regex to test for a valid parent property name in a hierarchical dimension
         validParent: /\d+/,
 
-        // True if a connections have been initialised
-        _initConnections: false,
-
-        // True if a connections sync is currently in progress.
-        _syncingConnections: false,
-
-        // True if connections have been synched at least once.
-        _connectionsLoaded: false,
+        // Field types that have an associated dimension connection model
+        dimensionFields: ['string', 'geo'],
 
         url: function () {
             return '/api/datasets/' + this.dataset.get('id') + '/visualisations/' + this.visualisation.get('id') + '/elements/' + this.get('id');
         },
 
-        initialize: function (options) {
-            this.setUp(options);
-
-            // Track connection syncs
-            this._connectionsSynced = {
-                observations: 0,
-                dimensions: 0
-            };
-
-            if (this.get('display') === true) {
-                // Only init connections if element is not hidden
-                this.initConnections(options);
-            }
-        },
-
         /**
-         * Set up basic element properties
-         *
+         * Initialise element, get connections
          */
-        setUp: function (options) {
+        initialize: function (opts) {
             // Set dataset and visualisation models
-            this.dataset = options.dataset;
-            this.visualisation = options.visualisation;
+            this.dataset = opts.dataset;
+            this.visualisation = opts.visualisation;
 
-            // Get dimensions and observations connections models
-            this.dimensions = [];
-            this.observations = [];
-        },
-
-        /**
-         * Init element's connections.
-         */
-        initConnections: function(){
-            if (this._initConnections === true) {
-                return;
-            }
-
-            _.each(this.get('dimensions'), function (opts, index) {
-                if (_.isUndefined(opts.field.id)) {
-                    return;
-                }
-
-                // Observations
-                var values = {
-                        dimension: opts.field.id,
-                        bucket: opts.bucket,
-                        measure: _.isNull(this.get('measure')) ? null : this.get('measure').id,
-                        aggregation: this.get('aggregation')
-                    },
-                    field_model = this.getField(index),
-                    observations = this.dataset.pool.getConnection(_.extend({type: 'observations'}, values));
-
-                // Bind to sync event and keep references
-                observations.bind('connection:sync', this.onConnectionSync, this);
-                this.observations.push(observations);
-
-                // Update connection sync counts
-                if (observations.isLoaded()) {
-                    this._connectionsSynced.observations++;
-                }
-
-                // Dimension values (only fetch for non date/numeric dimensions)
-                if (!_.contains(['date', 'numeric'], field_model.get('type'))) {
-                    var dimension = this.dataset.pool.getConnection(_.extend({type: 'dimensions'}, values));
-
-                    // Bind to sync event and keep references
-                    dimension.bind('connection:sync', this.onConnectionSync, this);
-                    this.dimensions.push(dimension);
-
-                    // Update connection sync counts
-                    if (dimension.isLoaded()) {
-                        this._connectionsSynced.dimensions++;
-                    }
-                }
+            // Get dimension(s) field model(s)
+            this._fields = _.map(this.get('dimensions'), function(dimension) {
+                return this.dataset.fields.get(dimension.field.id);
             }, this);
 
-            this._initConnections = true;
-            this.checkConnectionSync();
-        },
-
-        /**
-         * Dataset connection sync event handler
-         */
-        onConnectionSync: function (conn) {
-            if(!this._syncingConnections){
-                this._syncingConnections = true;
+            // Init connections if element is not hidden
+            if (this.get('display') === true) {
+                this.initConnections(opts);
+                this._ready();
             }
-            this._connectionsSynced[conn.get('type')]++;
-            this.checkConnectionSync();
         },
 
         /**
-         * Return true if all required data has loaded
+         * Emit an event that the element is ready to render
          */
-        connectionsAllSynched: function () {
-            // Check that all observations and dimensions have completed sync.
-            return ( (this._connectionsLoaded && !this._syncingConnections) ||
-                (this._connectionsSynced.observations === this.observations.length &&
-                    this._connectionsSynced.dimensions === this.dimensions.length));
-        },
-
-        checkConnectionSync: function() {
-            if(this.connectionsAllSynched()){
-                // This element is ready to be (re)rendered
+        _ready: function() {
+            if (this.isLoaded()) {
                 this.trigger('element:ready', this);
-
-                // Reset internal flags/counters
-                for (var type in this._connectionsSynced) {
-                    this._connectionsSynced[type] = 0;
-                }
-
-                this._syncingConnections = false;
-                this._connectionsLoaded = true;
             }
         },
 
@@ -152,8 +61,7 @@ function (Backbone, _, format) {
                 return false;
             }
 
-            var dimension = this.getFieldId(),
-                hierarchy = this.dataset.getDimensionHierarchy(dimension),
+            var hierarchy = this.dataset.getDimensionHierarchy(this._getField().get('id')),
                 observation = this.getObservation(index);
 
             // Non-hierarchical dimension
@@ -175,17 +83,47 @@ function (Backbone, _, format) {
         },
 
         /**
-         * Send an "addCut" event for th
+         * Get the specified observation
          */
-        addCut: function (value) {
-            this.trigger('addCut', _.object([this.getFieldId()], [value]));
+        getObservation: function(i, id) {
+            return this._getConnection('observations', id).getValue(i);
         },
 
         /**
-         * Send an "addCut" event
+         * Get all observations
          */
-        removeCut: function () {
-            this.trigger('removeCut', [this.getFieldId()]);
+        getObservations: function(id) {
+            return this._getConnection('observations', id).getData();
+        },
+
+        /**
+         * Get label dependent on field type
+         */
+        getLabel: function(value, index) {
+            var field = this._getField(index);
+            switch(field.get('type')) {
+                case 'date':
+                    return {
+                        label: format.dateLong(new Date(value.id)),
+                        label_short: format.dateShort(new Date(value.id))
+                    };
+
+                case 'numeric':
+                    return {label: format.num(value.id)};
+
+                default:
+                case 'string':
+                case 'geo':
+                    var conn = this._getConnection('dimensions', field.get('id'));
+                    if (conn) {
+                        var label = conn.getValue(value.id);
+                        if (label) {
+                            return label;
+                        }
+                    }
+                    // Unknown field or ID
+                    return _.extend({label: ''}, value);
+            }
         },
 
         /**
@@ -195,130 +133,51 @@ function (Backbone, _, format) {
             return this.get('measure_label');
         },
 
-        getFieldId: function (index) {
-            if (_.isUndefined(index)) {
-                index = 0;
-            }
-            return this.get('dimensions')[index].field.id;
-        },
-
-        getField: function(index) {
-            return this.dataset.fields.get(this.getFieldId(index));
+        /**
+         * Get dimension field type
+         */
+        getFieldType: function(index) {
+            return this._getField(index).get('type');
         },
 
         /**
-         * Get field type for this element's dimension
+         * Get dimension field chart types
          */
-        getFieldType: function() {
-            return this.getField().get('type');
+        getChartTypes: function(index) {
+            return _.pluck(this._getField(index).get('charts'), 'type');
         },
 
         /**
-         * Get allowed chart types for this element's dimension
+         * Send an "addCut" event for th
          */
-        getChartTypes: function() {
-            return _.pluck(this.getField().get('charts'), 'type');
+        addCut: function (value, index) {
+            this.trigger('addCut', _.object([this._getField(index).get('id')], [value]));
         },
 
         /**
-         * Returns an element connection
-         * @param type connection type. Possibile values: "dimensions" or "observations"
-         * @param dimensionId the dimension id of the connection we want to get
-         * if undefined, the first element of the dimensions/observations
-         * connection is returned
-         * @returns an Element connection
+         * Send an "addCut" event
          */
-        getElementConnection: function (type, dimensionId) {
-            if (!_.isUndefined(this[type])) {
-                if (_.isUndefined(dimensionId)) {
-                    return this[type][0];
-                }
-                return _.find(this[type], function (conn) {
-                    return conn.get('dimension') === dimensionId;
-                });
-            }
+        removeCut: function(index) {
+            this.trigger('removeCut', [this._getField(index).get('id')]);
         },
 
         /**
-         * Proxy methods
+         * Cut proxy methods
          */
-        getElementConnectionData: function (type, dimensionId) {
-            var conn = this.getElementConnection(type, dimensionId);
-
-            if (!_.isUndefined(conn)) {
-                return conn.getData();
-            }
-        },
-
-        getLabels: function (dimensionId) {
-            return this.getElementConnectionData('dimensions', dimensionId);
-        },
-
-        getLabel: function (value, dimensionId) {
-            var type = this.getFieldType();
-            if (type == 'date') {
-                return {
-                    label: format.dateLong(new Date(value['id'])),
-                    label_short: format.dateShort(new Date(value['id']))
-                };
-
-            } else if (type == 'numeric') {
-                return {label: format.num(value['id'])};
-
-            } else {
-                var label = _.extend({label: ''}, value),
-                    conn = this.getElementConnection('dimensions', dimensionId);
-
-                if (!_.isUndefined(conn) && !_.isUndefined(conn.getValue(value.id))) {
-                    label = conn.getValue(value.id);
-                }
-
-                return label;
-            }
-        },
-
-        getObservations: function (dimensionId) {
-            return this.getElementConnectionData('observations', dimensionId);
-        },
-
-        getObservation: function (i, dimensionId) {
-            var conn = this.getElementConnection('observations', dimensionId);
-
-            if (!_.isUndefined(conn)) {
-                return conn.getValue(i);
-            }
-        },
-
-        getDimension: function (i, dimensionId) {
-            var conn = this.getElementConnection('dimensions', dimensionId);
-
-            if (!_.isUndefined(conn)) {
-                return conn.getValue(i);
-            }
-        },
-
-        getTotal: function (dimensionId) {
-            var conn = this.getElementConnection('observations', dimensionId);
-
-            if (!_.isUndefined(conn)) {
-                return conn.getTotal();
-            }
-        },
-
         getCut: function (index) {
-            return this.dataset.getCut(this.getFieldId(index));
+            return this.dataset.getCut(this._getField(index).get('id'));
         },
 
         isCut: function (index) {
-            return this.dataset.isCut(this.getFieldId(index));
+            return this.dataset.isCut(this._getField(index).get('id'));
         },
 
         hasCutId: function (id, index) {
-            return this.dataset.hasCutId(this.getFieldId(index), id);
+            return this.dataset.hasCutId(this._getField(index).get('id'), id);
         },
 
         hasCutValue: function (i, index) {
-            return this.dataset.hasCutValue(this.getFieldId(index), i);
+            return this.dataset.hasCutValue(this._getField(index).get('id'), i);
         }
 
     });

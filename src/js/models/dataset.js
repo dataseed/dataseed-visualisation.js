@@ -27,7 +27,7 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
                 });
 
             } else {
-                console.log('No visualisation model supplied');
+                console.error('No visualisation model supplied');
                 return;
             }
 
