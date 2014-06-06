@@ -103,13 +103,15 @@ function (Backbone, _, format) {
             var field = this._getField(index);
             switch(field.get('type')) {
                 case 'date':
-                    return {
+                    return _.extend(value, {
                         label: format.dateLong(new Date(value.id)),
                         label_short: format.dateShort(new Date(value.id))
-                    };
+                    });
 
                 case 'numeric':
-                    return {label: format.num(value.id)};
+                    return _.extend(value, {
+                        label: format.num(value.id)
+                    });
 
                 default:
                 case 'string':

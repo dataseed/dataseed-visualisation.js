@@ -1,5 +1,5 @@
-define(['../filter', 'underscore', 'text!../../../templates/element/filter/navigation.html', 'text!../../../templates/element/filter/navigationDimension.html', 'bootstrap_collapse'],
-    function (FilterElementView, _, navigationTemplate, navigationDimensionTemplate) {
+define(['../filter', 'underscore', 'text!../../../templates/element/filter/navigationDimension.html', 'bootstrap_collapse'],
+    function (FilterElementView, _, navigationDimensionTemplate) {
     'use strict';
 
     var NavigationDimensionView = Backbone.View.extend({
@@ -28,7 +28,7 @@ define(['../filter', 'underscore', 'text!../../../templates/element/filter/navig
             'click h3 a': 'toggleAccordion'
         },
 
-        template: _.template(navigationTemplate),
+        template: _.template('<h2><%- label %></h2><div class="accordion"></div>'),
 
         initialize: function(options) {
             this.visualisation = options.visualisation;
