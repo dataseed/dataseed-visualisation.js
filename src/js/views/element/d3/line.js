@@ -9,8 +9,9 @@ define(['./chart', 'underscore', 'd3'],
         heightMin: 120,
 
         // Gutters
-        gutterLeft: 50,
-        gutterBottom: 80,
+        gutterLeft: 60,
+        gutterRight: 20,
+        gutterBottom: 50,
         gutterTop: 10,
 
         // Labels
@@ -39,7 +40,7 @@ define(['./chart', 'underscore', 'd3'],
             // low when we have few data
             var xScale, xAccessor,
                 height = this.heightMin + Math.floor(Math.log(this.heightWeight * data.length + 1)),
-                range = [0, this.width - (this.gutterLeft * 2)],
+                range = [0, this.width - (this.gutterLeft + this.gutterRight)],
                 type = this.model.getFieldType();
 
             if (type === 'date') {
