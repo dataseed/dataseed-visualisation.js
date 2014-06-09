@@ -130,6 +130,16 @@ function (Backbone, _, format) {
         },
 
         /**
+         * Get all labels
+         */
+        getLabels: function(id) {
+           var conn = this._getConnection('dimensions', id);
+           if (conn) {
+               return conn.getData();
+           }
+        },
+
+        /**
          * Get label for this element's measure
          */
         getMeasureLabel: function () {
