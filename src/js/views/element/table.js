@@ -18,7 +18,7 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
         // Chart constants
         margin: 19,
         rowHeight: 29,
-        maxHeight: 600,
+        maxHeight: 400,
 
         initialize: function() {
             // Calculating the minimum height for the table chart
