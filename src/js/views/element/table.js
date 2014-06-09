@@ -6,7 +6,7 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
 
         events: {
             'click .remove-filter': 'removeFilter',
-            'click .table-row a': 'selectRow',
+            'click .table-row a': 'featureClick',
             'click .table-sort': 'sortSelect'
         },
 
@@ -15,14 +15,10 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
         sortProperty: 'total',
         sortDirection: -1,
 
-        validParent: /\d+/,
-
         // Chart constants
         margin: 19,
         rowHeight: 29,
         maxHeight: 600,
-
-        minHeight: 0,
 
         initialize: function() {
             // Calculating the minimum height for the table chart
@@ -46,36 +42,6 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
 
             this.resetFeatures();
             return this;
-        },
-
-        featureClick: function (index) {
-            if (this.model.get('interactive') === false) {
-                return;
-            }
-
-            var dimension = this.model.getField().get('id'),
-                dimensionHierarchy = this.model.visualisation.dataset.getDimensionHierarchy(dimension);
-
-            if (_.isUndefined(dimensionHierarchy)) {
-                // the dimension is not hierarchical
-
-                if (this.model.hasCutValue(index)) {
-                    this.model.removeCut();
-                } else {
-                    this.model.addCut(this.model.getObservation(index).id);
-                }
-            } else {
-                // the dimension is hierarchical: this featureClick should
-                // handle the drill up/down
-                var levelField = dimensionHierarchy.level_field,
-                    level = this.model.getObservation(index)[levelField],
-                    cutValue = this.model.getObservation(index).id;
-
-                if (this.validParent.test(cutValue)) {
-                    this.model.visualisation.drillDown(dimension, level, this.validParent.exec(cutValue)[0]);
-                }
-            }
-            this.resetFeatures();
         },
 
         getTableValues: function() {
@@ -104,9 +70,12 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
             return values;
         },
 
-        selectRow: function(e) {
+        featureClick: function(e) {
             e.preventDefault();
-            this.featureClick($(e.currentTarget).parents('tr').data('index'));
+            var index = $(e.currentTarget).parents('tr').data('index');
+            if (this.model.featureClick(index)) {
+                this.resetFeatures();
+            }
         },
 
         sortSelect: function(e) {
