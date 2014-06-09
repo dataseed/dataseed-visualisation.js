@@ -40,14 +40,14 @@ function (Backbone, _, format) {
             // Init connections if element is not hidden
             if (this.get('display') === true) {
                 this.initConnections(opts);
-                this._ready();
+                this.ready();
             }
         },
 
         /**
          * Emit an event that the element is ready to render
          */
-        _ready: function() {
+        ready: function() {
             if (this.isLoaded()) {
                 this.trigger('element:ready', this);
             }

@@ -27,7 +27,7 @@ function (Backbone, _, Element) {
          * Handle connection sync event
          */
         _onSync: function() {
-            this._ready();
+            this.ready();
         },
 
         /**

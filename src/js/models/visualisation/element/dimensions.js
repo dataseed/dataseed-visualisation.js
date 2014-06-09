@@ -14,12 +14,12 @@ function (Backbone, _, Element) {
                 observations: {
                     pool: {},
                     num: 0,
-                    loaded: 0,
+                    loaded: 0
                 },
                 dimensions: {
                     pool: {},
                     num: 0,
-                    loaded: 0,
+                    loaded: 0
                 }
             };
 
@@ -73,7 +73,7 @@ function (Backbone, _, Element) {
          */
         _onSync: function(conn) {
             this._connections[conn.get('type')].loaded++;
-            this._ready();
+            this.ready();
         },
 
         /**
