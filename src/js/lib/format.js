@@ -43,21 +43,21 @@ define(['underscore', 'd3'], function(_, d3) {
             var d = new Date(timestamp);
             return _.reduce(this._dateShortFormats, function(output, format) {
                 if (format[1](d)) {
-                    output += d3.time.format(format[0])(d) + ' ';
+                    output += format[0](d) + ' ';
                 }
                 return output;
             }, '');
         },
 
         _dateShortFormats: [
-            ['.%L', function(d) { return d.getMilliseconds(); }],
-            [':%S', function(d) { return d.getSeconds(); }],
-            ['%I:%M', function(d) { return d.getMinutes(); }],
-            ['%I %p', function(d) { return d.getHours(); }],
-            ['%a %d', function(d) { return d.getDay() && d.getDate() != 1; }],
-            ['%b %d', function(d) { return d.getDate() != 1; }],
-            ['%B', function(d) { return d.getMonth(); }],
-            ['%Y', function() { return true; }]
+            [d3.time.format('.%L'), function(d) { return d.getMilliseconds(); }],
+            [d3.time.format(':%S'), function(d) { return d.getSeconds(); }],
+            [d3.time.format('%I:%M'), function(d) { return d.getMinutes(); }],
+            [d3.time.format('%I %p'), function(d) { return d.getHours(); }],
+            [d3.time.format('%a %d'), function(d) { return d.getDay() && d.getDate() != 1; }],
+            [d3.time.format('%b %d'), function(d) { return d.getDate() != 1; }],
+            [d3.time.format('%B'), function(d) { return d.getMonth(); }],
+            [d3.time.format('%Y'), function() { return true; }]
         ],
 
         /**
