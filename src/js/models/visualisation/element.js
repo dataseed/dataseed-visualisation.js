@@ -109,7 +109,8 @@ function (Backbone, _, format) {
                         label_short: format.dateShort(date)
                     });
 
-                case 'numeric':
+                case 'integer':
+                case 'float':
                     return _.extend(value, {
                         label: format.num(value.id)
                     });

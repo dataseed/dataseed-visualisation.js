@@ -1,5 +1,5 @@
-define(['./chart', 'underscore', 'd3'],
-    function(ChartView, _, d3) {
+define(['./chart', 'underscore', 'd3', '../../../lib/format'],
+    function(ChartView, _, d3, format) {
     'use strict';
 
     var BarChartView = ChartView.extend({
@@ -93,7 +93,7 @@ define(['./chart', 'underscore', 'd3'],
                     .attr('dy', -5)
                     .attr('text-anchor', 'middle')
                     .style('fill', this.getStyle('scaleLabel'))
-                    .text(this.numFormatScale);
+                    .text(format.numScale);
 
             chart.append('text')
                     .attr('text-anchor', 'middle')

@@ -14,7 +14,7 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
                     fields: [
                         {id: 'test04', type: 'string', label: 'Test Field 04'},
                         {id: 'test05', type: 'date', label: 'Test Field 05'},
-                        {id: 'test06', type: 'numeric'}
+                        {id: 'test06', type: 'integer'}
                     ]
                 });
             this.dataset.reset();

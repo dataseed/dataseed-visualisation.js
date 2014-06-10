@@ -1,4 +1,5 @@
-define(['./chart', 'underscore', 'd3'], function(ChartView, _, d3) {
+define(['./chart', 'underscore', 'd3', '../../../lib/format'],
+    function(ChartView, _, d3, format) {
     'use strict';
 
     var GeoChartView = ChartView.extend({
@@ -121,7 +122,7 @@ define(['./chart', 'underscore', 'd3'], function(ChartView, _, d3) {
                     .attr('x', _.bind(this.getScaleItemX, this))
                     .attr('y', (this.scaleItemMarginTop * 2) + this.scaleItemHeight)
                     .style('fill', this.getStyle('scaleLabel'))
-                    .text(this.numFormatScale);
+                    .text(format.numScale);
 
             chartScale.append('text')
                     .attr('class', 'scaleLabel')

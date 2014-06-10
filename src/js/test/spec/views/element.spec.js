@@ -10,7 +10,7 @@ define(['jquery', 'models/dataset', 'models/visualisation/element/dimensions', '
                     visualisation_id: 'test02',
                     fields: [
                         {id: 'test04', type: 'string'},
-                        {id: 'test05', type: 'numeric'}
+                        {id: 'test05', type: 'integer'}
                     ]
                 });
             this.dataset.reset();

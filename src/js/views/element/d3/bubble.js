@@ -1,4 +1,5 @@
-define(['./chart', 'underscore', 'd3'], function(ChartView, _, d3) {
+define(['./chart', 'underscore', 'd3', '../../../lib/format'],
+    function(ChartView, _, d3, format) {
     'use strict';
 
     var BubbleChartView = ChartView.extend({
@@ -114,7 +115,7 @@ define(['./chart', 'underscore', 'd3'], function(ChartView, _, d3) {
                     .attr('text-anchor', 'middle')
                     .attr('y', this.scalePosY + this.scaleMarginY)
                     .style('fill', this.getStyle('scaleLabel'))
-                    .text(this.numFormatScale);
+                    .text(format.numScale);
 
             // Set element height to chart height + scale height
             chart.attr('height', chartHeight + (this.scalePosY * 2) + (this.scaleMarginY * 2));

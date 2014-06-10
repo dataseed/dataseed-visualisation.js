@@ -1,4 +1,5 @@
-define(['backbone', 'underscore', 'd3', 'text!../../../templates/element/chart.html', 'tipsy'], function(Backbone, _, d3, chartTemplate) {
+define(['backbone', 'underscore', 'd3', '../../../lib/format', 'text!../../../templates/element/chart.html', 'tipsy'],
+    function(Backbone, _, d3, format, chartTemplate) {
     'use strict';
 
     var ChartView = Backbone.View.extend({
@@ -13,12 +14,6 @@ define(['backbone', 'underscore', 'd3', 'text!../../../templates/element/chart.h
         chartHeightPadding: 10,
 
         initialize: function(options) {
-            // Format as xx,xxx,xxx
-            this.numFormat = d3.format(',');
-
-            // Format as above but with SI suffixes (e.g. xxM)
-            this.numFormatScale = d3.format(',s');
-
             // Get parent element
             this.$parent = options['parent'];
 
@@ -128,7 +123,7 @@ define(['backbone', 'underscore', 'd3', 'text!../../../templates/element/chart.h
             if (valueLabel && valueLabel.label) {
                label += valueLabel.label + ': ';
             }
-            label += this.numFormat(value.total);
+            label += format.num(value.total);
             return label;
         },
 

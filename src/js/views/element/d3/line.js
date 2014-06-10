@@ -1,5 +1,5 @@
-define(['./chart', 'underscore', 'd3'],
-    function (ChartView, _, d3) {
+define(['./chart', 'underscore', 'd3', '../../../lib/format'],
+    function (ChartView, _, d3, format) {
     'use strict';
 
     var LineChartView = ChartView.extend({
@@ -88,7 +88,7 @@ define(['./chart', 'underscore', 'd3'],
                     .scale(yScale)
                     .orient('left')
                     .ticks(this.yAxisTicks)
-                    .tickFormat(this.numFormatScale),
+                    .tickFormat(format.numScale),
 
                 // Create line object
                 line = d3.svg.line()
