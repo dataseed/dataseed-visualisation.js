@@ -133,32 +133,6 @@ require(['models/dataset', 'models/dataset/connection', 'models/dataset/dimensio
             }
         });
 
-        it('should sum a total of observations', function() {
-            var data = [
-                    {
-                        id: 'id01',
-                        total: 1000
-                    },
-                    {
-                        id: 'id02',
-                        total: 999.99
-                    },
-                    {
-                        id: 'id02',
-                        total: 0.01
-                    }
-                ],
-                conn = new DimensionalConnection({
-                    dataset: this.dataset,
-                    type: 'dimensions',
-                    dimension: 'test18',
-                    measure: 'test19',
-                    aggregation: 'sum',
-                    test18: data
-                });
-            expect(conn.getTotal()).toBe(2000.0);
-        });
-
     });
 
 });
