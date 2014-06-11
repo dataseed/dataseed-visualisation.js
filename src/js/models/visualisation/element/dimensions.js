@@ -2,6 +2,13 @@ define(['backbone', 'underscore', '../element'],
 function (Backbone, _, Element) {
     'use strict';
 
+    /**
+     * Element with dimensional connections. For each dimension d, the element
+     * is related to:
+     *   - a connection to get the observations related to d
+     *   - a connection to get the dimensions values for d, if d is non
+     *     date/numeric
+     */
     var DimensionsElement = Element.extend({
 
         initConnections: function() {

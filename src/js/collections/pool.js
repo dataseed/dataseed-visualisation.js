@@ -37,6 +37,9 @@ define(['backbone', '../models/dataset/connection', '../models/dataset/dimension
         getConnectionId: function(opts) {
             switch(opts.type) {
                 case 'dimensions':
+                    // A dimension connection only depends on the dimension id:
+                    // measures and aggregations do not affect the dimension
+                    // values that need to be fetched.
                     return opts.type + ':' + opts.dimension;
 
                 case 'observations':
