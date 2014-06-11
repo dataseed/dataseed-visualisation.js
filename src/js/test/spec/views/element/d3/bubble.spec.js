@@ -97,8 +97,10 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
             expect(this.view.el).toContainElement('svg');
             expect(this.view.el).toContainElement('circle');
             expect(this.view.el).toContainElement('text.chartLabel');
+            expect(this.view.el).toContainElement('text.scaleLabel');
 
             expect(this.view.$el.find('text.chartLabel').length).toEqual(2);
+            expect(this.view.$el.find('circle').length).toEqual(2);
 
             expect(this.view.el).toContainText('Test Bubble Chart');
             expect(this.view.el).toContainText('Test Label 01');

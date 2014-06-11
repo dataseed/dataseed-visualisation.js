@@ -7,6 +7,7 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
         scaleMarginX: 10,
         scaleMarginY: 20,
         scaleLineHeight: 10,
+        scaleTextHeight: 10,
 
         render: function() {
 
@@ -97,10 +98,10 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
             // Add scale
             var scaleItems = chart.append('g')
                     .attr('transform', 'translate(0,' + this.height + ')')
-                .selectAll('.scaleItem')
-                    .data(scaleLines)
-                .enter().append('g')
-                    .attr('transform', _.bind(this.getScalePosition, this));
+                    .selectAll('.scaleItem')
+                        .data(scaleLines)
+                    .enter().append('g')
+                        .attr('transform', _.bind(this.getScalePosition, this));
 
             // Add scale lines
             scaleItems.append('polyline')
@@ -118,8 +119,17 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
                     .style('fill', this.getStyle('scaleLabel'))
                     .text(format.numScale);
 
+            // Add measure label
+            this.height += (this.scaleMarginY * 2) + this.scaleLineHeight + this.scaleTextHeight;
+            chart.append('text')
+                    .attr('text-anchor', 'middle')
+                    .attr('x', (this.width - this.scaleMarginX) / 2)
+                    .attr('y', this.height)
+                    .style('fill', this.getStyle('measureLabel'))
+                    .text(this.model.getMeasureLabel());
+
             // Set chart height
-            this.height += (this.scaleMarginY * 2) + this.scaleLineHeight;
+            this.height += this.scaleMarginY;
             chart.attr('height', this.height);
 
             return this;
