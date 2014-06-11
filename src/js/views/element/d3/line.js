@@ -154,7 +154,9 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
 
             // Attach tooltips
             this.attachTooltips('circle');
+
             return this;
+
         }
 
     });

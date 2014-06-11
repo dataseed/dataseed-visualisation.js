@@ -5,7 +5,6 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
     var TableChartView = Backbone.View.extend({
 
         events: {
-            'click .remove-filter': 'removeFilter',
             'click .table-row a': 'featureClick',
             'click .table-sort': 'sortSelect'
         },
@@ -16,14 +15,9 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
         sortDirection: -1,
 
         // Chart constants
-        margin: 19,
+        margin: 25,
         rowHeight: 29,
         maxHeight: 400,
-
-        initialize: function() {
-            // Calculating the minimum height for the table chart
-            this.minHeight = Math.min((this.getTableValues().length * this.rowHeight) + this.margin, this.maxHeight);
-        },
 
         render: function() {
             var attrs = _.extend({
@@ -33,14 +27,17 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
                 sortDirection: this.sortDirection
             }, this.model.attributes);
 
+            // Render template
             this.$el.html(this.template(attrs));
 
-            this.resetButtonDisplay();
-
-            // Add the fix height to the table chart
-            this.$('.chart-container').css('min-height', this.minHeight);
-
+            // Set styles (including cut highlighting)
             this.resetFeatures();
+
+            // Calculate the table height
+            if (!this.height) {
+                this.height = (attrs.values.length * this.rowHeight) + this.margin;
+            }
+
             return this;
         },
 
@@ -93,16 +90,6 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
             return;
         },
 
-        /**
-         * Reset table chart filters button event handler
-         */
-        removeFilter: function(e) {
-            e.preventDefault();
-            this.model.removeCut();
-            this.resetFeatures();
-            $('.tipsy').remove();
-        },
-
         resetFeatures: function() {
             // Get the colours from the model
             var featureFill = this.model.visualisation.styles.getStyle('featureFill', this.model);
@@ -120,18 +107,7 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
                 this.$('h2').css('color', headingColour);
                 this.$el.parent().css('background-color', backgroundColour);
             }
-        },
-
-        /**
-         * Shows reset button only when there is a cut on the dimension
-         */
-        resetButtonDisplay: function() {
-            if(this.model.isCut()) {
-                this.$(".container-icon").addClass('in');
-                this.$('.remove-filter').tipsy({gravity: 's'});
-            }
         }
-
 
     });
 

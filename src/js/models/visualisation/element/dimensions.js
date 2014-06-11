@@ -80,6 +80,9 @@ function (Backbone, _, Element) {
          * Check if all connections have loaded
          */
         isLoaded: function() {
+            if (!this._connections) {
+                return false;
+            }
             var obs = this._connections.observations,
                 dims = this._connections.dimensions;
             return (

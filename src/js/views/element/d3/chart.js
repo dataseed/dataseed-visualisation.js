@@ -7,15 +7,12 @@ define(['backbone', 'underscore', 'd3', '../../../lib/format', 'text!../../../te
         template: _.template(chartTemplate),
 
         events: {
-            'click .remove-filter': 'removeFilter',
             'mouseover g': 'mouseRemoveTips'
         },
 
-        chartHeightPadding: 10,
-
         initialize: function(options) {
-            // Get parent element
-            this.$parent = options['parent'];
+            // Get options
+            this.$parent = options.parent;
 
             // Re-render the chart on resize (at most, every 300 milliseconds)
             $(window).resize(_.throttle(_.bind(this.render, this), 300));
@@ -28,48 +25,24 @@ define(['backbone', 'underscore', 'd3', '../../../lib/format', 'text!../../../te
             // Render template
             this.$el.html(this.template(this.model.attributes));
 
-            this.resetButtonDisplay();
-
             // Set custom colours
             this.$el.css('background-color', this.model.visualisation.styles.getStyle('background'));
             this.$('h2').css('color', this.model.visualisation.styles.getStyle('heading'));
 
-            // Get parent element size
+            // Get parent element width
             this.width = this.$parent.width();
-            this.height = this.$parent.height();
 
             // Kepp reference to container DOM element for d3
             this.chartContainerEl = this.$('.chart-container').get(0);
-
             return this;
         },
 
         /**
-         * Reset chart filters button event handler
+         * Remove any lingering tooltips when the mouse leaves the chart
          */
-        removeFilter: function(e) {
-            e.preventDefault();
-            this.model.removeCut();
-            this.resetFeatures();
-            $('.tipsy').remove();
-        },
-
         mouseRemoveTips : function() {
             if($('.tipsy').length > 0) {
                 $('.tipsy:gt(0)').remove();
-            }
-        },
-
-        /**
-         * Update the size of the svg chart container
-         */
-        updateSize: function() {
-            var chartEl = this.$el
-                .children('svg')
-                .get(0);
-            if (!_.isUndefined(chartEl)) {
-                var height = parseInt(chartEl.getAttributeNS(null, 'height'), 10) + this.chartHeightPadding;
-                this.$el.height(height);
             }
         },
 
@@ -152,16 +125,6 @@ define(['backbone', 'underscore', 'd3', '../../../lib/format', 'text!../../../te
             var width = html.width();
             html.remove();
             return width;
-        },
-
-        /**
-         * Shows reset button only when there is a cut on the dimension
-         */
-        resetButtonDisplay: function() {
-            if(this.model.isCut()) {
-                this.$(".container-icon").addClass('in');
-                this.$('.remove-filter').tipsy({gravity: 's'});
-            }
         }
 
     });

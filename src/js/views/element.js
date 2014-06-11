@@ -6,7 +6,7 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
 
         tagName: 'article',
 
-        elementTypes: {
+        chartTypes: {
             // HTML elements
             summary:      SummaryElementView,
             navigation:   NavigationElementView,
@@ -20,7 +20,15 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
             line:         LineChartView
         },
 
-        element: false,
+        events: {
+            'click .remove-filter': 'reset'
+        },
+
+        // Add bottom margin to element container
+        marginBottom: 60,
+
+        // Only set the element size once
+        _sized: false,
 
         initialize: function(options) {
             this.visualisation = options.visualisation;
@@ -49,33 +57,69 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
                 if (this.model.isLoaded()) {
 
                     // Check if a chart view exists and is of the correct type
-                    if (!(this.element && this.element instanceof this.elementTypes[type])) {
+                    if (!(this.chart && this.chart instanceof this.chartTypes[type])) {
 
-                        // Remove existing element view, if it exists
-                        if (this.element) {
-                            this.element.remove();
+                        // Remove existing chart view, if it exists
+                        if (this.chart) {
+                            this.chart.remove();
                         }
 
-                        // Create new element view
-                        this.element = new this.elementTypes[type] ({
+                        // Create new chart view
+                        this.chart = new this.chartTypes[type] ({
                             parent: this.$el,
                             model: this.model,
                             visualisation: this.visualisation
                         });
 
-                        // Add element
-                        this.$el.append(this.element.$el);
+                        // Add chart
+                        this.$el.append(this.chart.$el);
 
                     }
 
-                    // Render
-                    this.element.render();
+                    // Render chart
+                    this.chart.render();
+
+                    // Show reset button when the chart is cut
+                    if (this.model.isCut()) {
+                        this.$('.container-icon').addClass('in');
+                        this.$('.remove-filter').tipsy({gravity: 's'});
+                    }
+
+                    // Set element height if the chart has one and this is the first render
+                    if (!this._sized && this.chart.height) {
+
+                        // Get chart height
+                        var height = this.chart.height;
+                        if (this.chart.maxHeight) {
+                            height = Math.min(height, this.chart.maxHeight);
+                        }
+
+                        // Set chart height
+                        this.$('.chart-container').height(height);
+
+                        // Set element height
+                        this.$el.height(height + this.marginBottom);
+
+                        // Don't set height again
+                        this._sized = true;
+
+                    }
 
                 }
 
             }
 
             return this;
+        },
+
+        /**
+         * Reset chart filters button event handler
+         */
+        reset: function(e) {
+            e.preventDefault();
+            this.model.removeCut();
+            this.chart.resetFeatures();
+            $('.tipsy').remove();
         }
 
     });

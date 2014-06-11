@@ -133,9 +133,6 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
                     .style('fill', this.getStyle('scaleFeature'))
                     .text(this.model.getMeasureLabel());
 
-            // Update container size
-            this.updateSize();
-
             return this;
 
         },

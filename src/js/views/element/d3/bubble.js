@@ -22,32 +22,32 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
             var chart = d3.select(this.chartContainerEl).append('svg')
                 .attr('width', this.width)
                 .attr('class', 'bubbleChart')
-                .classed('inactive', _.bind(this.model.isCut, this.model));
+                .classed('inactive', _.bind(this.model.isCut, this.model)),
 
             // Layout observations as bubbles
-            var nodes = d3.layout.pack()
-                .children(function(d) {
-                    return d;
-                })
-                .value(function(d) {
-                    return d.total;
-                })
-                .sort(null)
-                .size([this.width, this.width])
-                .nodes(values)
-                .filter(function (d) {
-                    return (!_.isUndefined(d.id));
-                });
+                nodes = d3.layout.pack()
+                    .children(function(d) {
+                        return d;
+                    })
+                    .value(function(d) {
+                        return d.total;
+                    })
+                    .sort(null)
+                    .size([this.width, this.width])
+                    .nodes(values)
+                    .filter(function (d) {
+                        return (!_.isUndefined(d.id));
+                    }),
 
             // Add bubbles
-            var bubbles = chart.append('g')
-                .selectAll('g.node')
-                    .data(nodes)
-                .enter().append('svg:g')
-                    .attr('class', 'node')
-                    .attr('title', _.bind(this.getTooltip, this))
-                    .attr('transform', function(d) { return 'translate(' + d.x + ',' + d.y + ')'; })
-                    .on('click', _.bind(this.featureClick, this));
+                bubbles = chart.append('g')
+                    .selectAll('g.node')
+                        .data(nodes)
+                    .enter().append('svg:g')
+                        .attr('class', 'node')
+                        .attr('title', _.bind(this.getTooltip, this))
+                        .attr('transform', function(d) { return 'translate(' + d.x + ',' + d.y + ')'; })
+                        .on('click', _.bind(this.featureClick, this));
 
             bubbles.append('circle')
                 .attr('r', function(d) { return d.r; })
@@ -64,64 +64,9 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
             // Attach tooltips
             this.attachTooltips('g');
 
-            // Get chart height
-            var chartHeight = d3.max(nodes, function(d) { return d.y + d.r; });
-
-            // Get scale (map input domain to output range)
-            this.scale = d3.scale.linear()
-                .domain([
-                    d3.min(nodes, this.getMeasure),
-                    d3.max(nodes, this.getMeasure)
-                ])
-                .range([
-                    d3.min(nodes, this.getArea),
-                    d3.max(nodes, this.getArea)
-                ]);
-
-            // Calculate scale bubbles
-            var scaleBubbles, scaleWidth, i = 5;
-            do {
-
-                // Get scale "ticks" (the scale bubbles), filtering out values of 0
-                scaleBubbles = _.filter(this.scale.ticks(i));
-
-                // Caculate scale width
-                scaleWidth = _.reduce(scaleBubbles, this.getScaleWidth, 0, this);
-
-            } while(--i > 0 && scaleWidth > this.width);
-
-            // Set scale item positions for the getScalePosition() method
-            this.scalePosX = (this.width - scaleWidth) / 2;
-            this.scalePosY = this.scaleMarginY + this.getRadius(scaleBubbles[scaleBubbles.length-1]);
-
-            // Add scale
-            var scaleItems = chart.append('g')
-                    .attr('transform', 'translate(0,' + chartHeight + ')')
-                .selectAll('.scaleItem')
-                    .data(scaleBubbles)
-                .enter().append('g')
-                    .attr('transform', _.bind(this.getScalePosition, this));
-
-            // Add scale bubbles
-            scaleItems.append('circle')
-                    .attr('class', 'scaleBubble')
-                    .style('fill', 'transparent')
-                    .style('stroke', this.getStyle('scaleFeature'))
-                    .attr('r', _.bind(this.getRadius, this));
-
-            // Add scale bubble labels
-            scaleItems.append('text')
-                    .attr('class', 'scaleLabel')
-                    .attr('text-anchor', 'middle')
-                    .attr('y', this.scalePosY + this.scaleMarginY)
-                    .style('fill', this.getStyle('scaleLabel'))
-                    .text(format.numScale);
-
-            // Set element height to chart height + scale height
-            chart.attr('height', chartHeight + (this.scalePosY * 2) + (this.scaleMarginY * 2));
-
-            // Update container size
-            this.updateSize();
+            // Set height
+            this.height = Math.floor(d3.max(nodes, function(d) { return d.y + d.r; }));
+            chart.attr('height', this.height);
 
             return this;
 

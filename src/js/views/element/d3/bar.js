@@ -33,25 +33,27 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
                 .domain([0, d3.max(data)])
                 .range([0, this.barWidth]);
 
+            this.height = 0;
+
             // Create bar chart
-            var chart = d3.select(this.chartContainerEl)
+            var chartContainer = d3.select(this.chartContainerEl)
                 .append('svg')
                     .attr('width', this.barWidth + this.gutterLeft)
-                    .attr('height', height + this.scaleHeight + this.gutterBottom)
                     .attr('class', 'barChart')
-                    .classed('inactive', _.bind(this.model.isCut, this.model))
-                    .append('g')
-                        .attr('transform', 'translate(' + this.gutterLeft + ',0)');
+                    .classed('inactive', _.bind(this.model.isCut, this.model)),
+
+                chart = chartContainer.append('g')
+                    .attr('transform', 'translate(' + this.gutterLeft + ',0)'),
 
             // Create nodes to hold bars and labels
-            var nodes = chart.selectAll('g')
-                    .data(data)
-                .enter().append('g')
-                    .attr('title', _.bind(this.getTooltip, this))
-                    .attr('transform', _.bind(this.getBarPosition, this))
-                    .attr('width', this.scale)
-                    .attr('height', this.barHeight)
-                    .on('click', _.bind(this.featureClick, this));
+                nodes = chart.selectAll('g')
+                        .data(data)
+                    .enter().append('g')
+                        .attr('title', _.bind(this.getTooltip, this))
+                        .attr('transform', _.bind(this.getBarPosition, this))
+                        .attr('width', this.scale)
+                        .attr('height', this.barHeight)
+                        .on('click', _.bind(this.featureClick, this));
 
             // Create bars
             nodes.append('rect')
@@ -80,32 +82,33 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
                     .attr('class', 'scale')
                     .attr('x1', this.scale)
                     .attr('x2', this.scale)
-                    .attr('y1', height + 5)
-                    .attr('y2', height + 10)
+                    .attr('y1', this.height + 5)
+                    .attr('y2', this.height + 10)
                     .style('stroke', this.getStyle('scaleFeature'));
 
+            this.height += this.scaleHeight;
             chart.selectAll('.scaleLabel')
                     .data(scaleTicks)
                 .enter().append('text')
                     .attr('class', 'scaleLabel')
                     .attr('x', this.scale)
-                    .attr('y', height + this.scaleHeight)
+                    .attr('y', this.height)
                     .attr('dy', -5)
                     .attr('text-anchor', 'middle')
                     .style('fill', this.getStyle('scaleLabel'))
                     .text(format.numScale);
 
+            this.height += this.gutterBottom;
             chart.append('text')
                     .attr('text-anchor', 'middle')
                     .attr('x', (this.width - (this.gutterLeft * 2)) / 2)
-                    .attr('y', height + this.scaleHeight + this.gutterBottom)
+                    .attr('y', this.height)
                     .attr('dy', -5)
                     .style('fill', this.getStyle('measureLabel'))
                     .text(this.model.getMeasureLabel());
 
-            // Update container size
-            this.updateSize();
-
+            // Set height
+            chartContainer.attr('height', this.height);
             return this;
 
         },
@@ -114,7 +117,11 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
          * Get a bar group's position
          */
         getBarPosition: function (d, i) {
-            return 'translate(0, ' + (i * this.barHeight) + ')';
+            var x = this.height;
+            if (d !== 0) {
+                this.height += this.barHeight;
+            }
+            return 'translate(0, ' + x + ')';
         },
 
         /**
