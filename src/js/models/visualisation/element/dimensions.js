@@ -86,8 +86,19 @@ function (Backbone, _, Element) {
             var obs = this._connections.observations,
                 dims = this._connections.dimensions;
             return (
+                // All observations have loaded, and...
                 obs.num > 0 && obs.loaded > 0 && (obs.loaded % obs.num) === 0 &&
-                (dims.num === 0 || (dims.loaded > 0 && (dims.loaded % dims.num) === 0))
+                (
+                    // There are no dimensions, or...
+                    (dims.num === 0) ||
+                    (
+                        // All dimensions have loaded and...
+                        (dims.loaded > 0 && (dims.loaded % dims.num) === 0) &&
+
+                        // Dimensions and observations have loaded an equal number of times
+                        (dims.loaded / obs.loaded === dims.num / obs.num)
+                    )
+                )
             );
         },
 
