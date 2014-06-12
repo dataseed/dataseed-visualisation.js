@@ -65,7 +65,7 @@ define(['backbone', 'underscore', 'd3', '../../../lib/format', 'text!../../../te
         },
 
         /**
-         * Get a bubble's label
+         * Get a chart feature's label
          */
         getFeatureLabel: function(d, i) {
             // Get this feature's label

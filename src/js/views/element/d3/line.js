@@ -4,24 +4,18 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
 
     var LineChartView = ChartView.extend({
 
-        // Height
-        heightWeight: 100,
-        heightMin: 120,
-
-        // Gutters
-        gutterLeft: 60,
-        gutterRight: 20,
-        gutterBottom: 50,
-        gutterTop: 10,
-
-        // Labels
-        labelY: 65,
+        // Axes
+        yAxisHeight: 170,
+        yAxisTicks: 5,
 
         // Points
         circleRadius: 3,
 
-        // Axes
-        yAxisTicks: 5,
+        // Gutters
+        gutterTop: 10,
+        gutterRight: 20,
+        gutterLeft: 60,
+        gutterBottom: 50,
 
         render: function () {
 
@@ -35,21 +29,16 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
                 return this;
             }
 
-            // The height is calculated as (a sort of) log regression:
-            // it will not be so big when we have a lot of data and not so
-            // low when we have few data
             var xScale, xAccessor,
-                height = this.heightMin + Math.floor(Math.log(this.heightWeight * data.length + 1)),
-                range = [0, this.width - (this.gutterLeft + this.gutterRight)],
-                type = this.model.getFieldType();
+                xRange = [0, this.width - (this.gutterLeft + this.gutterRight)];
 
-            if (type === 'date') {
+            if (this.model.getFieldType() === 'date') {
                 // Use a temporal scale for time dimension (X axis)
                 var ids = _.pluck(data, 'id');
 
                 xScale = d3.time.scale.utc()
                     .domain([d3.min(ids), d3.max(ids)])
-                    .range(range);
+                    .range(xRange);
 
                 xAccessor = function (d) {
                     return xScale(d.id);
@@ -58,12 +47,12 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
             } else {
                 // Use an ordinal scale for dimension labels (X axis)
                 data = _.map(data, function(d) {
-                    return this.model.getLabel(d);
+                    return _.extend({}, d, this.model.getLabel(d));
                 }, this);
 
                 xScale = d3.scale.ordinal()
                     .domain(_.pluck(data, 'label'))
-                    .rangePoints(range);
+                    .rangePoints(xRange);
 
                 xAccessor = function (d) {
                     return xScale(d.label);
@@ -73,7 +62,7 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
             // Use a linear scale for measure (Y axis)
             var yScale = d3.scale.linear()
                     .domain([0, d3.max(_.pluck(data, 'total'))])
-                    .range([height, 0]),
+                    .range([this.yAxisHeight, 0]),
 
                 yAccessor = function (d) {
                         return yScale(d.total);
@@ -96,14 +85,14 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
                     .y(yAccessor),
 
                 // Create line chart
-                chart = d3.select(this.chartContainerEl)
+                chartContainer = d3.select(this.chartContainerEl)
                     .append('svg')
                         .attr('width', this.width + this.gutterLeft)
-                        .attr('height', height + this.gutterBottom)
                         .attr('class', 'lineChart')
-                        .classed('inactive', _.bind(this.model.isCut, this.model))
-                        .append('g')
-                            .attr('transform', 'translate(' + this.gutterLeft + ',' + this.gutterTop + ')');
+                        .classed('inactive', _.bind(this.model.isCut, this.model)),
+
+                chart = chartContainer.append('g')
+                    .attr('transform', 'translate(' + this.gutterLeft + ',' + this.gutterTop + ')');
 
             // Draw X axis
             chart.append('g')
@@ -122,7 +111,7 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
                 .append('text')
                     .attr("transform", "rotate(-90)")
                     .attr('y', 0 - (this.gutterLeft / 1.5))
-                    .attr("x", 0 - (height / 2))
+                    .attr('x', 0 - (this.yAxisHeight / 2))
                     .attr('text-anchor', 'middle')
                     .style('fill', this.getStyle('measureLabel'))
                     .text(this.model.getMeasureLabel());
@@ -154,6 +143,10 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
 
             // Attach tooltips
             this.attachTooltips('circle');
+
+            // Set chart height
+            this.height = this.gutterTop + this.yAxisHeight + this.gutterBottom;
+            chartContainer.attr('height', this.height);
 
             return this;
 
