@@ -110,6 +110,14 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
         },
 
         /**
+         * Resize the element
+         */
+        resize: function() {
+            this._sized = false;
+            this.render();
+        },
+
+        /**
          * Reset chart filters button event handler
          */
         reset: function(e) {

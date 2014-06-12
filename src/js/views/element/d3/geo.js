@@ -10,7 +10,8 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
         scaleTicks: 7,
 
         scaleGutterLeft: 10,
-        scaleGutterTop: -60,
+        scaleGutterTop: -50,
+        scaleGutterBottom: 10,
 
         scaleItemWidth: 30,
         scaleItemHeight: 15,
@@ -26,43 +27,42 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
             ChartView.prototype.render.apply(this, arguments);
 
             // Get current values
-            var values = this.model.getObservations();
+            var values = this.model.getObservations(),
 
             // Get polygons (in the form of GeoJSON features) for all data points
-            var data = _.map(values, _.bind(this.getBoundary, this));
+                data = _.map(values, _.bind(this.getBoundary, this)),
 
             // Get bounds enclosing all polygons
-            var bounds = d3.geo.bounds(this.createFeature(
-                'MultiPolygon',
-                _.reduce(data, this.concatCoords, [])
-            ));
+                bounds = d3.geo.bounds(this.createFeature(
+                    'MultiPolygon',
+                    _.reduce(data, this.concatCoords, [])
+                )),
 
-            var mapWidth = Math.abs(bounds[1][0] - bounds[0][0]);
-            var mapHeight = Math.abs(bounds[1][1] - bounds[0][1]);
+                mapWidth = Math.abs(bounds[1][0] - bounds[0][0]),
+                mapHeight = Math.abs(bounds[1][1] - bounds[0][1]);
 
-            var scale = (this.width / mapWidth) * this.scalingFactorX;
             this.height = (this.width / mapHeight) * this.scalingFactorY;
 
             // Set map projection
             var projection = d3.geo.stereographic()
                 .translate([this.width / 2, this.height / 2])
-                .scale(scale);
+                .scale((this.width / mapWidth) * this.scalingFactorX),
 
             // Set geo path generator using our projection
-            var path = d3.geo.path()
-                .projection(projection);
+                path = d3.geo.path()
+                    .projection(projection),
 
             // Calculate centre point of map from bounding box
-            var centroid = path.centroid(this.createFeature(
-                'Polygon',
-                [[
-                    [bounds[0][0], bounds[0][1]], // left, top
-                    [bounds[0][0], bounds[1][1]], // left, bottom
-                    [bounds[1][0], bounds[1][1]], // right, bottom
-                    [bounds[1][0], bounds[0][1]], // right, top
-                    [bounds[0][0], bounds[0][1]] // left, top
-                ]]
-            ));
+                centroid = path.centroid(this.createFeature(
+                    'Polygon',
+                    [[
+                        [bounds[0][0], bounds[0][1]], // left, top
+                        [bounds[0][0], bounds[1][1]], // left, bottom
+                        [bounds[1][0], bounds[1][1]], // right, bottom
+                        [bounds[1][0], bounds[0][1]], // right, top
+                        [bounds[0][0], bounds[0][1]] // left, top
+                    ]]
+                ));
 
             // Convert centroid from pixel coordinates to lat/lon
             centroid = projection.invert(centroid);
@@ -100,30 +100,34 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
             this.attachTooltips('path');
 
             // Create scale
+            this.height += this.scaleGutterTop;
             var chartScale = chart.append('svg:g')
-                .attr('transform', 'translate(' + this.scaleGutterLeft + ',' + (this.height + this.scaleGutterTop) + ')');
+                .attr('transform', 'translate(' + this.scaleGutterLeft + ',' + this.height + ')');
 
             var scaleTicks = this.colourScale.ticks(this.scaleTicks);
 
+            var scaleY = this.scaleItemMarginTop;
             chartScale.selectAll('.scale')
                     .data(scaleTicks)
                 .enter().append('rect')
                     .attr('class', 'scale')
                     .attr('x', _.bind(this.getScaleItemX, this))
-                    .attr('y', this.scaleItemMarginTop)
+                    .attr('y', scaleY)
                     .attr('width', this.scaleItemWidth)
                     .attr('height', this.scaleItemHeight)
                     .attr('fill', this.colourScale);
 
+            scaleY += this.scaleItemMarginTop + this.scaleItemHeight;
             chartScale.selectAll('.scaleLabel')
                     .data(scaleTicks)
                 .enter().append('text')
                     .attr('class', 'scaleLabel')
                     .attr('x', _.bind(this.getScaleItemX, this))
-                    .attr('y', (this.scaleItemMarginTop * 2) + this.scaleItemHeight)
+                    .attr('y', scaleY)
                     .style('fill', this.getStyle('scaleLabel'))
                     .text(format.numScale);
 
+            scaleY += this.scaleMeasureHeight;
             chartScale.append('text')
                     .attr('class', 'scaleLabel')
                     .attr('text-anchor', 'middle')
@@ -132,6 +136,10 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
                     .attr('dy', -5)
                     .style('fill', this.getStyle('scaleFeature'))
                     .text(this.model.getMeasureLabel());
+
+            // Set height
+            this.height += scaleY + this.scaleGutterBottom;
+            chart.attr('height', this.height);
 
             return this;
 

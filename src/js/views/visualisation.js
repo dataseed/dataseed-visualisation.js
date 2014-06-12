@@ -19,6 +19,7 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
             this.model.elements.bind('add', this.createElement, this);
             this.model.elements.bind('remove', this.removeElement, this);
             this.model.elements.bind('element:ready', this.renderElement, this);
+            this.model.elements.bind('element:resize', this.resizeElement, this);
             this.model.elements.bind('reset', this.resetElements, this);
 
             this.model.styles.bind('ready', this.renderElements, this);
@@ -93,6 +94,13 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
          */
         renderElement: function(element) {
             this.elementsViews[element.id].render();
+        },
+
+        /**
+         * Resize and re-render an individual element.
+         */
+        resizeElement: function(element) {
+            this.elementsViews[element.id].resize();
         },
 
         /**
