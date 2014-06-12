@@ -13,10 +13,7 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
         scaleGutterTop: -50,
         scaleGutterBottom: 10,
 
-        scaleItemWidth: 30,
         scaleItemHeight: 15,
-
-        scaleItemMarginLeft: 0,
         scaleItemMarginTop: 10,
 
         scaleMeasureHeight: 25,
@@ -29,18 +26,20 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
             // Get current values
             var values = this.model.getObservations(),
 
-            // Get polygons (in the form of GeoJSON features) for all data points
+                // Get polygons (in the form of GeoJSON features) for all data points
                 data = _.map(values, _.bind(this.getBoundary, this)),
 
-            // Get bounds enclosing all polygons
+                // Get bounds enclosing all polygons
                 bounds = d3.geo.bounds(this.createFeature(
                     'MultiPolygon',
                     _.reduce(data, this.concatCoords, [])
                 )),
 
+                // Get map size
                 mapWidth = Math.abs(bounds[1][0] - bounds[0][0]),
                 mapHeight = Math.abs(bounds[1][1] - bounds[0][1]);
 
+            // Calculate map height
             this.height = (this.width / mapHeight) * this.scalingFactorY;
 
             // Set map projection
@@ -48,12 +47,13 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
                 .translate([this.width / 2, this.height / 2])
                 .scale((this.width / mapWidth) * this.scalingFactorX),
 
-            // Set geo path generator using our projection
+                // Set geo path generator using our projection
                 path = d3.geo.path()
                     .projection(projection),
 
-            // Calculate centre point of map from bounding box
-                centroid = path.centroid(this.createFeature(
+                // Calculate centre point of map from bounding box
+                // and convert from pixel coordinates to lat/lon
+                centroid = projection.invert(path.centroid(this.createFeature(
                     'Polygon',
                     [[
                         [bounds[0][0], bounds[0][1]], // left, top
@@ -62,22 +62,10 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
                         [bounds[1][0], bounds[0][1]], // right, top
                         [bounds[0][0], bounds[0][1]] // left, top
                     ]]
-                ));
-
-            // Convert centroid from pixel coordinates to lat/lon
-            centroid = projection.invert(centroid);
+                )));
 
             // Set the centre point for our projection and update path generator with new projection
             path = path.projection(projection.rotate([-centroid[0], 0]).center([0, centroid[1]]));
-
-            // Attach map SVG
-            var chart = d3.select(this.chartContainerEl)
-                .append('svg:svg')
-                .attr('height', this.height)
-                .attr('class', 'geoChart')
-                .classed('inactive', _.bind(this.model.isCut, this.model));
-
-            var geo = chart.append('svg:g');
 
             // Get colour range for the current set of values
             this.colourScale = d3.scale.linear()
@@ -87,14 +75,21 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
                 ])
                 .range([this.model.visualisation.styles.getStyle('choroplethMin'), this.model.visualisation.styles.getStyle('choroplethMax')]);
 
+            // Attach map SVG
+            var chart = d3.select(this.chartContainerEl)
+                .append('svg:svg')
+                    .attr('class', 'geoChart')
+                    .classed('inactive', _.bind(this.model.isCut, this.model));
+
             // Build choropleth
-            var features = geo.selectAll('path')
-                .data(data)
-            .enter().append('svg:path')
-                .attr('d', path)
-                .style('fill', _.bind(this.featureFill, this))
-                .attr('title', _.bind(this.getTooltip, this))
-                .on('click', _.bind(this.featureClick, this));
+            chart.append('svg:g')
+                .selectAll('path')
+                    .data(data)
+                .enter().append('svg:path')
+                    .attr('d', path)
+                    .style('fill', _.bind(this.featureFill, this))
+                    .attr('title', _.bind(this.getTooltip, this))
+                    .on('click', _.bind(this.featureClick, this));
 
             // Attach tooltips
             this.attachTooltips('path');
@@ -102,11 +97,12 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
             // Create scale
             this.height += this.scaleGutterTop;
             var chartScale = chart.append('svg:g')
-                .attr('transform', 'translate(' + this.scaleGutterLeft + ',' + this.height + ')');
+                    .attr('transform', 'translate(' + this.scaleGutterLeft + ',' + this.height + ')'),
+                scaleTicks = this.colourScale.ticks(this.scaleTicks),
+                scaleY = this.scaleItemMarginTop;
 
-            var scaleTicks = this.colourScale.ticks(this.scaleTicks);
+            this.scaleItemWidth = Math.floor((this.width - (this.scaleGutterLeft * 2)) / scaleTicks.length);
 
-            var scaleY = this.scaleItemMarginTop;
             chartScale.selectAll('.scale')
                     .data(scaleTicks)
                 .enter().append('rect')
@@ -203,7 +199,7 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
          * Set X position of scale item
          */
         getScaleItemX: function(d, i) {
-            return i * (this.scaleItemWidth + this.scaleItemMarginLeft);
+            return i * this.scaleItemWidth;
         }
 
     });
