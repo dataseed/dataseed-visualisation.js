@@ -94,9 +94,6 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
                             height = Math.min(height, this.chart.maxHeight);
                         }
 
-                        // Set chart height
-                        this.$('.chart-container').height(height);
-
                         // Set element height
                         this.$el.height(height + this.marginBottom);
 

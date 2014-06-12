@@ -6,6 +6,7 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
 
         scaleMarginX: 10,
         scaleMarginY: 20,
+        scaleMarginBottom: 5,
         scaleLineHeight: 10,
         scaleTextHeight: 10,
 
@@ -19,6 +20,9 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
             if (values.length < 1) {
                 return this;
             }
+
+            // Use a square bubble chart
+            this.height = this.width;
 
             // Add chart
             var chart = d3.select(this.chartContainerEl).append('svg')
@@ -35,7 +39,7 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
                         return d.total;
                     })
                     .sort(null)
-                    .size([this.width, this.width])
+                    .size([this.width, this.height])
                     .nodes(values)
                     .filter(function (d) {
                         return (!_.isUndefined(d.id));
@@ -85,15 +89,12 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
                 scaleLines = _.filter(this.scale.ticks(i));
 
                 // Caculate scale width
-                scaleWidth = _.reduce(scaleLines, this.getScaleWidth, 0, this);
+                scaleWidth = _.reduce(scaleLines, this.getScaleWidth, this.scaleMarginX, this);
 
             } while(--i > 0 && scaleWidth > this.width);
 
             // Set scale X position for the getScalePosition() method
-            this.scalePosX = (this.width - scaleWidth) / 2;
-
-            // Get chart height
-            this.height = Math.floor(d3.max(nodes, function(d) { return d.y + d.r; }));
+            this.scalePosX = ((this.width - scaleWidth) / 2) + this.scaleMarginX;
 
             // Add scale
             var scaleItems = chart.append('g')
@@ -123,13 +124,13 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
             this.height += (this.scaleMarginY * 2) + this.scaleLineHeight + this.scaleTextHeight;
             chart.append('text')
                     .attr('text-anchor', 'middle')
-                    .attr('x', (this.width - this.scaleMarginX) / 2)
+                    .attr('x', this.width / 2)
                     .attr('y', this.height)
                     .style('fill', this.getStyle('measureLabel'))
                     .text(this.model.getMeasureLabel());
 
             // Set chart height
-            this.height += this.scaleMarginY;
+            this.height += this.scaleMarginBottom;
             chart.attr('height', this.height);
 
             return this;
