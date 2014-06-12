@@ -58,7 +58,7 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
             } else {
                 // Use an ordinal scale for dimension labels (X axis)
                 data = _.map(data, function(d) {
-                    return _.extend({}, d, this.model.getLabel(d));
+                    return this.model.getLabel(d);
                 }, this);
 
                 xScale = d3.scale.ordinal()

@@ -7,7 +7,7 @@ define(['backbone', 'underscore', 'd3', '../../../lib/format', 'text!../../../te
         template: _.template(chartTemplate),
 
         events: {
-            'mouseover g': 'mouseRemoveTips'
+            'mouseover g': 'removeTooltips'
         },
 
         initialize: function(options) {
@@ -37,14 +37,6 @@ define(['backbone', 'underscore', 'd3', '../../../lib/format', 'text!../../../te
             return this;
         },
 
-        /**
-         * Remove any lingering tooltips when the mouse leaves the chart
-         */
-        mouseRemoveTips : function() {
-            if($('.tipsy').length > 0) {
-                $('.tipsy:gt(0)').remove();
-            }
-        },
 
         /**
          * Reset all chart features
@@ -70,6 +62,40 @@ define(['backbone', 'underscore', 'd3', '../../../lib/format', 'text!../../../te
             if (this.model.featureClick(i)) {
                 this.resetFeatures();
             }
+        },
+
+        /**
+         * Get a bubble's label
+         */
+        getFeatureLabel: function(d, i) {
+            // Get this feature's label
+            var label = this.model.getLabel(this.model.getObservation(i));
+            if (!label) {
+                return;
+            }
+
+            // If there's a short label, use it
+            label = (_.isUndefined(label.short_label)) ? label.label : label.short_label;
+
+            // Ignore labels that are longer than the diameter of the bubble
+            if (this.getStringWidth(label) > this.getFeatureWidth(d, i)) {
+                return;
+            }
+
+            return label;
+        },
+
+        /**
+         * Helper function to calculate a string's width in pixels
+         */
+        getStringWidth: function(str) {
+            var html = $('<span>' + str + '</span>')
+                .css('font-size', this.$el.css('font-size'))
+                .hide()
+                .prependTo('body');
+            var width = html.width();
+            html.remove();
+            return width;
         },
 
         /**
@@ -108,23 +134,12 @@ define(['backbone', 'underscore', 'd3', '../../../lib/format', 'text!../../../te
         },
 
         /**
-         * Remove all tooltips
+         * Remove tooltips
          */
         removeTooltips: function() {
-            $('.tipsy').remove();
-        },
-
-        /**
-         * Helper function to calculate a string's width in pixels
-         */
-        getStringWidth: function(str) {
-            var html = $('<span>' + str + '</span>')
-                .css('font-size', this.$el.css('font-size'))
-                .hide()
-                .prependTo('body');
-            var width = html.width();
-            html.remove();
-            return width;
+            if($('.tipsy').length > 0) {
+                $('.tipsy:gt(0)').remove();
+            }
         }
 
     });

@@ -65,7 +65,7 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
                 .attr('text-anchor', 'middle')
                 .attr('dy', '.3em')
                 .style('fill', this.getStyle('label'))
-                .text(_.bind(this.getLabel, this));
+                .text(_.bind(this.getFeatureLabel, this));
 
             // Attach tooltips
             this.attachTooltips('g');
@@ -138,25 +138,10 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
         },
 
         /**
-         * Get a bubble's label
+         * Get a bubble's width (i.e. its diameter)
          */
-        getLabel: function(d, i) {
-            // Get this bubble's value's model
-            var value = this.model.getObservation(i),
-                valueLabel = this.model.getLabel(value);
-            if (!valueLabel) {
-                return;
-            }
-
-            // If there's a short label, use it
-            var label = (_.isUndefined(valueLabel.short_label)) ? valueLabel.label : valueLabel.short_label;
-
-            // Ignore labels that are longer than the diameter of the bubble
-            if (this.getStringWidth(label) > (d.r * 2)) {
-                return;
-            }
-
-            return label;
+        getFeatureWidth: function(d, i) {
+            return d.r * 2;
         },
 
         /**
