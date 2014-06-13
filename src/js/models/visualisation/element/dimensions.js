@@ -30,6 +30,7 @@ function (Backbone, _, Element) {
                 var opts = {
                     dimension: dimension.field.id,
                     bucket: dimension.bucket,
+                    bucket_interval: dimension.bucket_interval,
                     measure: _.isNull(this.get('measure')) ? null : this.get('measure').id,
                     aggregation: this.get('aggregation')
                 };

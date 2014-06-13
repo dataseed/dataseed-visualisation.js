@@ -17,9 +17,17 @@ define(['backbone', 'underscore'], function (Backbone, _) {
 
             // Bucket dimensions
             var bucket = this.get('bucket');
-            if (this.get('type') == 'dimensions' && !_.isUndefined(bucket) && !_.isNull(bucket)) {
-                params.bucket = bucket;
+            var bucket_interval = this.get('bucket_interval');
+            if (this.get('type') == 'dimensions') {
+                if (!_.isUndefined(bucket_interval) && !_.isNull(bucket_interval)) {
+                    params.bucket_interval = bucket_interval;
+                }
+
+                if (!_.isUndefined(bucket) && !_.isNull(bucket)) {
+                    params.bucket = bucket;
+                }
             }
+
 
             // Add cut to query parameters
             var urlParams = _.map(params, function (value, key, cut) {
