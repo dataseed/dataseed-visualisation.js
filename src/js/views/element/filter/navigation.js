@@ -1,5 +1,5 @@
-define(['../filter', 'underscore', 'text!../../../templates/element/filter/navigationDimension.html', 'bootstrap_collapse'],
-    function (FilterElementView, _, navigationDimensionTemplate) {
+define(['backbone', 'underscore', '../filter', 'text!../../../templates/element/filter/navigationDimension.html', 'bootstrap_collapse'],
+    function (Backbone, _, FilterElementView, navigationDimensionTemplate) {
     'use strict';
 
     var NavigationDimensionView = Backbone.View.extend({

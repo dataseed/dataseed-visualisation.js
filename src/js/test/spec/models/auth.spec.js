@@ -1,4 +1,5 @@
 define(['models/auth'], function(Auth) {
+    /* global describe, beforeEach, expect, it */
 
     describe('An auth model', function() {
 

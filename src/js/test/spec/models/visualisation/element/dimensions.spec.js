@@ -1,4 +1,6 @@
-define(['models/dataset', 'models/dataset/connection', 'models/visualisation/element/dimensions'], function(Dataset, Connection, DimensionsElement) {
+define(['models/dataset', 'models/dataset/connection', 'models/visualisation/element/dimensions'],
+    function(Dataset, Connection, DimensionsElement) {
+    /* global describe, beforeEach, expect, it, spyOn */
 
     describe('A dimensions element model', function() {
 

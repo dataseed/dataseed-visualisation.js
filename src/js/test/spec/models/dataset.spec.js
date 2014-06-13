@@ -1,4 +1,5 @@
 define(['models/dataset'], function(Dataset) {
+    /* global describe, beforeEach, expect, it */
 
     describe('A dataset model', function() {
 

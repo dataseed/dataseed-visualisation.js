@@ -1,4 +1,6 @@
-require(['models/dataset', 'models/dataset/connection', 'models/dataset/dimensionalConnection'], function(Dataset, Connection, DimensionalConnection) {
+require(['models/dataset', 'models/dataset/connection', 'models/dataset/dimensionalConnection'],
+    function(Dataset, Connection, DimensionalConnection) {
+    /* global describe, beforeEach, expect, it */
 
     describe('A connection model', function() {
 
