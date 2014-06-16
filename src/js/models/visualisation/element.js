@@ -126,9 +126,12 @@ function (Backbone, _, format) {
             var field = this._getField(index);
             switch(field.get('type')) {
                 case 'date':
-                    var date = new Date(value.id);
+                    var dimensionIndex = index || 0,
+                        dimension = this.get('dimensions')[dimensionIndex],
+                        date = new Date(value.id);
+
                     return _.extend(value, {
-                        label: format.dateLong(date),
+                        label: format.dateLong(date, dimension.bucket_interval),
                         label_short: format.dateShort(date)
                     });
 

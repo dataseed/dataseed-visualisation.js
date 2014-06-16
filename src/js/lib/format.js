@@ -63,8 +63,45 @@ define(['underscore', 'd3'], function(_, d3) {
         /**
          * Format a timestamp with day and month names for the current locale
          */
-        dateLong: function(timestamp) {
-            return this._dateLongFormat(new Date(timestamp));
+        dateLong: function(timestamp, granularity) {
+            switch(granularity){
+                case 'date_year':
+                    return d3.time.format('%Y')(new Date(timestamp));
+                    break;
+
+                case 'date_quarter':
+                    var date = new Date(timestamp),
+                        m = d3.time.format('%m')(date),
+                        y = d3.time.format('%Y')(date),
+                        q = Math.ceil(m/3);
+                    return 'Q' + q + '-' + y;
+                    break;
+
+                case 'date_month':
+                    return d3.time.format('%B %Y')(new Date(timestamp));
+                    break;
+
+                case 'date_week':
+                    return d3.time.format('%Y Week %W')(new Date(timestamp));
+                    break;
+
+                case 'date_hour':
+                    return d3.time.format('%A, %e %B %Y %I%_p')(new Date(timestamp));
+                    break;
+
+                case 'date_minute':
+                    return d3.time.format('%A, %e %B %Y %H:%M')(new Date(timestamp));
+                    break;
+
+                case 'date_second':
+                    return d3.time.format('%A, %e %B %Y %H:%M:%S')(new Date(timestamp));
+                    break;
+
+                case 'date_day':
+                default:
+                    return this._dateLongFormat(new Date(timestamp));
+                    break;
+            }
         },
 
         _dateLongFormat: d3.time.format('%A, %e %B %Y')

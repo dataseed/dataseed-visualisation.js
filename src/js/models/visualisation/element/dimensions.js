@@ -2,6 +2,13 @@ define(['backbone', 'underscore', '../element'],
 function (Backbone, _, Element) {
     'use strict';
 
+    /**
+     * Element with dimensional connections.
+     * For each dimension d, the element is related to:
+     *   - a connection of type 'observations' to get the observations related to d
+     *   - a connection of type 'dimensions' to get the dimensions values for d, if d is non
+     *     date/numeric
+     */
     var DimensionsElement = Element.extend({
 
         // Maps field types to the related allowed values and labels for the
