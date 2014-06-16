@@ -9,27 +9,25 @@ define(['backbone', 'underscore'], function (Backbone, _) {
 
         url: function () {
             var url = this.apiEndpoint(),
-                params = _.extend({}, this.get('cut'), {aggregation: this.get('aggregation')});
+                params = _.extend({}, this.get('cut'), {aggregation: this.get('aggregation')}),
+
+            // Bucket dimensions
+                bucket = this.get('bucket'),
+                bucket_interval = this.get('bucket_interval');
 
             if (!_.isNull(this.get('measure'))) {
                 params.measure = this.get('measure');
             }
 
-            // Bucket dimensions
-            var bucket = this.get('bucket');
-            var bucket_interval = this.get('bucket_interval');
-            if (this.get('type') == 'dimensions') {
-                if (!_.isUndefined(bucket_interval) && !_.isNull(bucket_interval)) {
-                    params.bucket_interval = bucket_interval;
-                }
-
-                if (!_.isUndefined(bucket) && !_.isNull(bucket)) {
-                    params.bucket = bucket;
-                }
+            if (!_.isUndefined(bucket_interval) && !_.isNull(bucket_interval)) {
+                params.bucket_interval = bucket_interval;
             }
 
+            if (!_.isUndefined(bucket) && !_.isNull(bucket)) {
+                params.bucket = bucket;
+            }
 
-            // Add cut to query parameters
+            // Build up query parameters
             var urlParams = _.map(params, function (value, key, cut) {
                 return key + '=' + value;
             });

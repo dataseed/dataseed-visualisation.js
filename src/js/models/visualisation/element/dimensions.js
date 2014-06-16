@@ -4,6 +4,21 @@ function (Backbone, _, Element) {
 
     var DimensionsElement = Element.extend({
 
+        // Maps field types to the related allowed values and labels for the
+        // bucket_interval attribute.
+        bucketIntervals: {
+            date: {
+                date_year: 'Year',
+                date_quarter: 'Quarter',
+                date_month: 'Month',
+                date_week: 'Week',
+                date_day: 'Day',
+                date_hour: 'Hour',
+                date_minute: 'Minute',
+                date_second: 'Second'
+            }
+        },
+
         initConnections: function() {
             if (this._connections) {
                 return;
@@ -38,7 +53,9 @@ function (Backbone, _, Element) {
                 // Observations
                 this._initConnection('observations', opts);
 
-                // Dimension values (only fetch for non date/numeric dimensions)
+                // Dimension values (only fetch if the field type has an
+                // associated dimension connection model - see the parent
+                // Element model object.)
                 if (_.contains(this.dimensionFields, this._getField(index).get('type'))) {
                     this._initConnection('dimensions', opts);
                 }

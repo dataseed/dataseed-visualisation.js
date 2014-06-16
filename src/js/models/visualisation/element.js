@@ -11,17 +11,43 @@ function (Backbone, _, format) {
      *      _onSync()
      *      _getField([index])
      *      _getConnection(type, [id])
+     *
+     * Derived elements are supposed to store their connections in either
+     * this._connections or this._connection which have both to be meant as
+     * 'protected' instance properties.
+     *
      */
     var Element = Backbone.Model.extend({
 
         // Regex to test for a valid parent property name in a hierarchical dimension
         validParent: /\d+/,
 
-        // Field types that have an associated dimension connection model
+        // Field types that have an associated dimension connection model.
+        // For the other types (basically numeric and dates) it makes sense to
+        // use observation values as labels - see this.getLabel().
         dimensionFields: ['string', 'geo'],
 
         url: function () {
             return '/api/datasets/' + this.dataset.get('id') + '/visualisations/' + this.visualisation.get('id') + '/elements/' + this.get('id');
+        },
+
+        /**
+         * Re-initialise element connections.
+         */
+        resetConnections: function () {
+            if(this._connections){
+                delete this._connections;
+            }
+
+            if(this._connection){
+                delete this._connection;
+            }
+
+            // Init connections if element is not hidden
+            if (this.get('display') === true) {
+                this.initConnections();
+                this.ready();
+            }
         },
 
         /**
@@ -37,11 +63,8 @@ function (Backbone, _, format) {
                 return this.dataset.fields.get(dimension.field.id);
             }, this);
 
-            // Init connections if element is not hidden
-            if (this.get('display') === true) {
-                this.initConnections(opts);
-                this.ready();
-            }
+            // Reset and init connections.
+            this.resetConnections();
         },
 
         /**

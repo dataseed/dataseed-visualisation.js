@@ -40,8 +40,21 @@ define(['backbone', '../models/dataset/connection', '../models/dataset/dimension
                     return opts.type + ':' + opts.dimension;
 
                 case 'observations':
-                    var dim = (_.isUndefined(opts.dimension)) ? 'NODIM' : opts.dimension;
-                    return opts.type + ':' + dim + ':' + opts.measure + ':' + opts.aggregation;
+                    var dim = (_.isUndefined(opts.dimension)) ? 'NODIM' : opts.dimension,
+                        connId = opts.type + ':' + dim + ':' + opts.measure + ':' + opts.aggregation,
+
+                        bucket = opts.bucket,
+                        bucket_interval = opts.bucket_interval;
+
+                    if (!_.isUndefined(bucket_interval) && !_.isNull(bucket_interval)) {
+                        connId += ':' + bucket_interval;
+                    }
+
+                    if (!_.isUndefined(bucket) && !_.isNull(bucket)) {
+                        connId += ':' + bucket;
+                    }
+
+                    return connId;
 
                 default:
                     return _.uniqueId('conn_');
