@@ -26,7 +26,7 @@ define(['backbone', 'underscore', 'd3', '../../../lib/format', 'text!../../../te
             this.$el.html(this.template(this.model.attributes));
 
             // Set custom colours
-            this.$el.css('background-color', this.model.visualisation.styles.getStyle('background'));
+            this.$parent.css('background-color', this.model.visualisation.styles.getStyle('background'));
             this.$('h2').css('color', this.model.visualisation.styles.getStyle('heading'));
 
             // Get parent element width
