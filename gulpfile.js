@@ -4,6 +4,7 @@ var gulp = require('gulp'),
     karma = require('gulp-karma'),
     rjs = require('gulp-requirejs'),
     uglify = require('gulp-uglify'),
+    replace = require('gulp-replace'),
     less = require('gulp-less'),
     csso = require('gulp-csso');
 
@@ -90,6 +91,7 @@ gulp.task('js-d3', function() {
         .pipe(uglify({
             outSourceMap: false
         }))
+        .pipe(replace(/\s+/g, ' '))
         .pipe(gulp.dest(conf.js.outDir));
 });
 
@@ -106,6 +108,7 @@ gulp.task('js-highcharts', function() {
         .pipe(uglify({
             outSourceMap: false
         }))
+        .pipe(replace(/\s+/g, ' '))
         .pipe(gulp.dest(conf.js.outDir));
 });
 
