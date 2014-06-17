@@ -1,5 +1,6 @@
 define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element/dimensions', 'views/element/filter/navigation'],
     function($, Dataset, Connection, DimensionsElement, NavigationElementView) {
+    /* global describe, beforeEach, expect, it */
 
     describe('A navigation element view', function() {
 

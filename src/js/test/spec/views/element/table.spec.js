@@ -1,5 +1,6 @@
 define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element/dimensions', 'views/element/table'],
     function($, Dataset, Connection, DimensionsElement, TableChartView) {
+    /* global describe, beforeEach, expect, it */
 
     describe('A table element view', function() {
 

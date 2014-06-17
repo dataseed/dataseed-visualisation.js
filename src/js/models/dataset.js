@@ -125,7 +125,7 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
                         update = this.fields.get(dimension).get('update_dimension');
 
                     // Re-fetch if the field *isn't* included in the updated cut
-                    fetchConn = (_.size(cut) > 1 || !_.has(cut, dimension)) && (type != 'dimensions' || update === true);
+                    fetchConn = (_.size(cut) > 1 || !_.has(cut, dimension)) && (type !== 'dimensions' || update === true);
                 }
 
                 // Re-fetch the connection or just let the observers know that
@@ -161,7 +161,7 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
             if (!_.isUndefined(this.get('hierarchies'))) {
                 hierarchy = _.chain(this.get('hierarchies'))
                     .find(function (h) {
-                        return h.id == dimensionId;
+                        return h.id === dimensionId;
                     })
                     .value();
             }

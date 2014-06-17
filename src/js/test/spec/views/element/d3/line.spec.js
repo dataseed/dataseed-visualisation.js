@@ -1,5 +1,6 @@
 define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element/dimensions', 'views/element/d3/line'],
     function($, Dataset, Connection, DimensionsElement, LineChartView) {
+    /* global describe, beforeEach, expect, it */
 
     describe('A line chart view', function() {
 

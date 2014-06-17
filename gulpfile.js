@@ -39,7 +39,9 @@ var conf = {
 gulp.task('lint', function() {
     return gulp.src([
             conf.js.rjs.baseUrl + '/**/*.js',
-            '!' + conf.js.rjs.baseUrl + '/components/**/*.js'
+            '!' + conf.js.rjs.baseUrl + '/components/**/*.js',
+            '!' + conf.js.test.config,
+            '!' + conf.js.test.perfConfig
         ])
         .pipe(jshint({
             sub: true

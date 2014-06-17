@@ -70,7 +70,8 @@ function (Backbone, _, format) {
                 return false;
             }
 
-            var hierarchy = this.dataset.getDimensionHierarchy(this._getField().get('id')),
+            var id = this._getField().get('id'),
+                hierarchy = this.dataset.getDimensionHierarchy(id),
                 observation = this.getObservation(index);
 
             // Non-hierarchical dimension
@@ -84,7 +85,7 @@ function (Backbone, _, format) {
                 // Hierarchical dimension, handle the drill up/down
                 var level = observation[hierarchy.level_field];
                 if (this.validParent.test(observation.id)) {
-                    this.dataset.drillDown(dimension, level, this.validParent.exec(observation.id)[0]);
+                    this.dataset.drillDown(id, level, this.validParent.exec(observation.id)[0]);
                 }
             }
 

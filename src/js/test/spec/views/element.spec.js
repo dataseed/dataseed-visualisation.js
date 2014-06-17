@@ -1,4 +1,6 @@
-define(['jquery', 'models/dataset', 'models/visualisation/element/dimensions', 'views/element'], function($, Dataset, DimensionsElement, ElementView) {
+define(['jquery', 'models/dataset', 'models/visualisation/element/dimensions', 'views/element'],
+    function($, Dataset, DimensionsElement, ElementView) {
+    /* global describe, beforeEach, expect, it */
 
     describe('An element view', function() {
 

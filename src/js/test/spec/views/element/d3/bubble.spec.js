@@ -1,5 +1,6 @@
 define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element/dimensions', 'views/element/d3/bubble'],
     function($, Dataset, Connection, DimensionsElement, BubbleChartView) {
+    /* global describe, beforeEach, expect, it */
 
     describe('A bubble chart view', function() {
 

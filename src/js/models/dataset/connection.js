@@ -17,7 +17,7 @@ define(['backbone', 'underscore'], function (Backbone, _) {
 
             // Bucket dimensions
             var bucket = this.get('bucket');
-            if (this.get('type') == 'dimensions' && !_.isUndefined(bucket) && !_.isNull(bucket)) {
+            if (this.get('type') === 'dimensions' && !_.isUndefined(bucket) && !_.isNull(bucket)) {
                 params.bucket = bucket;
             }
 
