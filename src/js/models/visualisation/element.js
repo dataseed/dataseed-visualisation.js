@@ -54,6 +54,15 @@ function (Backbone, _, format) {
         },
 
         /**
+         * Emit an event that the element is ready to resize and render
+         */
+        resize: function() {
+            if (this.isLoaded()) {
+                this.trigger('element:resize', this);
+            }
+        },
+
+        /**
          * Handle element feature (bar/point/etc) click
          */
         featureClick: function (index) {
