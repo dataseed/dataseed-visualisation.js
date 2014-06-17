@@ -58,7 +58,7 @@ require.config({
         text: 'components/requirejs-text/text',
 
         // jQuery
-        jquery: 'components/jquery/jquery.min',
+        jquery: 'components/jquery/jquery',
 
         // Underscore (Lo-Dash - http://lodash.com)
         underscore: 'components/lodash/dist/lodash.underscore.min',
