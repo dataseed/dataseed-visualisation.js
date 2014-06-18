@@ -3,7 +3,10 @@ function (Backbone, _, Element) {
     'use strict';
 
     /**
-     * Element related to only one connection to get aggregation data.
+     * Element related to only one observations connection to get aggregation
+     * data.
+     * Beware: the element still have a dimensions attribute but it is not taken
+     * into account to set its connections.
      */
     var MeasureElement = Element.extend({
 
