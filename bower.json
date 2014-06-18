@@ -10,6 +10,7 @@
     "requirejs-text": "2.0",
     "almond": "0.2",
     "d3": "3.1.5",
+    "topojson": "1.6",
     "highcharts": "highslide-software/highcharts-release#4.0",
     "tipsy": "atchai/tipsy#v1.0.0b",
     "bootstrap": "2.3",

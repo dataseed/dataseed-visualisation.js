@@ -18,8 +18,15 @@ define(['backbone', 'underscore', './connection'],
         /**
          * Get the specified value
          */
-        getValue: function(k) {
-            return this.getData()[k];
+        getValue: function(i) {
+            return this.getData()[i];
+        },
+
+        /**
+         * Get the specified value by ID
+         */
+        getValueById: function(id) {
+            return _.findWhere(this.getData(), {id: id});
         }
 
     });

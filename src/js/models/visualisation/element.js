@@ -88,27 +88,27 @@ function (Backbone, _, format) {
         /**
          * Handle element feature (bar/point/etc) click
          */
-        featureClick: function (index) {
+        featureClick: function (d, i) {
             if (this.get('interactive') === false) {
                 return false;
             }
 
             var id = this._getField().get('id'),
-                hierarchy = this.dataset.getDimensionHierarchy(id),
-                observation = this.getObservation(index);
+                hierarchy = this.dataset.getDimensionHierarchy(id);
 
             // Non-hierarchical dimension
             if (_.isUndefined(hierarchy)) {
-                if (this.hasCutId(observation.id)) {
+                if (this.hasCutId(d.id)) {
                     this.removeCut();
                 } else {
-                    this.addCut(observation.id);
+                    this.addCut(d.id);
                 }
             } else {
                 // Hierarchical dimension, handle the drill up/down
-                var level = observation[hierarchy.level_field];
-                if (this.validParent.test(observation.id)) {
-                    this.dataset.drillDown(id, level, this.validParent.exec(observation.id)[0]);
+                var observation = this.getObservationById(d.id),
+                    level = observation[hierarchy.level_field];
+                if (this.validParent.test(d.id)) {
+                    this.dataset.drillDown(id, level, this.validParent.exec(d.id)[0]);
                 }
             }
 
@@ -120,6 +120,13 @@ function (Backbone, _, format) {
          */
         getObservation: function(i, id) {
             return this._getConnection('observations', id).getValue(i);
+        },
+
+        /**
+         * Get the specified observation
+         */
+        getObservationById: function(oid, fid) {
+            return this._getConnection('observations', fid).getValueById(oid);
         },
 
         /**
@@ -177,6 +184,16 @@ function (Backbone, _, format) {
         },
 
         /**
+         * Get extra dimension data
+         */
+        getDimensionData: function(attribute, id) {
+           var conn = this._getConnection('dimensions', id);
+           if (conn) {
+               return conn.get(attribute);
+           }
+        },
+
+        /**
          * Get label for this element's measure
          */
         getMeasureLabel: function () {
@@ -187,14 +204,21 @@ function (Backbone, _, format) {
          * Get dimension field type
          */
         getFieldType: function(index) {
-            return this._getField(index).get('type');
+            var field = this._getField(index);
+            if (field) {
+                return field.get('type');
+            }
         },
 
         /**
          * Get dimension field chart types
          */
         getChartTypes: function(index) {
-            return _.pluck(this._getField(index).get('charts'), 'type');
+            var field = this._getField(index);
+            if (field) {
+                return _.pluck(field.get('charts'), 'type');
+            }
+            return [];
         },
 
         /**

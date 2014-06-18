@@ -22,7 +22,7 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
 
             // Calculate bar widths and heights
             this.barWidth = this.width - (this.gutterLeft * 2);
-            var data = _.map(this.model.getObservations(), function (d) { return d.total; });
+            var data = this.model.getObservations();
             if (data.length < 1) {
                 return this;
             }
@@ -30,7 +30,7 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
             var height = this.barHeight * data.length;
 
             this.scale = d3.scale.linear()
-                .domain([0, d3.max(data)])
+                .domain([0, d3.max(data, function (d) { return d.total; })])
                 .range([0, this.barWidth]);
 
             this.height = 0;
@@ -51,13 +51,11 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
                     .enter().append('g')
                         .attr('title', _.bind(this.getTooltip, this))
                         .attr('transform', _.bind(this.getBarPosition, this))
-                        .attr('width', this.scale)
-                        .attr('height', this.barHeight)
                         .on('click', _.bind(this.featureClick, this));
 
             // Create bars
             nodes.append('rect')
-                    .attr('width', this.scale)
+                    .attr('width', _.bind(this.getFeatureWidth, this))
                     .attr('height', this.barHeight)
                     .style('fill', this.getStyle('featureFill'))
                     .style('stroke', this.getStyle('featureStroke'));
@@ -128,7 +126,7 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
          * Get a bar's width
          */
         getFeatureWidth: function(d, i) {
-            return this.scale(d);
+            return this.scale(d.total);
         }
 
     });

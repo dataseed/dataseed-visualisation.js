@@ -14,6 +14,9 @@ require.config({
         'd3': {
             exports: 'd3'
         },
+        'topojson': {
+            exports: 'topojson'
+        },
         'highcharts': {
             deps: ['jquery'],
             exports: 'Highcharts'
@@ -68,6 +71,9 @@ require.config({
 
         // D3
         d3: 'components/d3/d3',
+
+        // TopoJSON
+        topojson: 'components/topojson/topojson',
 
         // Highcharts
         highcharts: 'components/highcharts/highcharts.src',

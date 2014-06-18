@@ -59,7 +59,7 @@ define(['backbone', 'underscore', 'd3', '../../../lib/format', 'text!../../../te
          * Handle a chart feature click
          */
         featureClick: function(d, i) {
-            if (this.model.featureClick(i)) {
+            if (this.model.featureClick(d, i)) {
                 this.resetFeatures();
             }
         },
@@ -69,7 +69,7 @@ define(['backbone', 'underscore', 'd3', '../../../lib/format', 'text!../../../te
          */
         getFeatureLabel: function(d, i) {
             // Get this feature's label
-            var label = this.model.getLabel(this.model.getObservation(i));
+            var label = this.model.getLabel(d);
             if (!label) {
                 return;
             }
@@ -116,8 +116,11 @@ define(['backbone', 'underscore', 'd3', '../../../lib/format', 'text!../../../te
          * Get a tooltip label
          */
         getTooltip: function(d, i) {
-            var value = this.model.getObservation(i),
-                valueLabel = this.model.getLabel(value),
+            var value = this.model.getObservationById(d.id);
+            if (!value) {
+                return;
+            }
+            var valueLabel = this.model.getLabel(d),
                 label = '';
             if (valueLabel && valueLabel.label) {
                label += valueLabel.label + ': ';
