@@ -29,6 +29,54 @@ define(['models/dataset', 'models/dataset/connection', 'models/visualisation/ele
             expect(element.url()).toBe('/api/datasets/test01/visualisations/test02/elements/test03');
         });
 
+        it('should (re-)initialise connections correctly', function (){
+            var element = new DimensionsElement({
+                id: 'test03',
+                dataset: this.dataset,
+                visualisation: this.dataset.visualisation,
+                display: true,
+                measure: null,
+                aggregation: 'rows',
+                dimensions: [
+                    {
+                        field: {
+                            id: 'test04',
+                            type: 'string'
+                        }
+                    }
+                ]
+            });
+
+            expect(element._connections['observations'].num).toBe(1);
+            expect(element._connections['observations'].pool.test04.url()).toBe("/api/datasets/test01/observations/test04?aggregation=rows");
+
+            expect(element._connections['dimensions'].num).toBe(1);
+            expect(element._connections['dimensions'].pool.test04.url()).toBe("/api/datasets/test01/dimensions/test04?aggregation=rows");
+
+            // Change measure and aggregation
+            element.set("measure", {id: "test05"});
+            element.set("aggregation", "sum");
+
+            // re-initialise connections
+            element.resetConnections();
+
+            // We should still have only one observations connection and one
+            // dimensions connection (connections have to be replaced)
+            expect(element._connections['observations'].num).toBe(1);
+            expect(element._connections['dimensions'].num).toBe(1);
+
+            // Assert the connection URLs are correct
+            expect(element._connections['observations'].pool.test04.url()).toBe("/api/datasets/test01/observations/test04?aggregation=sum&measure=test05");
+
+            // Dimension connection URL doesn't change: a connection ID of type
+            // dimension doesn't depend on measure/aggregation: for this dimension,
+            // ConnectionPool.getConnection() called within the flow that starts
+            // from Element.resetConnection() returns the same connection that
+            // has been added to the dataset's pool when the Element has been
+            // instantiated.
+            expect(element._connections['dimensions'].pool.test04.url()).toBe("/api/datasets/test01/dimensions/test04?aggregation=rows");
+        });
+
         it('should return the correct measure label', function() {
             var element = new DimensionsElement({
                     id: 'test03',

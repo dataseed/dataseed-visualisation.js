@@ -67,7 +67,8 @@ gulp.task('watch', function() {
     return gulp.src(conf.js.test.files)
         .pipe(karma({
             configFile: conf.js.test.config,
-            action: 'watch'
+            action: 'watch',
+            logLevel: 'debug'
         }));
 });
 

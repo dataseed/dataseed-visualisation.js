@@ -2,6 +2,9 @@ define(['backbone', 'underscore', '../element'],
 function (Backbone, _, Element) {
     'use strict';
 
+    /**
+     * Element related to only one connection to get aggregation data.
+     */
     var MeasureElement = Element.extend({
 
         /**
