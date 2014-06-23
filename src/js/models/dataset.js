@@ -84,7 +84,12 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
          * Compares the specified ID to the ID of the current cut for this dimension
          */
         hasCutId: function(dimension, id) {
-            return (this.isCut(dimension) && this.getCut(dimension) === id);
+            return (
+                this.isCut(dimension) &&
+                    _.find(this.getCut(dimension).split(","), function (cvalue) {
+                        return cvalue === id;
+                    })
+                );
         },
 
         /**
@@ -93,21 +98,45 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
         hasCutValue: function(dimension, i) {
             if (this.isCut(dimension)) {
                 var value = this.pool.findWhere({type: 'observations', dimension: dimension}).getValue(i);
-                return (!_.isUndefined(value) && this.getCut(dimension) === value.id);
+                return (
+                    !_.isUndefined(value) &&
+                        _.find(this.getCut(dimension).split(","), function (cvalue) {
+                            return cvalue === value.id;
+                        })
+                    );
             }
             return false;
         },
 
         /**
          * Set cut(s)
+         *
+         * @param cut
+         *      the cut to be set
+         * @param multivalues
+         *      false if we want the cut values to be added rather than replaced
+         *      in the current dataset cut. This is temporary: probably we'll
+         *      get rid of this parameter once multivalues cut will be supported
+         *      on all the other elements type apart from navigation filters.
          */
-        addCut: function (cut) {
-            // Update cut
+        addCut: function (cut, multivalues) {
+            // Update dataset cut
             _.each(cut, function (value, key) {
                 if (_.isNull(value)) {
                     delete this.cut[key];
                 } else {
-                    this.cut[key] = value;
+                    if (multivalues === true) {
+                        this.cut[key] = _.isUndefined(this.cut[key]) ?
+                            value :
+                            this.hasCutId(key, value) ?
+                                // A cut key=value is already set. Nothing to do
+                                this.cut[key] :
+                                // A cut is set on key but we are not cutting on
+                                // value yet.
+                                this.cut[key] + ',' + value;
+                    }else{
+                        this.cut[key] = value;
+                    }
                 }
             }, this);
 
@@ -129,7 +158,7 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
                 }
 
                 // Re-fetch the connection or just let the observers know that
-                // this the connection is already synched, so a re-render could
+                // this connection is already synched, so that a re-render could
                 // be initiated
                 if(fetchConn){
                     conn.fetch();
@@ -143,12 +172,34 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
 
         /**
          * Remove cut(s)
+         * @param keys
+         *      keys
+         * @param values
+         *      (optional) cut values to remove. Useful to handle multi-values
+         *      cuts.
+         *      if values[i] is undefined, the dataset cut will be set such that
+         *      cut[keys[i]] = null; otherwise we'll get the new value for
+         *      cut[keys[i]] by omitting values[i] from cut[keys[i]]
          */
-        removeCut: function(keys) {
+        removeCut: function(keys, values) {
             if (_.isUndefined(keys)) {
                 keys = _.keys(this.cut);
             }
-            this.addCut(_.object(keys, _.map(keys, function() { return null; })));
+
+            if(_.isUndefined(values)){
+                values = [];
+            }
+
+            this.addCut(_.object(
+                keys,
+                _.map(keys, function (k, i) {
+                    var cutValues = (_.isUndefined(this.cut[k]) || _.isUndefined(values[i]))  ?
+                        [] :
+                        _.without(this.getCut(k).split(","), values[i]);
+
+                    return (cutValues.length > 0) ? cutValues.join() : null;
+                }, this)
+            ));
         },
 
         /**

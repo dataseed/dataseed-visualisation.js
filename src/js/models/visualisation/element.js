@@ -198,14 +198,16 @@ function (Backbone, _, format) {
         },
 
         /**
-         * Send an "addCut" event for th
+         * Send an "addCut" event which will be handled by the dataset model
+         * (see addElement() method in the Visualisation model)
          */
         addCut: function (value, index) {
             this.trigger('addCut', _.object([this._getField(index).get('id')], [value]));
         },
 
         /**
-         * Send an "addCut" event
+         * Send a "removeCut" event which will be handled by the dataset model
+         * (see addElement() method in the Visualisation model)
          */
         removeCut: function(index) {
             var ids = _.map(this.get('dimensions'), function (d) { return d.field.id; });

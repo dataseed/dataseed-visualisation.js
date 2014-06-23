@@ -345,12 +345,42 @@ rect.scale {
             .rotate(0deg);
         }
 
+        .filter-info {
+            font-weight: normal;
+        }
+
     }
 
     .table {
         td {
             border: none;
             padding: 0 20px;
+
+            .dimension-cut {
+                span.check-btn {
+                    width: 24px;
+                    height: 24px;
+                    display: inline-block;
+                    background: none;
+                    border: 1px solid @dsGrey;
+                }
+
+                span.cut-label{
+                    position:relative;
+                    bottom:8px;
+                }
+
+                input[type="checkbox"] {
+                    display: none;
+                }
+
+                input:checked + span.check-btn {
+                    background: url('@{dsBaseUrl}img/checkbox-tick.gif');
+                    background-repeat: no-repeat;
+                    background-position: center;
+                }
+
+            }
         }
 
         .right {

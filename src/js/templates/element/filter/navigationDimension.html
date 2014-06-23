@@ -2,20 +2,23 @@
     <h3>
         <a data-toggle="collapse" href="#<%- accordion_id %>" class="dimension-filter <% if (!state) { %> collapsed<% } %>">
             <i></i>
-            <%- label %>
+            <%- label %> <span class="filter-info">(<span class="num-selected"><%- num_selected %></span> of <%- values.length %>)</span>
         </a>
     </h3>
     <div id="<%- accordion_id %>" class="info-body collapse<% if (state) { %> in<% } %>">
         <table class="table<% if (!_.isUndefined(cut)) { %> cut<% } %>">
             <% _.each(values, function(value) { %>
                 <% if (value.total > 0) { %>
-                    <tr class="cut-wrapper<% if (value.id === cut) { %> active<% } %>">
+                    <tr class="cut-wrapper<% if (dataset.hasCutId(id, value.id)) { %> active<% } %>">
                         <td>
-                            <a href="#" class="dimension-cut" data-value="<%- value.id %>">
-                                <%- value.label %>
-                            </a>
+                            <label class="dimension-cut">
+                                <input type="checkbox" data-value="<%- value.id %>"
+                                <% if (_.isUndefined(cut) || dataset.hasCutId(id, value.id) ) { %> checked="checked"<% } %>/>
+                                <span class="check-btn"></span>
+                                <span class="cut-label"><%- value.label %></span>
+                            </label>
                         </td>
-                        <td><% if (!_.isUndefined(value.totalFormat)) {%> (<%- value.totalFormat %>) <% } %></td>
+                        <td class="cut-totals"><% if (!_.isUndefined(value.totalFormat)) {%> <%- value.totalFormat %> <% } %></td>
                     </tr>
                 <% } %>
             <% }); %>
