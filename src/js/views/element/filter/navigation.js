@@ -1,5 +1,5 @@
-define(['backbone', 'underscore', '../filter', 'text!../../../templates/element/filter/navigationDimension.html', 'bootstrap_collapse'],
-    function (Backbone, _, FilterElementView, navigationDimensionTemplate) {
+define(['backbone', 'underscore', '../filter', 'text!../../../templates/element/filter/navigationDimension.html', 'text!../../../templates/element/filter/navigationElement.html', 'bootstrap_collapse'],
+    function (Backbone, _, FilterElementView, navigationDimensionTemplate, navigationElementTemplate) {
     'use strict';
 
     var NavigationDimensionView = Backbone.View.extend({
@@ -28,7 +28,7 @@ define(['backbone', 'underscore', '../filter', 'text!../../../templates/element/
             'click h3 a': 'toggleAccordion'
         },
 
-        template: _.template('<h2><%- label %></h2><div class="accordion"></div>'),
+        template: _.template(navigationElementTemplate),
 
         initialize: function(options) {
             this.visualisation = options.visualisation;
@@ -61,6 +61,12 @@ define(['backbone', 'underscore', '../filter', 'text!../../../templates/element/
         getDimension: function (dimension, index) {
             var attrs = this.getDimensionAttrs(dimension, index),
                 field = this.visualisation.dataset.fields.findWhere({id: attrs.id});
+
+            // Check if there are a cut on the filter dimensions. Show reset if so.
+            if(this.model.isCut(index)) {
+                this.$(".container-icon").addClass('in');
+                this.$('.remove-filter').tipsy({gravity: 's'});
+            }
 
             return {
                 id: attrs.id,

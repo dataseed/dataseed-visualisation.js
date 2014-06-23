@@ -208,7 +208,8 @@ function (Backbone, _, format) {
          * Send an "addCut" event
          */
         removeCut: function(index) {
-            this.trigger('removeCut', [this._getField(index).get('id')]);
+            var ids = _.map(this.get('dimensions'), function (d) { return d.field.id; });
+            this.trigger('removeCut', ids);
         },
 
         /**

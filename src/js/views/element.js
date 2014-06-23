@@ -123,7 +123,6 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
         reset: function(e) {
             e.preventDefault();
             this.model.removeCut();
-            this.chart.resetFeatures();
             $('.tipsy').remove();
         }
 
