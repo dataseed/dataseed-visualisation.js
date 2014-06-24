@@ -210,6 +210,7 @@ function (Backbone, _, format) {
          * (see addElement() method in the Visualisation model)
          */
         removeCut: function(index) {
+            this.trigger('removeCut', [this._getField(index).get('id')]);
             var ids = _.map(this.get('dimensions'), function (d) { return d.field.id; });
             this.trigger('removeCut', ids);
         },

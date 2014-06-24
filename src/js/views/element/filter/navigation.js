@@ -17,6 +17,13 @@ define(['backbone', 'underscore', '../filter', 'text!../../../templates/element/
             var attrs = this.navigation.getDimension(this.dimension, this.index);
             attrs.dataset = this.visualisation.dataset;
             this.$el.html(this.template(_.extend({}, attrs)));
+
+            // Check if there are a cut on the filter dimensions. Show reset if so.
+            if(this.model.isCut()) {
+                this.$(".container-icon").addClass('in');
+                this.$('.remove-filter').tipsy({gravity: 's'});
+            }
+
             return this;
         }
 
@@ -87,12 +94,6 @@ define(['backbone', 'underscore', '../filter', 'text!../../../templates/element/
         getDimension: function (dimension, index) {
             var attrs = this.getDimensionAttrs(dimension, index),
                 field = this.visualisation.dataset.fields.findWhere({id: attrs.id});
-
-            // Check if there are a cut on the filter dimensions. Show reset if so.
-            if(this.model.isCut(index)) {
-                this.$(".container-icon").addClass('in');
-                this.$('.remove-filter').tipsy({gravity: 's'});
-            }
 
             return {
                 id: attrs.id,
