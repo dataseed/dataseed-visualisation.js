@@ -239,6 +239,64 @@ rect.scale {
 // TABLE CHART
 // --------------------------------------------------
 
+// Table search bar
+.table-search-wrap {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.search-icon {
+    background-image: url('@{dsBaseUrl}img/search-icon.gif');
+    background-repeat: no-repeat;
+    background-size: 15px;
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    position: absolute;
+    top: 55px;
+    left: 20px;
+}
+
+.search-reset {
+    background-image: url('@{dsBaseUrl}img/search-reset.gif');
+    background-repeat: no-repeat;
+    background-size: 15px;
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    float: right;
+    position: relative;
+    top: -32px;
+    left: -8px;
+    cursor: pointer;
+    visibility: hidden;
+}
+
+input.table-search {
+    width: 100%;
+    height: 30px;
+    padding-left: 30px;
+    padding-right: 30px;
+
+    .gradient(#f2f2f2, white);
+    .border-radius(0px);
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+input.table-search::-ms-clear {
+    display: none;
+}
+
+// no result text
+.no-result {
+    font-size: 15px;
+    text-align: center;
+    padding: 0 30px;
+}
+
+
 //chevron up
 .asc {
     i.icon-chevron-down {

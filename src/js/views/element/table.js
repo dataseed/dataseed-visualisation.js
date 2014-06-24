@@ -6,7 +6,9 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
 
         events: {
             'click .table-row a': 'featureClick',
-            'click .table-sort': 'sortSelect'
+            'click .table-sort': 'sortSelect',
+            'keyup input': 'delaySearch',
+            'click .search-reset': 'searchReset'
         },
 
         template: _.template(tableTemplate),
@@ -111,6 +113,92 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
             // current cut.
             this.$('.table.cut .table-row a').css('color', featureFillActive);
             this.$('.table.cut .table-row.cut-active a').css('color', featureFill);
+        },
+
+        // Delays the call to the search function
+        delaySearch: function() {
+            var self = this;
+            // Shows search reset button if not empty
+            if(this.$(".table-search").val()) {
+                this.$(".search-reset").css('visibility', 'visible');
+            }
+            else {
+                this.$(".search-reset").css('visibility', 'hidden');
+            }
+
+            _.debounce(self.search(), 500);
+        },
+
+        // Calls the wordSearch function and controls the view display
+        search: function() {
+            var queryString = '';
+            var textValue = this.$(".table-search").val().toLowerCase();
+            var query = this.tokenizer(textValue);
+
+            this.$('.no-result').remove();
+            this.$('tr').hide();
+
+            // Creates a single jquery attribute contains selector string.
+            for(var i = 0; i < query.length; i++) {
+                queryString = queryString.concat('[data-content*=' + query[i] + ']');
+            }
+
+            // If query has been found or query is empty display results. Otherwise show not found message.
+            if(this.$('tr').is(queryString) || !query.length) {
+                this.$('tr.sort').show();
+                this.$('tr'+queryString).show();
+            }
+            else {
+                this.$el.append('<p class="no-result">Sorry no items matched your search, please try broadening your search terms.</p>');
+            }
+        },
+
+        searchReset: function() {
+            this.$(".table-search").val('');
+            this.delaySearch();
+        },
+
+
+        // Search text tokenizer function
+        tokenizer: function(str) {
+            // trim spaces
+            str = str.replace(/^\s+|\s+$/g, '');
+
+            // retun if string is empty
+            if (!str) {return str;}
+
+            // split by spaces
+            var terms = str.split(/\s/),
+                i = 0,
+                result = [];
+
+            while (terms[i]) {
+                var current = terms[i];
+
+                // phrase if double quoted
+                if (current[0] === '"') {
+
+                    // iterate by the end of quotations
+                    var j = i + 1;
+                    while (terms[j]) {
+                        var next = terms[j];
+                        current += ' ' + next;
+
+                        if (next.slice(-1) === '"') {
+                            terms.splice(j, 1);
+                            break;
+                        } else {
+                            terms.splice(j, 1);
+                        }
+                    }
+                }
+
+                result.push(current);
+
+                i++;
+            }
+
+            return result;
         }
 
     });
