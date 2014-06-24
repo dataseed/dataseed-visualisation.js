@@ -64,13 +64,24 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
         },
 
         /**
-         * Get the value of the current cut for this dimension
+         * Get the list of values of the current cut for this dimension.
+         * Returns undefined if no cut is set on dimension.
          */
         getCut: function(dimension) {
             if (_.isUndefined(dimension)) {
-                return this.cut;
+                var c = {};
+                _.each(this.cut, function (v, k) {
+                    c[k] = v.split(',');
+                });
+                return c;
             }
-            return this.cut[dimension];
+
+            if(!_.isUndefined(this.cut[dimension])){
+                return this.cut[dimension].split(",");
+            }
+
+            // TODO if a cut is not set on dimension, this function should
+            // return an empty list and callers should be refactored accordingly.
         },
 
         /**
@@ -86,9 +97,9 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
         hasCutId: function(dimension, id) {
             return (
                 this.isCut(dimension) &&
-                    _.find(this.getCut(dimension).split(","), function (cvalue) {
+                    !_.isUndefined(_.find(this.getCut(dimension), function (cvalue) {
                         return cvalue === id;
-                    })
+                    }))
                 );
         },
 
@@ -100,7 +111,7 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
                 var value = this.pool.findWhere({type: 'observations', dimension: dimension}).getValue(i);
                 return (
                     !_.isUndefined(value) &&
-                        _.find(this.getCut(dimension).split(","), function (cvalue) {
+                        _.find(this.getCut(dimension), function (cvalue) {
                             return cvalue === value.id;
                         })
                     );
@@ -195,7 +206,7 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
                 _.map(keys, function (k, i) {
                     var cutValues = (_.isUndefined(this.cut[k]) || _.isUndefined(values[i]))  ?
                         [] :
-                        _.without(this.getCut(k).split(","), values[i]);
+                        _.without(this.getCut(k), values[i]);
 
                     return (cutValues.length > 0) ? cutValues.join() : null;
                 }, this)

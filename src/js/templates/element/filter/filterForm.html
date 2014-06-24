@@ -42,7 +42,7 @@
                 <% } %>
                 <%_.each(dimension['values'], function(value) { %>
                 <option data-value="<%- value['id'] %>"<%
-                    if (value['id'] === dimension['cut']) {cutWrapperClass='cut-wrapper active'; selectedAttr='selected="selected"'}
+                    if (dataset.hasCutId(dimension.id, value.id)) {cutWrapperClass='cut-wrapper active'; selectedAttr='selected="selected"'}
                     else{ cutWrapperClass='cut-wrapper';selectedAttr=''} %> class="<%- cutWrapperClass %>" <%- selectedAttr %>>
                     <%- value['label'] %><% if (!_.isUndefined(value['totalFormat'])) {%> (<%- value['totalFormat'] %>) <% } %>
                 </option>

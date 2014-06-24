@@ -48,7 +48,7 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
                                         type: 'dimensions',
                                         dimension: dimension.field.id
                                     }),
-                                    value = this.visualisation.dataset.getCut(dimension.field.id);
+                                    value = this.visualisation.dataset.getCut(dimension.field.id)[0];
                                 return dimension.text_format.replace('$', _.escape(conn.getValue(value).label));
                             } else {
                                 return dimension.text_default;

@@ -21,7 +21,8 @@ define(['backbone', 'underscore', '../../lib/format'],
             return  {
                 id: this.model.get('id'),
                 label: this.model.get('label'),
-                dimensions: this.getDimensions()
+                dimensions: this.getDimensions(),
+                dataset: this.visualisation.dataset,
             };
         },
 

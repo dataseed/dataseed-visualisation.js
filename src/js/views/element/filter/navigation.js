@@ -101,7 +101,7 @@ define(['backbone', 'underscore', '../filter', 'text!../../../templates/element/
                 cut: this.model.getCut(index),
                 num_selected : _.isUndefined(this.model.getCut(index))?
                     attrs.values.length:
-                    this.model.getCut(index).split(',').length,
+                    this.model.getCut(index).length,
                 state: (this.accordionState[attrs.id] === true),
                 values: attrs.values
             };

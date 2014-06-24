@@ -22,9 +22,11 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
         render: function() {
             var attrs = _.extend({
                 values: this.getTableValues(),
+                dimension: this.model.get('dimensions')[0],
                 cut: this.model.getCut(),
                 sortProperty: this.sortProperty,
-                sortDirection: this.sortDirection
+                sortDirection: this.sortDirection,
+                dataset : this.model.dataset
             }, this.model.attributes);
 
             // Render template
@@ -92,21 +94,23 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
 
         resetFeatures: function() {
             // Get the colours from the model
-            var featureFill = this.model.visualisation.styles.getStyle('featureFill', this.model);
-            var backgroundColour = this.model.visualisation.styles.getStyle('background', this.model);
-            var headingColour = this.model.visualisation.styles.getStyle('heading', this.model);
+            var featureFill = this.model.visualisation.styles.getStyle('featureFill', this.model),
+                backgroundColour = this.model.visualisation.styles.getStyle('background', this.model),
+                headingColour = this.model.visualisation.styles.getStyle('heading', this.model),
+                featureFillActive = this.model.visualisation.styles.getStyle('featureFillActive', this.model);
 
-            if (this.model.isCut()) {
-                var featureFillActive = this.model.visualisation.styles.getStyle('featureFillActive', this.model);
-                this.$('.table-row a').css('color', featureFillActive);
-                this.$('.table-row[data-id="' + this.model.getCut() + '"] a').css('color', featureFill);
-                this.$('h2').css('color', headingColour);
-            }
-            else {
-                this.$('.table-row a').css('color', featureFill);
-                this.$('h2').css('color', headingColour);
-                this.$el.parent().css('background-color', backgroundColour);
-            }
+            // Generic styles
+            this.$('h2').css('color', headingColour);
+            this.$el.parent().css('background-color', backgroundColour);
+
+            // Styles to apply if the table's dimension is not included in the
+            // current cut.
+            this.$('.table-row a').css('color', featureFill);
+
+            // Styles to apply if the table's dimension is included in the
+            // current cut.
+            this.$('.table.cut .table-row a').css('color', featureFillActive);
+            this.$('.table.cut .table-row.cut-active a').css('color', featureFill);
         }
 
     });

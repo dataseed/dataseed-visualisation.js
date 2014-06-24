@@ -178,7 +178,7 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
                     expect(member).toContainText(tests[i].expected[j].label);
 
                     // Check value
-                    expect(member).toContainHtml('<td> (' + tests[i].expected[j].total + ') </td>');
+                    expect($(member).find('td.cut-totals')).toContainText(tests[i].expected[j].total);
                 }
             }
 

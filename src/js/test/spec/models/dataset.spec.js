@@ -14,7 +14,7 @@ define(['models/dataset'], function(Dataset) {
         it('should return the correct cut', function() {
             var cut = {
                     test04: 'test05',
-                    test05: '6'
+                    test05: '6,7'
                 },
                 dataset = new Dataset({
                     id: 'test02',
@@ -23,11 +23,14 @@ define(['models/dataset'], function(Dataset) {
                 });
 
             // Check entire cut
-            expect(dataset.getCut()).toBe(cut);
+            expect(dataset.getCut()).toEqual({
+                test04: ['test05'],
+                test05: ['6' , '7']
+            });
 
             // Check cut on each dimension
             for (var key in cut) {
-                expect(dataset.getCut(key)).toBe(cut[key]);
+                expect(dataset.getCut(key)).toEqual(cut[key].split(','));
             }
         });
 
