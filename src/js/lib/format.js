@@ -29,7 +29,7 @@ define(['underscore', 'd3'], function(_, d3) {
         /**
          * Format a number with commas to 2 d.p.
          */
-        numFloat: d3.format('0,.3f'),
+        numFloat: d3.format('0,.2f'),
 
         /**
          * Format a number with an SI prefix (e.g. k, M)
