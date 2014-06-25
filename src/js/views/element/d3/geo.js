@@ -12,17 +12,15 @@ define(['./chart', 'underscore', 'd3', 'topojson', '../../../lib/format'],
         scaleMeasureHeight: 25,
 
         render: function() {
-
             // Setup chart
             ChartView.prototype.render.apply(this, arguments);
 
             // Square chart
             this.height = this.width;
 
-            // Setup GeoJSON, projection, bounds and centering offset
+            // Setup GeoJSON, projection, bounds and scaling factor
             var values = this.model.getObservations(),
-                tjson = this.model.getDimensionData('geo'),
-                gjson = topojson.feature(tjson, tjson.objects.data),
+                gjson = this.getGeoJSON(),
                 mwidth = this.width - (this.margin * 2),
                 mheight = this.height - (this.margin * 2),
                 center = d3.geo.centroid(gjson),
@@ -33,22 +31,24 @@ define(['./chart', 'underscore', 'd3', 'topojson', '../../../lib/format'],
                 path = d3.geo.path()
                     .projection(projection),
                 bounds = path.bounds(gjson),
-                offset = [
-                    mwidth - (bounds[0][0] + bounds[1][0])/2,
-                    mheight - (bounds[0][1] + bounds[1][1])/2
-                ],
                 hscale = (this.scaleFactor * mwidth)  / (bounds[1][0] - bounds[0][0]),
                 vscale = (this.scaleFactor * mheight) / (bounds[1][1] - bounds[0][1]);
 
             // Calculate scale factor
-            this.scaleFactor = (hscale < vscale) ? hscale : vscale,
+            this.scaleFactor = (hscale < vscale) ? hscale : vscale;
 
-            // Re-scale and re-center
-            projection = d3.geo.mercator()
-                .center(center)
+            // Re-scale and re-center projection
+            projection = projection
                 .scale(this.scaleFactor)
-                .translate(offset);
+                .center(center);
+
+            // Calculate offset and translate projection
             path = path.projection(projection);
+            bounds = path.bounds(gjson);
+            projection = projection.translate([
+                mwidth - (bounds[0][0] + bounds[1][0])/2,
+                mheight - (bounds[0][1] + bounds[1][1])/2
+            ]);
 
             // Get colour range for the current set of values
             this.colourScale = d3.scale.linear()
@@ -65,7 +65,6 @@ define(['./chart', 'underscore', 'd3', 'topojson', '../../../lib/format'],
             var chart = d3.select(this.chartContainerEl)
                 .append('svg')
                     .attr('width', this.width)
-                    .attr('height', this.height)
                     .attr('class', 'geoChart')
                     .classed('inactive', _.bind(this.model.isCut, this.model));
 
@@ -73,7 +72,6 @@ define(['./chart', 'underscore', 'd3', 'topojson', '../../../lib/format'],
             chart.append('svg:g')
                     .attr('transform', 'translate(' + this.margin + ', ' + this.margin + ')')
                     .attr('width', mwidth)
-                    .attr('height', mheight)
                 .selectAll('path')
                     .data(gjson.features)
                         .enter()
@@ -133,6 +131,17 @@ define(['./chart', 'underscore', 'd3', 'topojson', '../../../lib/format'],
 
             return this;
 
+        },
+
+        /**
+         * Transform TopoJSON into GeoJSON and cache
+         */
+        getGeoJSON: function() {
+            if (!this.gjson) {
+                var tjson = this.model.getDimensionData('geo');
+                this.gjson = topojson.feature(tjson, tjson.objects.data);
+            }
+            return this.gjson;
         },
 
         /**
