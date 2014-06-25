@@ -15,11 +15,10 @@ define(['backbone', 'underscore', '../filter', 'text!../../../templates/element/
 
         render: function() {
             var attrs = this.navigation.getDimension(this.dimension, this.index);
-            attrs.dataset = this.visualisation.dataset;
-            this.$el.html(this.template(_.extend({}, attrs)));
+            this.$el.html(this.template(_.extend({dataset: this.visualisation.dataset}, attrs)));
 
             // Check if there are a cut on the filter dimensions. Show reset if so.
-            if(this.model.isCut()) {
+            if(attrs.cut) {
                 this.$(".container-icon").addClass('in');
                 this.$('.remove-filter').tipsy({gravity: 's'});
             }
