@@ -4,7 +4,7 @@ define(['./chart', 'underscore', 'd3', 'topojson', '../../../lib/format'],
 
     var GeoChartView = ChartView.extend({
 
-        scaleFactor: 10,
+        scaleFactor: 100,
         margin: 10,
 
         scaleTicks: 7,
@@ -21,17 +21,16 @@ define(['./chart', 'underscore', 'd3', 'topojson', '../../../lib/format'],
             // Setup GeoJSON, projection, bounds and scaling factor
             var values = this.model.getObservations(),
                 gjson = this.getGeoJSON(),
-                mwidth = this.width - (this.margin * 2),
-                mheight = this.height - (this.margin * 2),
                 center = d3.geo.centroid(gjson),
+                mheight = this.height - (this.margin * 2),
                 projection = d3.geo.mercator()
                     .scale(this.scaleFactor)
                     .center(center)
-                    .translate([mwidth/2, mheight/2]),
+                    .translate([this.width/2, mheight/2]),
                 path = d3.geo.path()
                     .projection(projection),
                 bounds = path.bounds(gjson),
-                hscale = (this.scaleFactor * mwidth)  / (bounds[1][0] - bounds[0][0]),
+                hscale = (this.scaleFactor * this.width)  / (bounds[1][0] - bounds[0][0]),
                 vscale = (this.scaleFactor * mheight) / (bounds[1][1] - bounds[0][1]);
 
             // Calculate scale factor
@@ -46,7 +45,7 @@ define(['./chart', 'underscore', 'd3', 'topojson', '../../../lib/format'],
             path = path.projection(projection);
             bounds = path.bounds(gjson);
             projection = projection.translate([
-                mwidth - (bounds[0][0] + bounds[1][0])/2,
+                this.width - (bounds[0][0] + bounds[1][0])/2,
                 mheight - (bounds[0][1] + bounds[1][1])/2
             ]);
 
@@ -70,16 +69,16 @@ define(['./chart', 'underscore', 'd3', 'topojson', '../../../lib/format'],
 
             // Add geo container
             chart.append('svg:g')
-                    .attr('transform', 'translate(' + this.margin + ', ' + this.margin + ')')
-                    .attr('width', mwidth)
+                    //.attr('transform', 'translate(' + this.margin + ', ' + this.margin + ')')
+                    .attr('transform', 'translate(0, ' + this.margin + ')')
+                    .attr('width', this.width)
                 .selectAll('path')
                     .data(gjson.features)
                         .enter()
                     .append('path')
                         .attr('d', path)
                         .style('stroke-width', '1')
-                        .style('stroke', 'black')
-                        .style('fill', 'white')
+                        .style('stroke', this.getStyle('choroplethStroke'))
                         .style('fill', _.bind(this.featureFill, this))
                         .attr('title', _.bind(this.getTooltip, this))
                         .on('click', _.bind(this.featureClick, this));
@@ -165,7 +164,7 @@ define(['./chart', 'underscore', 'd3', 'topojson', '../../../lib/format'],
             if (value) {
                 return this.colourScale(value.total);
             }
-            return 'rgb(255, 255, 255)';
+            return this.model.visualisation.styles.getStyle('choroplethMin');
         },
 
         /**

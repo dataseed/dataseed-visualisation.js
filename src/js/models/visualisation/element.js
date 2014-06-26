@@ -93,22 +93,31 @@ function (Backbone, _, format) {
                 return false;
             }
 
+            // Check for a valid feature ID
+            var observation = this.getObservationById(d.id);
+            if (!observation) {
+                return false;
+            }
+
             var id = this._getField().get('id'),
                 hierarchy = this.dataset.getDimensionHierarchy(id);
 
             // Non-hierarchical dimension
-            if (_.isUndefined(hierarchy)) {
+            if (!hierarchy) {
                 if (this.hasCutId(d.id)) {
                     this.removeCut();
                 } else {
                     this.addCut(d.id);
                 }
+
             } else {
                 // Hierarchical dimension, handle the drill up/down
-                var observation = this.getObservationById(d.id),
-                    level = observation[hierarchy.level_field];
                 if (this.validParent.test(d.id)) {
-                    this.dataset.drillDown(id, level, this.validParent.exec(d.id)[0]);
+                    this.dataset.drillDown(
+                        id,
+                        observation[hierarchy.level_field],
+                        this.validParent.exec(d.id)[0]
+                    );
                 }
             }
 

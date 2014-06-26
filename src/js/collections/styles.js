@@ -18,7 +18,8 @@ define(['backbone', '../models/visualisation/style'],
             'scaleLabel':           '#555',
             'measureLabel':         '#555',
             'choroplethMin':        '#fff',
-            'choroplethMax':        '#000'
+            'choroplethMax':        '#000',
+            'choroplethStroke':     '#000'
         },
 
         initialize: function(models, options) {
