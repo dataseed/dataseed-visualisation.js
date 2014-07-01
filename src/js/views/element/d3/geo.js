@@ -77,8 +77,8 @@ define(['./chart', 'underscore', 'd3', 'topojson', '../../../lib/format'],
                         .enter()
                     .append('path')
                         .attr('d', path)
-                        .style('stroke-width', '1')
                         .style('stroke', this.getStyle('choroplethStroke'))
+                        .style('stroke-width', this.getStyle('choroplethStrokeWidth'))
                         .style('fill', _.bind(this.featureFill, this))
                         .attr('title', _.bind(this.getTooltip, this))
                         .on('click', _.bind(this.featureClick, this));

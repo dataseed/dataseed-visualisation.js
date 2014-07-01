@@ -7,19 +7,20 @@ define(['backbone', '../models/visualisation/style'],
         model: Style,
 
         defaults: {
-            'background':           '#fff',
-            'heading':              '#555',
-            'featureFill':          '#089fd8',
-            'featureFillActive':    '#c8c8c8',
-            'featureStroke':        '#fff',
-            'featureStrokeActive':  '#fff',
-            'label':                '#fff',
-            'scaleFeature':         '#555',
-            'scaleLabel':           '#555',
-            'measureLabel':         '#555',
-            'choroplethMin':        '#fff',
-            'choroplethMax':        '#000',
-            'choroplethStroke':     '#000'
+            'background':               '#fff',
+            'heading':                  '#555',
+            'featureFill':              '#089fd8',
+            'featureFillActive':        '#c8c8c8',
+            'featureStroke':            '#fff',
+            'featureStrokeActive':      '#fff',
+            'label':                    '#fff',
+            'scaleFeature':             '#555',
+            'scaleLabel':               '#555',
+            'measureLabel':             '#555',
+            'choroplethMin':            '#fff',
+            'choroplethMax':            '#000',
+            'choroplethStroke':         '#000',
+            'choroplethStrokeWidth':    '1'
         },
 
         initialize: function(models, options) {
