@@ -69,7 +69,6 @@ define(['./chart', 'underscore', 'd3', 'topojson', '../../../lib/format'],
 
             // Add geo container
             chart.append('svg:g')
-                    //.attr('transform', 'translate(' + this.margin + ', ' + this.margin + ')')
                     .attr('transform', 'translate(0, ' + this.margin + ')')
                     .attr('width', this.width)
                 .selectAll('path')
