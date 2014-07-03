@@ -15,13 +15,13 @@
 		<tr class="sort">
 			<th class="table-chevron-left">
 				<a href="#" class="table-sort <%= (sortDirection == 1) ? 'asc' : 'desc' %><% if (sortProperty == 'label') { %> active<% } %>" data-sort-property="label">
-					<i class="icon-chevron-down"></i>
+					<i class="icon-sort"></i>
 					<span><%- label %></span>
 				</a>
 			</th>
 			<th>
 				<a href="#" class="table-sort <%= (sortDirection == 1) ? 'asc' : 'desc' %><% if (sortProperty == 'total') { %> active<% } %>" data-sort-property="total">
-					<i class="icon-chevron-down"></i>
+					<i class="icon-sort"></i>
 					<span><%- measure_label %></span>
 				</a>
 			</th>

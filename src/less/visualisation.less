@@ -166,7 +166,7 @@ article.summaryElement {
     h2 {
         font-size: 18px;
         font-weight: normal;
-        margin: 0px 10px 0px 10px;
+        margin: 0px 10px 20px 10px;
         color: @dsMediumGrey;
         padding-top: 10px;
     }
@@ -243,6 +243,7 @@ rect.scale {
 .table-search-wrap {
     padding-left: 10px;
     padding-right: 10px;
+    margin-top: -15px;
 }
 
 .search-icon {
@@ -303,10 +304,25 @@ input.table-search::-ms-clear {
     margin-top: 0;
 }
 
+.table-sort:hover {
+    color: @dsMediumGrey;
+}
+
+// Sort chevron
+i.icon-sort {
+    .rotate(90deg);
+    width: 14px;
+    height: 14px;
+    background-image: url('@{dsBaseUrl}img/grey-arrow.gif');
+    background-repeat: no-repeat;
+    background-size: 7px;
+    background-position: 4px center;
+}
+
 //chevron up
 .asc {
-    i.icon-chevron-down {
-        .rotate(180deg);
+    i.icon-sort {
+        .rotate(-90deg);
     }
 }
 
