@@ -166,7 +166,7 @@ article.summaryElement {
     h2 {
         font-size: 18px;
         font-weight: normal;
-        margin: 0px 10px 20px 10px;
+        margin: 0px 10px 0px 10px;
         color: @dsMediumGrey;
         padding-top: 10px;
     }
@@ -252,9 +252,9 @@ rect.scale {
     width: 15px;
     height: 15px;
     display: inline-block;
-    position: absolute;
-    top: 55px;
-    left: 20px;
+    position: relative;
+    top: 28px;
+    left: 8px;
 }
 
 .search-reset {
@@ -296,6 +296,12 @@ input.table-search::-ms-clear {
     padding: 0 30px;
 }
 
+// found text
+.found {
+    font-size: 14px;
+    text-align: center;
+    margin-top: 0;
+}
 
 //chevron up
 .asc {
@@ -305,7 +311,9 @@ input.table-search::-ms-clear {
 }
 
 .tableElement {
-    //the table header
+    overflow: initial;
+
+    //the table header, sort
     th {
         border-left: 1px solid #dddddd;
         padding: 0;
@@ -330,6 +338,21 @@ input.table-search::-ms-clear {
         a.active i {
             visibility: visible;
         }
+
+        /* Chevron title color */
+        span {
+            color: @dsMediumGrey;
+            font-weight: 400;
+            text-decoration: underline;
+        }
+
+        span:hover {
+            text-decoration: none;
+        }
+    }
+
+    .table {
+        margin-bottom: 0;
     }
 
 
@@ -360,6 +383,11 @@ input.table-search::-ms-clear {
         a:hover {
             text-decoration: none;
         }
+    }
+
+    /* Table td section */
+    .scroll {
+        overflow: auto;
     }
 }
 

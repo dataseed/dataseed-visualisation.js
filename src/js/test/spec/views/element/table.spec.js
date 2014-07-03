@@ -34,6 +34,7 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
                     measure: {
                         id: 'test05'
                     },
+                    measure_label: 'test label',
                     label: 'Test Table Chart'
                 });
 

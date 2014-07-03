@@ -7,7 +7,7 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
         events: {
             'click .table-row a': 'featureClick',
             'click .table-sort': 'sortSelect',
-            'keyup input': 'delaySearch',
+            'keyup input': 'search',
             'click .search-reset': 'searchReset'
         },
 
@@ -20,6 +20,9 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
         margin: 25,
         rowHeight: 29,
         maxHeight: 400,
+        fixedHeadHeight: 80,
+
+        searchFailMsg: '<p class="no-result">Sorry no items matched your search, please try broadening your search terms.</p>',
 
         render: function() {
             var attrs = _.extend({
@@ -40,7 +43,14 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
             // Calculate the table height
             if (!this.height) {
                 this.height = (attrs.values.length * this.rowHeight) + this.margin;
+                // Calculate table data height
+                var currentHeight = Math.min(this.height, this.maxHeight);
+                this.tableDataHeight = currentHeight - this.fixedHeadHeight;
             }
+
+            // Set table data height
+            this.$('.scroll').css('max-height', this.tableDataHeight);
+            this.$('.table-data-label').width(this.$('.table-chevron-left').width());
 
             return this;
         },
@@ -115,51 +125,54 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
             this.$('.table.cut .table-row.cut-active a').css('color', featureFill);
         },
 
-        // Delays the call to the search function
-        delaySearch: function() {
-            var self = this;
-            // Shows search reset button if not empty
-            if(this.$(".table-search").val()) {
-                this.$(".search-reset").css('visibility', 'visible');
-            }
-            else {
-                this.$(".search-reset").css('visibility', 'hidden');
-            }
-
-            _.debounce(self.search(), 500);
-        },
-
         // Calls the wordSearch function and controls the view display
-        search: function() {
+        search: _.debounce(function() {
+            this.$(".search-reset").css("visibility", (this.$(".table-search").val()) ? "visible" : "hidden");
+
             var queryString = '';
             var textValue = this.$(".table-search").val().toLowerCase();
-            var query = this.tokenizer(textValue);
 
             this.$('.no-result').remove();
+            this.$('.found').remove();
             this.$('tr').hide();
 
-            // Creates a single jquery attribute contains selector string.
-            for(var i = 0; i < query.length; i++) {
-                queryString = queryString.concat('[data-content*=' + query[i] + ']');
-            }
+            // Get tokenized search terms and then create one long jquery attribute selector string.
+            // Escape special characters and remove double quotes.
+            queryString = _.map(this.tokenizer(textValue), function(token) {
+                return '[data-content*=' + token.replace(/[!#$%&'()*+,./:;<=>?@\[\\\]^`{|}~]/g, "\\$&") + ']';
+            }).join();
 
-            // If query has been found or query is empty display results. Otherwise show not found message.
-            if(this.$('tr').is(queryString) || !query.length) {
-                this.$('tr.sort').show();
-                this.$('tr'+queryString).show();
+            // If invalid search term throw search fail message
+            try {
+                // If query has been found or query is empty display results. Otherwise show not found message.
+                if(this.$('tr').is(queryString) || !queryString.length) {
+                    this.$('tr.sort').show();
+                    this.$('tr'+queryString).show();
+
+                    // Show found message only if something is actually searched.
+                    if(queryString.length) {
+                        this.$('.table-search-wrap').append('<p class="found">Found <strong>' + this.$('tr'+queryString+':visible').length + '</strong> items containing \"<strong>' + textValue + '</strong>\"</p>');
+                    }
+                }
+                else {
+                    this.$el.append(this.searchFailMsg);
+                }
             }
-            else {
-                this.$el.append('<p class="no-result">Sorry no items matched your search, please try broadening your search terms.</p>');
+            catch (error) {
+                this.$el.append(this.searchFailMsg);
             }
-        },
+        }, 500),
 
         searchReset: function() {
             this.$(".table-search").val('');
-            this.delaySearch();
+            this.search();
         },
 
 
-        // Search text tokenizer function
+        /*
+         * Search-text-tokenizer is a text tokenizer for Google-like search query supporting double quoted phrase.
+         * https://github.com/tatsuyaoiw/search-text-tokenizer
+        */
         tokenizer: function(str) {
             // trim spaces
             str = str.replace(/^\s+|\s+$/g, '');
