@@ -5,7 +5,6 @@ define(['backbone', 'underscore', '../models/dataset', '../models/datasetSinglet
     var DatasetEmbedView = Backbone.View.extend({
 
         visualisationViewType: VisualisationEmbedView,
-        visualisation: null,
 
         initialize: function(options) {
             // Initialise model
@@ -17,7 +16,7 @@ define(['backbone', 'underscore', '../models/dataset', '../models/datasetSinglet
                 loaded = true;
 
             // If an ID has been supplied, fetch model from server
-            } else if (!_.isUndefined(options['id'])) {
+            } else if (!options.id) {
                 this.model = new Dataset(options);
 
             // No data or ID supplied, error
@@ -28,7 +27,7 @@ define(['backbone', 'underscore', '../models/dataset', '../models/datasetSinglet
 
             // Fetch models or render
             if (!loaded) {
-                var opts = {'success': _.after(2, _.bind(this.render, this))};
+                var opts = {success: _.after(2, _.bind(this.render, this))};
                 this.model.fetch(opts);
                 this.model.visualisation.fetch(opts);
             } else {
@@ -40,11 +39,11 @@ define(['backbone', 'underscore', '../models/dataset', '../models/datasetSinglet
          * Render dataset
          */
         render: function() {
-            if (_.isNull(this.visualisation)) {
+            if (!this.visualisation) {
                 this.visualisation = new this.visualisationViewType({
-                    'el': this.el,
-                    'model': this.model.visualisation,
-                    'dataset': this.model
+                    el: this.el,
+                    model: this.model.visualisation,
+                    dataset: this.model
                 });
             }
 
