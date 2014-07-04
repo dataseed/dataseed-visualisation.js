@@ -71,13 +71,13 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
             if (_.isUndefined(dimension)) {
                 var c = {};
                 _.each(this.cut, function (v, k) {
-                    c[k] = v.split(',');
+                    c[k] = String(v).split(',');
                 });
                 return c;
             }
 
             if(!_.isUndefined(this.cut[dimension])){
-                return this.cut[dimension].split(",");
+                return String(this.cut[dimension]).split(",");
             }
 
             // TODO if a cut is not set on dimension, this function should
@@ -206,7 +206,7 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
                 _.map(keys, function (k, i) {
                     var cutValues = (_.isUndefined(this.cut[k]) || _.isUndefined(values[i]))  ?
                         [] :
-                        _.without(this.getCut(k), values[i]);
+                        _.without(this.getCut(k), String(values[i]));
 
                     return (cutValues.length > 0) ? cutValues.join() : null;
                 }, this)

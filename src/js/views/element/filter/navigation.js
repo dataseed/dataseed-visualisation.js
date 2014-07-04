@@ -119,12 +119,13 @@ define(['backbone', 'underscore', '../filter', 'text!../../../templates/element/
         toggleCut: function (e) {
             e.preventDefault();
             var $cut = $(e.currentTarget),
-                dimension = $cut.parents('.filter-group').data('dimension');
-            if ($cut.closest('.cut-wrapper').hasClass('active')) {
-                this.visualisation.dataset.removeCut([dimension], [$cut.data('value')]);
+                dimension = $cut.parents('.filter-group').data('dimension'),
+                cutData = $cut.data('value');
 
+            if ($cut.closest('.cut-wrapper').hasClass('active')) {
+                this.visualisation.dataset.removeCut([dimension], [cutData]);
             } else {
-                this.visualisation.dataset.addCut(_.object([dimension], [$cut.data('value')]), true);
+                this.visualisation.dataset.addCut(_.object([dimension], [cutData]), true);
             }
         }
 
