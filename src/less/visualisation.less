@@ -422,7 +422,7 @@ i.icon-sort {
 
     h3 {
         margin: 0;
-        font-size: 15px;
+        font-size: 13px;
 
         a {
             display: block;
@@ -430,6 +430,7 @@ i.icon-sort {
             padding: 15px 15px 15px 13px;
             color: @dsMediumGrey;
             text-decoration: none;
+            outline: 0;
 
             i {
                 background-image: url('@{dsBaseUrl}img/grey-arrow.gif');
@@ -449,6 +450,7 @@ i.icon-sort {
 
         .filter-info {
             font-weight: normal;
+            margin-left: 5px;
         }
 
     }
@@ -460,16 +462,16 @@ i.icon-sort {
 
             .dimension-cut {
                 span.check-btn {
-                    width: 24px;
-                    height: 24px;
+                    width: 13px;
+                    height: 13px;
                     display: inline-block;
                     background: none;
                     border: 1px solid @dsGrey;
                 }
 
                 span.cut-label{
-                    position:relative;
-                    bottom:8px;
+                    position: relative;
+                    bottom: 2px;
                 }
 
                 input[type="checkbox"] {
@@ -477,9 +479,11 @@ i.icon-sort {
                 }
 
                 input:checked + span.check-btn {
-                    background: url('@{dsBaseUrl}img/checkbox-tick.gif');
+                    background: url('@{dsBaseUrl}img/checkbox-tick-white.gif');
+                    background-color: @dsBlue;
                     background-repeat: no-repeat;
                     background-position: center;
+                    background-size: 9px;
                 }
 
             }
