@@ -201,6 +201,8 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
                 values = [];
             }
 
+            // Set a new cut for the dataset filtering out the provided
+            // dimensions/values
             this.addCut(_.object(
                 keys,
                 _.map(keys, function (k, i) {
