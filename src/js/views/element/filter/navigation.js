@@ -17,12 +17,6 @@ define(['backbone', 'underscore', '../filter', 'text!../../../templates/element/
             var attrs = this.navigation.getDimension(this.dimension, this.index);
             this.$el.html(this.template(_.extend({dataset: this.visualisation.dataset}, attrs)));
 
-            // Check if there are a cut on the filter dimensions. Show reset if so.
-            if(attrs.cut) {
-                this.$(".container-icon").addClass('in');
-                this.$('.remove-filter').tipsy({gravity: 's'});
-            }
-
             return this;
         }
 
@@ -58,6 +52,14 @@ define(['backbone', 'underscore', '../filter', 'text!../../../templates/element/
             _.each(this.dimensions, function(dimension) {
                 $accordion.append(dimension.render().el);
             }, this);
+
+            // Check if there are a cut on the filter dimensions. Show reset if so.
+            for (var i = 0; i < this.model._fields.length; i++) {
+                if(this.model.isCut(i)) {
+                    this.$(".container-icon").addClass('in');
+                    this.$('.remove-filter').tipsy({gravity: 's'});
+                }
+            }
 
             /*
              * Set the style for the filter DOM elements depending on the
