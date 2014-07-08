@@ -92,7 +92,9 @@ define(['backbone', 'underscore', '../filter', 'text!../../../templates/element/
 
         getDimension: function (dimension, index) {
             var attrs = this.getDimensionAttrs(dimension, index),
-                field = this.visualisation.dataset.fields.findWhere({id: attrs.id});
+                field = this.visualisation.dataset.fields.findWhere({id: attrs.id}),
+                // Filter out filter values whose total is 0
+                values = _.filter(attrs.values, function(value){return value.total > 0; });
 
             return {
                 id: attrs.id,
@@ -100,10 +102,10 @@ define(['backbone', 'underscore', '../filter', 'text!../../../templates/element/
                 label: _.isUndefined(field) ? this.model.get('label') : field.get('label'),
                 cut: this.model.getCut(index),
                 num_selected : _.isUndefined(this.model.getCut(index))?
-                    attrs.values.length:
+                    values.length:
                     this.model.getCut(index).length,
                 state: (this.accordionState[attrs.id] === true),
-                values: attrs.values
+                values: values
             };
         },
 
