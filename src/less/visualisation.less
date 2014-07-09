@@ -241,36 +241,30 @@ rect.scale {
 
 // Table search bar
 .table-search-wrap {
+    position: relative;
     padding-left: 10px;
     padding-right: 10px;
-    margin-top: -15px;
+}
+
+.search-reset,
+.search-icon {
+    position: absolute;
+    top: 9px;
+    width: 15px;
+    height: 15px;
+    background-repeat: no-repeat;
+    background-size: 15px;
 }
 
 .search-icon {
+    left: 19px;
     background-image: url('@{dsBaseUrl}img/search-icon.gif');
-    background-repeat: no-repeat;
-    background-size: 15px;
-    width: 15px;
-    height: 15px;
-    display: inline-block;
-    position: relative;
-    top: 28px;
-    left: 8px;
 }
 
 .search-reset {
+    display: none;
+    right: 19px;
     background-image: url('@{dsBaseUrl}img/search-reset.gif');
-    background-repeat: no-repeat;
-    background-size: 15px;
-    width: 15px;
-    height: 15px;
-    display: inline-block;
-    float: right;
-    position: relative;
-    top: -32px;
-    left: -8px;
-    cursor: pointer;
-    visibility: hidden;
 }
 
 input.table-search {
@@ -286,22 +280,21 @@ input.table-search {
     box-sizing: border-box;
 }
 
-input.table-search::-ms-clear {
-    display: none;
+.no-result,
+.found {
+    text-align: center;
+    margin: 5px 0 10px 0;
 }
 
 // no result text
 .no-result {
     font-size: 15px;
-    text-align: center;
     padding: 0 30px;
 }
 
 // found text
 .found {
     font-size: 14px;
-    text-align: center;
-    margin-top: 0;
 }
 
 .table-sort:hover {
@@ -327,32 +320,25 @@ i.icon-sort {
 }
 
 .tableElement {
-    overflow: initial;
-
     //the table header, sort
     th {
-        border-left: 1px solid #dddddd;
         padding: 0;
+        border: none;
 
         //hide all chevron
         a {
             display: block;
-            text-align: center;
             i {
                 visibility: hidden;
             }
         }
 
-        //show chevron on hover
-        a:hover {
+        //show chevron on hover/active
+        a:hover,
+        a.active {
             i {
                 visibility: visible;
             }
-        }
-
-        //show chevron for active th
-        a.active i {
-            visibility: visible;
         }
 
         /* Chevron title color */
@@ -371,29 +357,23 @@ i.icon-sort {
         margin-bottom: 0;
     }
 
-
-    th.table-chevron-left {
-        border-left: none;
-    }
-
     th:hover {
         background-color: #c8c8c8;
     }
 
     tr:hover {
-       cursor: pointer;
-       background-color: @tableBackgroundHover;
+        cursor: pointer;
+        background-color: @tableBackgroundHover;
     }
 
     td {
-    padding: 0;
-    overflow: hidden;
+        padding: 0;
+        overflow: hidden;
+        border: none;
 
         a {
             display: block;
-            padding: 5px;
-            padding-bottom: 1000px;
-            margin-bottom: -995px;
+            padding: 5px 5px 5px 17px;
         }
 
         a:hover {

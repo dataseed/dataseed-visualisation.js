@@ -1,94 +1,122 @@
-define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/element/table.html'],
-    function(Backbone, _, format, tableTemplate) {
+define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../templates/element/table.html', 'text!../../templates/element/table-search-success.html', 'text!../../templates/element/table-search-fail.html'],
+    function(Backbone, _, $, format, tableTemplate, tableSearchSuccessTemplate, tableSearchFailTemplate) {
     'use strict';
 
     var TableChartView = Backbone.View.extend({
 
         events: {
-            'click .table-row a': 'featureClick',
+            'click tr a': 'featureClick',
             'click .table-sort': 'sortSelect',
-            'keyup input': 'search',
+            'keyup input': 'searchDebounce',
             'click .search-reset': 'searchReset'
         },
 
+        // Main template
         template: _.template(tableTemplate),
 
+        // Search success/failure templates
+        searchSuccessTemplate: _.template(tableSearchSuccessTemplate),
+        searchFailTemplate: tableSearchFailTemplate,
+
+        searchQuery: '',
         sortProperty: 'total',
         sortDirection: -1,
 
         // Chart constants
-        margin: 25,
+        margin: 30,
         rowHeight: 29,
         maxHeight: 400,
-        fixedHeadHeight: 80,
-
-        searchFailMsg: '<p class="no-result">Sorry no items matched your search, please try broadening your search terms.</p>',
 
         render: function() {
             var attrs = _.extend({
-                values: this.getTableValues(),
-                dimension: this.model.get('dimensions')[0],
+                values: _.chain(this.model.getObservations())
+                    .map(function(value, index) {
+                        return {
+                            index: index,
+                            id: value.id,
+                            total: value.total,
+                            totalFormat: format.num(value.total),
+                            label: this.model.getLabel(value).label
+                        };
+                    }, this)
+                    .sortBy(this.sortProperty)
+                    .value(),
+                field: this.model._getField().get('id'),
                 cut: this.model.getCut(),
+                searchQuery: this.searchQuery,
                 sortProperty: this.sortProperty,
                 sortDirection: this.sortDirection,
                 dataset : this.model.dataset
             }, this.model.attributes);
 
+            // Handle sort direction
+            if (this.sortDirection === -1) {
+                attrs.values.reverse();
+            }
+
             // Render template
             this.$el.html(this.template(attrs));
+
+            // Set search if we have a query
+            if (this.searchQuery.length > 0) {
+                this.search();
+            }
 
             // Set styles (including cut highlighting)
             this.resetFeatures();
 
             // Calculate the table height
+            var $scroll = this.$('.scroll');
             if (!this.height) {
-                this.height = (attrs.values.length * this.rowHeight) + this.margin;
-                // Calculate table data height
-                var currentHeight = Math.min(this.height, this.maxHeight);
-                this.tableDataHeight = currentHeight - this.fixedHeadHeight;
+                var pos = $scroll.position(),
+                    headerHeight = (pos) ? pos.top : 0,
+                    contentHeight = attrs.values.length * this.rowHeight;
+                this.height = Math.min(headerHeight + contentHeight, this.maxHeight) - this.margin;
+                this.tableHeight = (this.height - headerHeight) + this.margin;
             }
 
-            // Set table data height
-            this.$('.scroll').css('max-height', this.tableDataHeight);
-            this.$('.table-data-label').width(this.$('.table-chevron-left').width());
+            // Set table height
+            $scroll.css('max-height', this.tableHeight);
+
+            // Fix table columns
+            this.$('.data-table tr > td:first-child').width(this.$('.table-chevron-left').width());
 
             return this;
         },
 
-        getTableValues: function() {
-            var values = _.chain(this.model.getObservations())
-                //._map transforms an array to another array
-                //value parameter is the value of the chained getObservation
-                .map(function(value, index) {
-                    //_.extend used to add more objects to the value object
-                    return {
-                        index: index,
-                        id: value.id,
-                        total: value.total,
-                        totalFormat: format.num(value.total),
-                        label: this.model.getLabel(value).label
-                    };
-                }, this)
-                //sort the object by the current sorting property
-                .sortBy(this.sortProperty)
-                //value() to return the value only and not the wrapped methods in _.chain()
-                .value();
+        /**
+         * Set table styles
+         */
+        resetFeatures: function() {
+            // Generic styles
+            var styles = this.model.visualisation.styles;
+            this.$('h2').css('color', styles.getStyle('heading', this.model));
+            this.$el.parent().css('background-color', styles.getStyle('background', this.model));
 
-            if (this.sortDirection === -1) {
-                values.reverse();
+            if (this.model.isCut()) {
+                // Cut styles
+                this.$('.data-table tr a').css('color', styles.getStyle('featureFillActive', this.model));
+                this.$('.data-table tr.cut-active a').css('color', styles.getStyle('featureFill', this.model));
+            } else {
+                // No-cut styles
+                this.$('.data-table tr a').css('color', styles.getStyle('featureFill', this.model));
             }
-
-            return values;
         },
 
+        /**
+         * Table row click
+         */
         featureClick: function(e) {
             e.preventDefault();
-            var index = $(e.currentTarget).parents('tr').data('index');
-            if (this.model.featureClick(index)) {
+            var id = $(e.currentTarget).parents('tr').data('id');
+            if (this.model.featureClick({id: id})) {
                 this.resetFeatures();
             }
         },
 
+        /**
+         * Table column sort
+         */
         sortSelect: function(e) {
             e.preventDefault();
             var $sort = $(e.currentTarget);
@@ -101,73 +129,74 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
             }
 
             this.render();
-            return;
         },
 
-        resetFeatures: function() {
-            // Get the colours from the model
-            var featureFill = this.model.visualisation.styles.getStyle('featureFill', this.model),
-                backgroundColour = this.model.visualisation.styles.getStyle('background', this.model),
-                headingColour = this.model.visualisation.styles.getStyle('heading', this.model),
-                featureFillActive = this.model.visualisation.styles.getStyle('featureFillActive', this.model);
+        /**
+         * Search (at the most every 200ms)
+         */
+        searchDebounce: _.debounce(function() {
+            this.search(this.$('.table-search').val());
+        }, 200),
 
-            // Generic styles
-            this.$('h2').css('color', headingColour);
-            this.$el.parent().css('background-color', backgroundColour);
-
-            // Styles to apply if the table's dimension is not included in the
-            // current cut.
-            this.$('.table-row a').css('color', featureFill);
-
-            // Styles to apply if the table's dimension is included in the
-            // current cut.
-            this.$('.table.cut .table-row a').css('color', featureFillActive);
-            this.$('.table.cut .table-row.cut-active a').css('color', featureFill);
+        /**
+         * Clear search
+         */
+        searchReset: function(e) {
+            e.preventDefault();
+            this.$('.table-search').val('');
+            this.search('');
         },
 
-        // Calls the wordSearch function and controls the view display
-        search: _.debounce(function() {
-            this.$(".search-reset").css("visibility", (this.$(".table-search").val()) ? "visible" : "hidden");
-
-            var queryString = '';
-            var textValue = this.$(".table-search").val().toLowerCase();
-
-            this.$('.no-result').remove();
-            this.$('.found').remove();
-            this.$('tr').hide();
+        /**
+         * Run a search
+         */
+        search: function(searchQuery) {
+            if (!_.isUndefined(searchQuery)) {
+                this.searchQuery = searchQuery;
+            }
 
             // Get tokenized search terms and then create one long jquery attribute selector string.
             // Escape special characters and remove double quotes.
-            queryString = _.map(this.tokenizer(textValue), function(token) {
-                return '[data-content*=' + token.replace(/[!#$%&'()*+,./:;<=>?@\[\\\]^`{|}~]/g, "\\$&") + ']';
-            }).join();
+            var tokens = _.map(this.tokenizer(this.searchQuery.toLowerCase()), function(token) {
+                    token = token
+                        .replace(/^"|"$/g, '')  // Remove leading/trailing quotes
+                        .replace(/\\/g, '\\\\') // Escape backslashes
+                        .replace(/"/g, '\\"');  // Escape quotes
+                    return '[data-content*="' + token + '"]';
+                });
 
-            // If invalid search term throw search fail message
-            try {
-                // If query has been found or query is empty display results. Otherwise show not found message.
-                if(this.$('tr').is(queryString) || !queryString.length) {
-                    this.$('tr.sort').show();
-                    this.$('tr'+queryString).show();
+            // Remove any messages from previous searches
+            this.$('p').remove();
 
-                    // Show found message only if something is actually searched.
-                    if(queryString.length) {
-                        this.$('.table-search-wrap').append('<p class="found">Found <strong>' + this.$('tr'+queryString+':visible').length + '</strong> items containing \"<strong>' + textValue + '</strong>\"</p>');
-                    }
+            // Show table header by default
+            this.$('.sort').show();
+
+            if (tokens.length > 0) {
+                this.$('.search-reset').show();
+
+                // Hide show rows based on search query
+                var matches = this.$('.data-table tr')
+                    .hide()
+                    .filter(tokens.join(''))
+                        .show();
+
+                if (matches.length > 0) {
+                    // Found one or more results
+                    this.$('.table-search-wrap').append(this.searchSuccessTemplate({
+                        num: matches.length,
+                        input: this.searchQuery
+                    }));
+                } else {
+                    // No results
+                    this.$el.append(this.searchFailTemplate);
+                    this.$('.sort').hide();
                 }
-                else {
-                    this.$el.append(this.searchFailMsg);
-                }
-            }
-            catch (error) {
-                this.$el.append(this.searchFailMsg);
-            }
-        }, 500),
 
-        searchReset: function() {
-            this.$(".table-search").val('');
-            this.search();
+            } else {
+                this.$('.search-reset').hide();
+                this.$('tr').show();
+            }
         },
-
 
         /*
          * Search-text-tokenizer is a text tokenizer for Google-like search query supporting double quoted phrase.

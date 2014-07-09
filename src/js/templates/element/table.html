@@ -6,36 +6,36 @@
 <h2><%- label %></h2>
 <div class="table-search-wrap">
 	<i class="search-icon"></i>
-	<input type="text" class="table-search" />
-	<div class='search-reset'></div>
+	<input type="text" class="table-search" value="<%- searchQuery %>" />
+	<a class="search-reset" href="#"></a>
 </div>
 <div class="chart-container">
     <% if (values.length > 0) { %>
-	<table class="table <% if (!_.isUndefined(cut)) { %> cut<% } %>">
-		<tr class="sort">
-			<th class="table-chevron-left">
-				<a href="#" class="table-sort <%= (sortDirection == 1) ? 'asc' : 'desc' %><% if (sortProperty == 'label') { %> active<% } %>" data-sort-property="label">
-					<i class="icon-sort"></i>
-					<span><%- label %></span>
-				</a>
-			</th>
-			<th>
-				<a href="#" class="table-sort <%= (sortDirection == 1) ? 'asc' : 'desc' %><% if (sortProperty == 'total') { %> active<% } %>" data-sort-property="total">
-					<i class="icon-sort"></i>
-					<span><%- measure_label %></span>
-				</a>
-			</th>
-		</tr>
-	</table>
-	<div class="scroll">
-	<table class="table">
-		<% _.each(values, function(observation) { %>
-			<tr class="table-row <% if (dataset.hasCutId(dimension.field.id, observation['id'])) { %> cut-active<% }%>" data-id="<%= observation['id'] %>" data-index="<%= observation['index'] %>" data-index="<%= observation['index'] %>" data-content="<%- observation.label.toLowerCase() %>">
-				<td class="table-data-label"><a href="#"><%- observation['label'] %></a></td>
-				<td class="table-data-value"><a href="#"><%- observation['totalFormat'] %></a></td>
-			</tr>
-		<% }); %>
-	</table>
-	</div>
+        <table class="table<% if (!_.isUndefined(cut)) { %> cut<% } %>">
+            <tr class="sort">
+                <th class="table-chevron-left">
+                    <a href="#" class="table-sort <%= (sortDirection == 1) ? 'asc' : 'desc' %><% if (sortProperty == 'label') { %> active<% } %>" data-sort-property="label">
+                        <i class="icon-sort"></i>
+                        <span><%- label %></span>
+                    </a>
+                </th>
+                <th>
+                    <a href="#" class="table-sort <%= (sortDirection == 1) ? 'asc' : 'desc' %><% if (sortProperty == 'total') { %> active<% } %>" data-sort-property="total">
+                        <i class="icon-sort"></i>
+                        <span><%- measure_label %></span>
+                    </a>
+                </th>
+            </tr>
+        </table>
+        <div class="scroll">
+            <table class="table data-table<% if (!_.isUndefined(cut)) { %> cut<% } %>">
+                <% _.each(values, function(observation) { %>
+                    <tr<% if (dataset.hasCutId(field, observation.id)) { %> class="cut-active"<% }%> data-id="<%= observation.id %>" data-content="<%- observation.label.toLowerCase() %>">
+                        <td><a href="#"><%- observation.label %></a></td>
+                        <td><a href="#"><%- observation.totalFormat %></a></td>
+                    </tr>
+                <% }); %>
+            </table>
+        </div>
     <% } %>
 </div>
