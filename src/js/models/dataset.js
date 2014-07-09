@@ -80,8 +80,8 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
                 return String(this.cut[dimension]).split(",");
             }
 
-            // TODO if a cut is not set on dimension, this function should
-            // return an empty list and callers should be refactored accordingly.
+            // TODO if a cut is not set on dimension (i.e. this.cut[dimension] is undefined),
+            // this function should return an empty list and callers should be refactored accordingly.
         },
 
         /**
@@ -101,22 +101,6 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
                         return cvalue === id;
                     }))
                 );
-        },
-
-        /**
-         * Compares the value at the specified index to the value of the current cut for this dimension
-         */
-        hasCutValue: function(dimension, i) {
-            if (this.isCut(dimension)) {
-                var value = this.pool.findWhere({type: 'observations', dimension: dimension}).getValue(i);
-                return (
-                    !_.isUndefined(value) &&
-                        _.find(this.getCut(dimension), function (cvalue) {
-                            return cvalue === value.id;
-                        })
-                    );
-            }
-            return false;
         },
 
         /**

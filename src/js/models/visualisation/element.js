@@ -266,10 +266,6 @@ function (Backbone, _, format) {
 
         hasCutId: function (id, index) {
             return this.dataset.hasCutId(this._getField(index).get('id'), id);
-        },
-
-        hasCutValue: function (i, index) {
-            return this.dataset.hasCutValue(this._getField(index).get('id'), i);
         }
 
     });

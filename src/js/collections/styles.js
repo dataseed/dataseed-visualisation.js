@@ -33,15 +33,18 @@ define(['backbone', '../models/visualisation/style'],
          */
         getStyle: function (type, element, d, i) {
             // If this is a feature, check if it's active
-            if (type.substring(0, 7) === 'feature' &&
-                !_.isUndefined(element) &&
-                !_.isUndefined(i) &&
-                element.isCut() &&
-                !element.hasCutValue(i)) {
-                type += 'Active';
-            }
+            var activeFeature = (
+                    type.substring(0, 7) === 'feature' &&
+                    !_.isUndefined(element) &&
+                    !_.isUndefined(i) &&
+                    element.isCut() &&
+                    !element.hasCutId(d.id)
+                );
+
+            type += (activeFeature) ? 'Active' : '';
 
             var style = this.get(type);
+
             if (!_.isUndefined(style)) {
                 return style.get('value');
             }
