@@ -95,17 +95,25 @@ define(['backbone', 'underscore', '../filter', 'text!../../../templates/element/
         getDimension: function (dimension, index) {
             var attrs = this.getDimensionAttrs(dimension, index),
                 field = this.visualisation.dataset.fields.findWhere({id: attrs.id}),
-                // Filter out filter values whose total is 0
-                values = _.filter(attrs.values, function(value){return value.total > 0; });
+
+                // Index values by their ids and filter out the items whose total is 0
+                values = _.chain(attrs.values)
+                    .filter(function (value) {
+                        return value.total > 0;
+                    })
+                    .indexBy('id')
+                    .value(),
+                values_count = _.keys(values).length;
 
             return {
                 id: attrs.id,
                 accordion_id: this.model.get('id') + '_' + attrs.id.replace(/[^a-z0-9_\-]/gi, '_'),
                 label: _.isUndefined(field) ? this.model.get('label') : field.get('label'),
                 cut: this.model.getCut(index),
-                num_selected : _.isUndefined(this.model.getCut(index))?
-                    values.length:
-                    this.model.getCut(index).length,
+                values_count : values_count,
+                selected_count : _.isUndefined(this.model.getCut(index))?
+                    values_count:
+                    _.intersection(this.model.getCut(index), _.keys(values)).length,
                 state: (this.accordionState[attrs.id] === true),
                 values: values
             };

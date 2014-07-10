@@ -2,7 +2,7 @@
     <h3>
         <a data-toggle="collapse" href="#<%- accordion_id %>" class="dimension-filter <% if (!state) { %> collapsed<% } %>">
             <i></i>
-            <%- label %> <span class="filter-info">(<span class="num-selected"><%- num_selected %></span> of <%- values.length %>)</span>
+            <%- label %> <span class="filter-info">(<span class="num-selected"><%- selected_count %></span> of <%- values_count %>)</span>
         </a>
     </h3>
     <div id="<%- accordion_id %>" class="info-body collapse<% if (state) { %> in<% } %>">
