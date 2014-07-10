@@ -109,7 +109,7 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
                 .attr('class', 'y axis')
                 .call(yAxis)
                 .append('text')
-                    .attr("transform", "rotate(-90)")
+                    .attr('transform', 'rotate(-90)')
                     .attr('y', 0 - (this.gutterLeft / 1.5))
                     .attr('x', 0 - (this.yAxisHeight / 2))
                     .attr('text-anchor', 'middle')
@@ -126,7 +126,7 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
                 .style('stroke-width', 2);
 
             // Draw a circle for each data point
-            chart.selectAll('dot')
+            chart.selectAll('circle')
                 .data(data)
                 .enter().append('circle')
                     .attr('r', this.circleRadius)

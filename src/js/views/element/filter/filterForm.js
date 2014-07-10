@@ -23,7 +23,7 @@ define(['../filter', 'underscore', 'text!../../../templates/element/filter/filte
             var $cut = $(e.currentTarget),
                 dimension = $cut.parents('.filter-group').data('dimension');
 
-            var cutValue = String($cut.find(':selected').data('value'));
+            var cutValue = $cut.find(':selected').attr('data-value');
 
             /**
              * The cut have to be set in a different way depending on whether

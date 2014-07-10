@@ -13,8 +13,8 @@ define(['models/dataset'], function(Dataset) {
 
         it('should return the correct cut', function() {
             var cut = {
-                    test04: 'test05',
-                    test05: '6,7'
+                    test04:['test05'],
+                    test05: ['6', '7']
                 },
                 dataset = new Dataset({
                     id: 'test02',
@@ -25,12 +25,12 @@ define(['models/dataset'], function(Dataset) {
             // Check entire cut
             expect(dataset.getCut()).toEqual({
                 test04: ['test05'],
-                test05: ['6' , '7']
+                test05: ['6', '7']
             });
 
             // Check cut on each dimension
             for (var key in cut) {
-                expect(dataset.getCut(key)).toEqual(cut[key].split(','));
+                expect(dataset.getCut(key)).toEqual(cut[key]);
             }
         });
 
@@ -39,7 +39,7 @@ define(['models/dataset'], function(Dataset) {
                     id: 'test07',
                     visualisation_id: 'test08',
                     cut: {
-                        test09: 'test10'
+                        test09: ['test10']
                     }
                 });
             expect(dataset.isCut('test09')).toEqual(true);
@@ -51,7 +51,7 @@ define(['models/dataset'], function(Dataset) {
                     id: 'test11',
                     visualisation_id: 'test12',
                     cut: {
-                        test13: 'test14'
+                        test13: ['test14']
                     }
                 });
             expect(dataset.hasCutId('test13', 'test14')).toEqual(true);

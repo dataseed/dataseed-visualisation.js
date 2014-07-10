@@ -69,19 +69,11 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
          */
         getCut: function(dimension) {
             if (_.isUndefined(dimension)) {
-                var c = {};
-                _.each(this.cut, function (v, k) {
-                    c[k] = String(v).split(',');
-                });
-                return c;
+                return _.clone(this.cut);
+            } else if (dimension in this.cut) {
+                return _.clone(this.cut[dimension]);
             }
-
-            if(!_.isUndefined(this.cut[dimension])){
-                return String(this.cut[dimension]).split(",");
-            }
-
-            // TODO if a cut is not set on dimension (i.e. this.cut[dimension] is undefined),
-            // this function should return an empty list and callers should be refactored accordingly.
+            return [];
         },
 
         /**
@@ -95,12 +87,7 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
          * Compares the specified ID to the ID of the current cut for this dimension
          */
         hasCutId: function(dimension, id) {
-            return (
-                this.isCut(dimension) &&
-                    !_.isUndefined(_.find(this.getCut(dimension), function (cvalue) {
-                        return cvalue === id;
-                    }))
-                );
+            return (this.isCut(dimension) && _.indexOf(this.cut[dimension], id) > -1);
         },
 
         /**
@@ -108,30 +95,24 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
          *
          * @param cut
          *      the cut to be set
-         * @param multivalues
-         *      false if we want the cut values to be added rather than replaced
-         *      in the current dataset cut. This is temporary: probably we'll
-         *      get rid of this parameter once multivalues cut will be supported
-         *      on all the other elements type apart from navigation filters.
+         * @param append
+         *      true if we want the cut values to be appended rather than replaced
+         *      in the current dataset cut.
          */
-        addCut: function (cut, multivalues) {
+        addCut: function (cut, append) {
             // Update dataset cut
             _.each(cut, function (value, key) {
                 if (_.isNull(value)) {
                     delete this.cut[key];
-                } else {
-                    if (multivalues === true) {
-                        this.cut[key] = _.isUndefined(this.cut[key]) ?
-                            value :
-                            this.hasCutId(key, value) ?
-                                // A cut key=value is already set. Nothing to do
-                                this.cut[key] :
-                                // A cut is set on key but we are not cutting on
-                                // value yet.
-                                this.cut[key] + ',' + value;
-                    }else{
-                        this.cut[key] = value;
+                } else if (append === true) {
+                    if (_.isUndefined(this.cut[key])) {
+                        this.cut[key] = [];
                     }
+                    this.cut[key].push(value);
+                } else if (_.isArray(value)) {
+                    this.cut[key] = value;
+                } else {
+                    this.cut[key] = [value];
                 }
             }, this);
 
@@ -190,11 +171,13 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
             this.addCut(_.object(
                 keys,
                 _.map(keys, function (k, i) {
-                    var cutValues = (_.isUndefined(this.cut[k]) || _.isUndefined(values[i]))  ?
-                        [] :
-                        _.without(this.getCut(k), String(values[i]));
-
-                    return (cutValues.length > 0) ? cutValues.join() : null;
+                    if (!_.isUndefined(this.cut[k]) && !_.isUndefined(values[i])) {
+                        var cutValues = _.without(this.getCut(k), values[i]);
+                        if (cutValues.length > 0) {
+                           return cutValues;
+                        }
+                    }
+                    return null;
                 }, this)
             ));
         },

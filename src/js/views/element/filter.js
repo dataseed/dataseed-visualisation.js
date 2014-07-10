@@ -97,7 +97,7 @@ define(['backbone', 'underscore', '../../lib/format'],
             if ($cut.closest('.cut-wrapper').hasClass('active')) {
                 this.visualisation.dataset.removeCut([dimension]);
             } else {
-                this.visualisation.dataset.addCut(_.object([dimension], [$cut.data('value')]));
+                this.visualisation.dataset.addCut(_.object([dimension], [$cut.attr('data-value')]));
             }
         }
 

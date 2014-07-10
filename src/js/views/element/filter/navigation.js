@@ -131,7 +131,7 @@ define(['backbone', 'underscore', '../filter', 'text!../../../templates/element/
             e.preventDefault();
             var $cut = $(e.currentTarget),
                 dimension = $cut.parents('.filter-group').data('dimension'),
-                cutData = $cut.data('value');
+                cutData = $cut.attr('data-value');
 
             if ($cut.closest('.cut-wrapper').hasClass('active')) {
                 this.visualisation.dataset.removeCut([dimension], [cutData]);

@@ -64,39 +64,27 @@ define(['underscore', 'd3'], function(_, d3) {
          * Format a timestamp with day and month names for the current locale
          */
         dateLong: function(timestamp, granularity) {
-            switch(granularity){
-                case 'date_year':
-                    return d3.time.format('%Y')(new Date(timestamp));
-
-                case 'date_quarter':
-                    var date = new Date(timestamp),
-                        m = d3.time.format('%m')(date),
-                        y = d3.time.format('%Y')(date),
-                        q = Math.ceil(m/3);
-                    return 'Q' + q + '-' + y;
-
-                case 'date_month':
-                    return d3.time.format('%B %Y')(new Date(timestamp));
-
-                case 'date_week':
-                    return d3.time.format('%Y Week %W')(new Date(timestamp));
-
-                case 'date_hour':
-                    return d3.time.format('%A, %e %B %Y %I%_p')(new Date(timestamp));
-
-                case 'date_minute':
-                    return d3.time.format('%A, %e %B %Y %H:%M')(new Date(timestamp));
-
-                case 'date_second':
-                    return d3.time.format('%A, %e %B %Y %H:%M:%S')(new Date(timestamp));
-
-                default:
-                case 'date_day':
-                    return this._dateLongFormat(new Date(timestamp));
+            if (!(granularity in this._dateLongFormats)) {
+                granularity = 'date_day';
             }
+            return this._dateLongFormats[granularity](new Date(timestamp));
         },
 
-        _dateLongFormat: d3.time.format('%A, %e %B %Y')
+        _dateLongFormats: {
+            'date_year': d3.time.format('%Y'),
+            'date_quarter': function(date) {
+                var m = d3.time.format('%m')(date),
+                    y = d3.time.format('%Y')(date),
+                    q = Math.ceil(m/3);
+                return 'Q' + q + '-' + y;
+            },
+            'date_month': d3.time.format('%B %Y'),
+            'date_week': d3.time.format('%Y Week %W'),
+            'date_hour': d3.time.format('%A, %e %B %Y %I%_p'),
+            'date_minute': d3.time.format('%A, %e %B %Y %H:%M'),
+            'date_second': d3.time.format('%A, %e %B %Y %H:%M:%S'),
+            'date_day': d3.time.format('%A, %e %B %Y')
+        }
 
     };
 
