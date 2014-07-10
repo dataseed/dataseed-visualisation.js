@@ -98,12 +98,11 @@ define(['backbone', 'underscore', '../filter', 'text!../../../templates/element/
 
                 // Index values by their ids and filter out the items whose total is 0
                 values = _.chain(attrs.values)
-                    .filter(function (value) {
-                        return value.total > 0;
-                    })
+                    .filter(function (value) {return value.total > 0;})
                     .indexBy('id')
                     .value(),
-                values_count = _.keys(values).length;
+                values_ids = _.keys(values),
+                values_count = values_ids.length;
 
             return {
                 id: attrs.id,
@@ -113,7 +112,7 @@ define(['backbone', 'underscore', '../filter', 'text!../../../templates/element/
                 values_count : values_count,
                 selected_count : _.isUndefined(this.model.getCut(index))?
                     values_count:
-                    _.intersection(this.model.getCut(index), _.keys(values)).length,
+                    _.intersection(this.model.getCut(index), values_ids).length,
                 state: (this.accordionState[attrs.id] === true),
                 values: values
             };
