@@ -108,7 +108,7 @@ define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../temp
          */
         featureClick: function(e) {
             e.preventDefault();
-            var id = $(e.currentTarget).parents('tr').data('id');
+            var id = $(e.currentTarget).parents('tr').attr('data-id');
             if (this.model.featureClick({id: id})) {
                 this.resetFeatures();
             }
