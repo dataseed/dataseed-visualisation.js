@@ -6,13 +6,13 @@
         </a>
     </h3>
     <div id="<%- accordion_id %>" class="info-body collapse<% if (state) { %> in<% } %>">
-        <table class="table<% if (!_.isUndefined(cut)) { %> cut<% } %>">
+        <table class="table<% if (cut.length > 0) { %> cut<% } %>">
             <% _.each(values, function(value) { %>
                 <tr class="cut-wrapper<% if (dataset.hasCutId(id, value.id)) { %> active<% } %>">
                     <td>
                         <label class="dimension-cut">
                             <input type="checkbox" data-value="<%- format.data(value.id) %>"
-                            <% if (_.isUndefined(cut) || dataset.hasCutId(id, value.id) ) { %> checked="checked"<% } %>/>
+                            <% if (cut.length < 1 || dataset.hasCutId(id, value.id) ) { %> checked="checked"<% } %>/>
                             <span class="check-btn"></span>
                             <span class="cut-label"><%- value.label %></span>
                         </label>

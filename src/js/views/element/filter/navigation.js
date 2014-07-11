@@ -39,9 +39,8 @@ define(['backbone', 'underscore', '../../../lib/format', 'text!../../../template
                             this.model.getLabel(d, this.index)
                         );
                     }, this)
-                    // Ignore observations with a value of 0
-                    .filter(function (value) {return value.total > 0;})
                     .indexBy('id')
+                    .filter(function (value) {return value.total > 0;})
                     .sortBy(sortProperty)
                     .value();
 

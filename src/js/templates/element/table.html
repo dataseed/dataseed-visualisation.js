@@ -11,7 +11,7 @@
 </div>
 <div class="chart-container">
     <% if (values.length > 0) { %>
-        <table class="table<% if (!_.isUndefined(cut)) { %> cut<% } %>">
+        <table class="table<% if (cut.length > 0) { %> cut<% } %>">
             <tr class="sort">
                 <th class="table-chevron-left">
                     <a href="#" class="table-sort <%= (sortDirection == 1) ? 'asc' : 'desc' %><% if (sortProperty == 'label') { %> active<% } %>" data-sort-property="label">
@@ -28,7 +28,7 @@
             </tr>
         </table>
         <div class="scroll">
-            <table class="table data-table<% if (!_.isUndefined(cut)) { %> cut<% } %>">
+            <table class="table data-table<% if (cut.length > 0) { %> cut<% } %>">
                 <% _.each(values, function(observation) { %>
                     <tr<% if (dataset.hasCutId(field, observation.id)) { %> class="cut-active"<% }%>
                         data-value="<%- format.data(observation.id) %>"
