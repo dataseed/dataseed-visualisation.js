@@ -97,7 +97,6 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
          *      the cut to be set
          * @param append
          *      true if we want the cut values to be appended rather than replaced
-         *      in the current dataset cut.
          */
         addCut: function (cut, append) {
             // Update dataset cut

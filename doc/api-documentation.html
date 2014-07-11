@@ -613,45 +613,6 @@ $(document).ready(function() {
 }
 </code></pre>
                     </li>
-                    <li>
-                        <h6>Filter Form</h6>
-
-                        <p>The navigation element displays all the dimensions'
-                            values as options of a drop down select form
-                            element.</p>
-<pre><code class="html prettyprint">{
-    "aggregation":"sum",
-    "dimensions":[
-        {
-            "bucket":null,
-            "field":{
-                "id":"gender",
-                "type":"string"
-            },
-            "weight":1
-        },
-        {
-            "bucket":null,
-            "field":{
-                "id":"year",
-                "type":"string"
-            },
-            "weight":4
-        }
-    ],
-    "display":true,
-    "id":"filter",
-    "label":"Filter",
-    "measure":{
-        "id":"value"
-    },
-    "measure_label":"Number of deaths",
-    "type":"filterForm",
-    "weight":1,
-    "width":4
-}
-</code></pre>
-                    </li>
                 </ul>
             </li>
             <li>
@@ -888,7 +849,7 @@ require.config({
                                 "id": "year",
                                 "label": "Year",
                                 "measure_label": "Number of deaths",
-                                "type": "filterForm",
+                                "type": "navigation",
                                 "required": true,
                                 //Other element attributes here ...
                             },
@@ -943,7 +904,7 @@ require.config({
                                 "id": "year",
                                 "label": "Year",
                                 "measure_label": "Number of deaths",
-                                "type": "filterForm",
+                                "type": "navigation",
                                 "sort": {
                                     "label": "asc"
                                 },

@@ -1,4 +1,4 @@
-define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../templates/element/table.html', 'text!../../templates/element/table-search-success.html', 'text!../../templates/element/table-search-fail.html'],
+define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../templates/element/table.html', 'text!../../templates/element/tableSearchSuccess.html', 'text!../../templates/element/tableSearchFail.html'],
     function(Backbone, _, $, format, tableTemplate, tableSearchSuccessTemplate, tableSearchFailTemplate) {
     'use strict';
 

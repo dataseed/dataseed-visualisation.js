@@ -1,5 +1,5 @@
-define(['backbone', 'underscore', '../../../lib/format', '../filter', 'text!../../../templates/element/filter/navigationDimension.html', 'text!../../../templates/element/filter/navigationElement.html', 'bootstrap_collapse'],
-    function (Backbone, _, format, FilterElementView, navigationDimensionTemplate, navigationElementTemplate) {
+define(['backbone', 'underscore', '../../../lib/format', 'text!../../../templates/element/filter/navigationDimension.html', 'text!../../../templates/element/filter/navigationElement.html', 'bootstrap_collapse'],
+    function (Backbone, _, format, navigationDimensionTemplate, navigationElementTemplate) {
     'use strict';
 
     var NavigationDimensionView = Backbone.View.extend({
@@ -7,7 +7,6 @@ define(['backbone', 'underscore', '../../../lib/format', '../filter', 'text!../.
         template: _.template(navigationDimensionTemplate),
 
         initialize: function(opts) {
-            this.visualisation = opts.visualisation;
             this.navigation = opts.navigation;
             this.dimension = opts.dimension;
             this.index = opts.index;
@@ -21,7 +20,7 @@ define(['backbone', 'underscore', '../../../lib/format', '../filter', 'text!../.
 
     });
 
-    var NavigationElementView = FilterElementView.extend({
+    var NavigationElementView = Backbone.View.extend({
 
         events: {
             'click td .dimension-cut input': 'toggleCut',
@@ -36,7 +35,6 @@ define(['backbone', 'underscore', '../../../lib/format', '../filter', 'text!../.
 
             this.dimensions = _(this.model.get('dimensions')).map(function (dimension, index) {
                 return new NavigationDimensionView({
-                    visualisation: this.visualisation,
                     navigation: this,
                     dimension: dimension,
                     index: index
@@ -119,15 +117,38 @@ define(['backbone', 'underscore', '../../../lib/format', '../filter', 'text!../.
             };
         },
 
+        getDimensionAttrs: function (dimension, index) {
+            var defaultSort = {total: 'desc'},
+                sort = !_.isUndefined(dimension.sort) ? dimension.sort : defaultSort,
+                id = dimension.field.id,
+                values = _.map(this.model.getObservations(id), function (d) {
+                    return _.extend(
+                        {
+                            total: d.total,
+                            totalFormat: format.num(d.total)
+                        },
+                        this.model.getLabel(d, index)
+                    );
+                }, this);
+
+            // At the moment we can sort only on one attribute.
+            values = _.sortBy(values, _.keys(sort)[0]);
+
+            return {
+                id: id,
+                // Sorting
+                values: (sort[_.keys(sort)[0]] === 'desc') ? values.reverse() : values,
+                hierarchy: this.visualisation.dataset.getDimensionHierarchy(id),
+                dataset_cut: this.visualisation.dataset.getCut(),
+                required: _.isBoolean(dimension.required) ? dimension.required : false
+            };
+        },
+
         toggleAccordion: function(e) {
             var id = $(e.currentTarget).parents('.accordion-group').data('dimension');
             this.accordionState[id] = (this.accordionState[id] !== true);
         },
 
-        /**
-         * Override FilterElementView.toggleCut() in order to handle cuts on
-         * multiple dimensions.
-         */
         toggleCut: function (e) {
             e.preventDefault();
             var $cut = $(e.currentTarget),
