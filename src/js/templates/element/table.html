@@ -30,7 +30,9 @@
         <div class="scroll">
             <table class="table data-table<% if (!_.isUndefined(cut)) { %> cut<% } %>">
                 <% _.each(values, function(observation) { %>
-                    <tr<% if (dataset.hasCutId(field, observation.id)) { %> class="cut-active"<% }%> data-id="<%= observation.id %>" data-content="<%- observation.label.toLowerCase() %>">
+                    <tr<% if (dataset.hasCutId(field, observation.id)) { %> class="cut-active"<% }%>
+                        data-value="<%- format.data(observation.id) %>"
+                        data-content="<%- observation.label.toLowerCase() %>">
                         <td><a href="#"><%- observation.label %></a></td>
                         <td><a href="#"><%- observation.totalFormat %></a></td>
                     </tr>

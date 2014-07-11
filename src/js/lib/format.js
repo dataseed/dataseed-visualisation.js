@@ -84,6 +84,13 @@ define(['underscore', 'd3'], function(_, d3) {
             'date_minute': d3.time.format('%A, %e %B %Y %H:%M'),
             'date_second': d3.time.format('%A, %e %B %Y %H:%M:%S'),
             'date_day': d3.time.format('%A, %e %B %Y')
+        },
+
+        /**
+         * Format a value for output in an HTML5 data attribute
+         */
+        data: function(value) {
+            return JSON.stringify({value: value});
         }
 
     };

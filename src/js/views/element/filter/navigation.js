@@ -1,5 +1,5 @@
-define(['backbone', 'underscore', '../filter', 'text!../../../templates/element/filter/navigationDimension.html', 'text!../../../templates/element/filter/navigationElement.html', 'bootstrap_collapse'],
-    function (Backbone, _, FilterElementView, navigationDimensionTemplate, navigationElementTemplate) {
+define(['backbone', 'underscore', '../../../lib/format', '../filter', 'text!../../../templates/element/filter/navigationDimension.html', 'text!../../../templates/element/filter/navigationElement.html', 'bootstrap_collapse'],
+    function (Backbone, _, format, FilterElementView, navigationDimensionTemplate, navigationElementTemplate) {
     'use strict';
 
     var NavigationDimensionView = Backbone.View.extend({
@@ -15,8 +15,7 @@ define(['backbone', 'underscore', '../filter', 'text!../../../templates/element/
 
         render: function() {
             var attrs = this.navigation.getDimension(this.dimension, this.index);
-            this.$el.html(this.template(_.extend({dataset: this.visualisation.dataset}, attrs)));
-
+            this.$el.html(this.template(attrs));
             return this;
         }
 
@@ -53,10 +52,10 @@ define(['backbone', 'underscore', '../filter', 'text!../../../templates/element/
                 $accordion.append(dimension.render().el);
             }, this);
 
-            // Check if there are a cut on the filter dimensions. Show reset if so.
+            // Show reset if there is a cut on the filter dimensions
             for (var i = 0; i < this.model._fields.length; i++) {
                 if(this.model.isCut(i)) {
-                    this.$(".container-icon").addClass('in');
+                    this.$('.container-icon').addClass('in');
                     this.$('.remove-filter').tipsy({gravity: 's'});
                 }
             }
@@ -65,29 +64,29 @@ define(['backbone', 'underscore', '../filter', 'text!../../../templates/element/
              * Set the style for the filter DOM elements depending on the
              * current cut set.
              */
+            var styles = this.visualisation.styles;
 
             // DOM elements related to dimensions not included in the cut
-            this.$('.table .dimension-cut .cut-label').css('color', this.visualisation.styles.getStyle('featureFill', this.model));
-            this.$('.table .cut-totals').css('color', this.visualisation.styles.getStyle('featureFill', this.model));
+            this.$('.table .dimension-cut .cut-label').css('color', styles.getStyle('featureFill', this.model));
+            this.$('.table .cut-totals').css('color', styles.getStyle('featureFill', this.model));
 
             // DOM elements related to:
             //  - dimensions included in the cut
             //  - values that are not cut values
-            this.$('.table.cut .dimension-cut .cut-label').css('color', this.visualisation.styles.getStyle('featureFillActive', this.model));
-            this.$('.table.cut .cut-totals').css('color', this.visualisation.styles.getStyle('featureFillActive', this.model));
+            this.$('.table.cut .dimension-cut .cut-label').css('color', styles.getStyle('featureFillActive', this.model));
+            this.$('.table.cut .cut-totals').css('color', styles.getStyle('featureFillActive', this.model));
 
             // DOM elements related to:
             //  - dimensions included in the cut
             //  - values that are cut values
-            this.$('.table.cut .active .dimension-cut .cut-label').css('color', this.visualisation.styles.getStyle('featureFill', this.model));
-            this.$('.table.cut .active .cut-totals').css('color', this.visualisation.styles.getStyle('featureFill', this.model));
+            this.$('.table.cut .active .dimension-cut .cut-label').css('color', styles.getStyle('featureFill', this.model));
+            this.$('.table.cut .active .cut-totals').css('color', styles.getStyle('featureFill', this.model));
 
             /*
              * Set the style for the DOM elements that do not visually depend on
              * the cut
              */
-
-            this.$('.dimension-filter .num-selected').css('color', this.visualisation.styles.getStyle('featureFill', this.model));
+            this.$('.dimension-filter .num-selected').css('color', styles.getStyle('featureFill', this.model));
 
             return this;
         },
@@ -114,7 +113,9 @@ define(['backbone', 'underscore', '../filter', 'text!../../../templates/element/
                     values_count:
                     _.intersection(this.model.getCut(index), values_ids).length,
                 state: (this.accordionState[attrs.id] === true),
-                values: values
+                values: values,
+                dataset: this.visualisation.dataset,
+                format: format
             };
         },
 
@@ -131,7 +132,7 @@ define(['backbone', 'underscore', '../filter', 'text!../../../templates/element/
             e.preventDefault();
             var $cut = $(e.currentTarget),
                 dimension = $cut.parents('.filter-group').data('dimension'),
-                cutData = $cut.attr('data-value');
+                cutData = $cut.data('value').value;
 
             if ($cut.closest('.cut-wrapper').hasClass('active')) {
                 this.visualisation.dataset.removeCut([dimension], [cutData]);

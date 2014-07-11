@@ -29,6 +29,7 @@ define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../temp
 
         render: function() {
             var attrs = _.extend({
+                format: format,
                 values: _.chain(this.model.getObservations())
                     .map(function(value, index) {
                         return {
@@ -108,7 +109,7 @@ define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../temp
          */
         featureClick: function(e) {
             e.preventDefault();
-            var id = $(e.currentTarget).parents('tr').attr('data-id');
+            var id = $(e.currentTarget).parents('tr').data('value').value;
             if (this.model.featureClick({id: id})) {
                 this.resetFeatures();
             }

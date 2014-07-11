@@ -1,5 +1,5 @@
-define(['../filter', 'underscore', 'text!../../../templates/element/filter/filterForm.html'],
-    function (FilterElementView, _, filterFormTemplate) {
+define(['../filter', 'underscore', '../../../lib/format', 'text!../../../templates/element/filter/filterForm.html'],
+    function (FilterElementView, _, format, filterFormTemplate) {
     'use strict';
 
     var FilterFormElementView = FilterElementView.extend({
@@ -23,7 +23,7 @@ define(['../filter', 'underscore', 'text!../../../templates/element/filter/filte
             var $cut = $(e.currentTarget),
                 dimension = $cut.parents('.filter-group').data('dimension');
 
-            var cutValue = $cut.find(':selected').attr('data-value');
+            var cutValue = $cut.find(':selected').data('value').value;
 
             /**
              * The cut have to be set in a different way depending on whether

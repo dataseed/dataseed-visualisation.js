@@ -11,7 +11,7 @@
                 <tr class="cut-wrapper<% if (dataset.hasCutId(id, value.id)) { %> active<% } %>">
                     <td>
                         <label class="dimension-cut">
-                            <input type="checkbox" data-value="<%- value.id %>"
+                            <input type="checkbox" data-value="<%- format.data(value.id) %>"
                             <% if (_.isUndefined(cut) || dataset.hasCutId(id, value.id) ) { %> checked="checked"<% } %>/>
                             <span class="check-btn"></span>
                             <span class="cut-label"><%- value.label %></span>
