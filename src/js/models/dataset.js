@@ -101,18 +101,27 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
         addCut: function (cut, append) {
             // Update dataset cut
             _.each(cut, function (value, key) {
+
+                // Remove all values
                 if (_.isNull(value)) {
                     delete this.cut[key];
+
+                // Append a single value
                 } else if (append === true) {
                     if (_.isUndefined(this.cut[key])) {
                         this.cut[key] = [];
                     }
                     this.cut[key].push(value);
+
+                // Replace all values
                 } else if (_.isArray(value)) {
                     this.cut[key] = value;
+
+                // Replace all values with a single value)
                 } else {
                     this.cut[key] = [value];
                 }
+
             }, this);
 
             // Update field connections
@@ -150,11 +159,7 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
          * @param keys
          *      keys
          * @param values
-         *      (optional) cut values to remove. Useful to handle multi-values
-         *      cuts.
-         *      if values[i] is undefined, the dataset cut will be set such that
-         *      cut[keys[i]] = null; otherwise we'll get the new value for
-         *      cut[keys[i]] by omitting values[i] from cut[keys[i]]
+         *      (optional) cut values to remove
          */
         removeCut: function(keys, values) {
             if (_.isUndefined(keys)) {
@@ -167,13 +172,12 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
 
             // Set a new cut for the dataset filtering out the provided
             // dimensions/values
-            this.addCut(_.object(
-                keys,
+            this.addCut(_.object(keys,
                 _.map(keys, function (k, i) {
                     if (!_.isUndefined(this.cut[k]) && !_.isUndefined(values[i])) {
-                        var cutValues = _.without(this.getCut(k), values[i]);
-                        if (cutValues.length > 0) {
-                           return cutValues;
+                        var cut = _.without(this.cut[k], values[i]);
+                        if (cut.length > 0) {
+                           return cut;
                         }
                     }
                     return null;

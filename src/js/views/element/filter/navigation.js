@@ -90,57 +90,49 @@ define(['backbone', 'underscore', '../../../lib/format', 'text!../../../template
         },
 
         getDimension: function (dimension, index) {
-            var attrs = this.getDimensionAttrs(dimension, index),
-                field = this.visualisation.dataset.fields.findWhere({id: attrs.id}),
+            var id = dimension.field.id,
+                field = this.visualisation.dataset.fields.findWhere({id: id}),
+                cut = this.model.getCut(index),
 
-                // Index values by their ids and filter out the items whose total is 0
-                values = _.chain(attrs.values)
+                // Get sort
+                sort = !_.isUndefined(dimension.sort) ? dimension.sort : {total: 'desc'},
+                sortProperty = _.keys(sort)[0],
+
+                // Merge observation values with dimension labels
+                values = _.chain(this.model.getObservations(id))
+                    .map(function (d) {
+                        return _.extend(
+                            {
+                                total: d.total,
+                                totalFormat: format.num(d.total)
+                            },
+                            this.model.getLabel(d, index)
+                        );
+                    }, this)
+                    // Ignore observations with a value of 0
                     .filter(function (value) {return value.total > 0;})
                     .indexBy('id')
-                    .value(),
-                values_ids = _.keys(values),
+                    .sortBy(sortProperty)
+                    .value();
+
+            if (sort[sortProperty] === 'desc') {
+                values.reverse();
+            }
+
+            var values_ids = _.keys(values),
                 values_count = values_ids.length;
 
             return {
-                id: attrs.id,
-                accordion_id: this.model.get('id') + '_' + attrs.id.replace(/[^a-z0-9_\-]/gi, '_'),
+                id: id,
+                accordion_id: this.model.get('id') + '_' + id.replace(/[^a-z0-9_\-]/gi, '_'),
                 label: _.isUndefined(field) ? this.model.get('label') : field.get('label'),
                 cut: this.model.getCut(index),
                 values_count : values_count,
-                selected_count : _.isUndefined(this.model.getCut(index))?
-                    values_count:
-                    _.intersection(this.model.getCut(index), values_ids).length,
-                state: (this.accordionState[attrs.id] === true),
+                selected_count : _.isUndefined(cut) ? values_count : _.intersection(cut, values_ids).length,
+                state: (this.accordionState[id] === true),
                 values: values,
                 dataset: this.visualisation.dataset,
                 format: format
-            };
-        },
-
-        getDimensionAttrs: function (dimension, index) {
-            var defaultSort = {total: 'desc'},
-                sort = !_.isUndefined(dimension.sort) ? dimension.sort : defaultSort,
-                id = dimension.field.id,
-                values = _.map(this.model.getObservations(id), function (d) {
-                    return _.extend(
-                        {
-                            total: d.total,
-                            totalFormat: format.num(d.total)
-                        },
-                        this.model.getLabel(d, index)
-                    );
-                }, this);
-
-            // At the moment we can sort only on one attribute.
-            values = _.sortBy(values, _.keys(sort)[0]);
-
-            return {
-                id: id,
-                // Sorting
-                values: (sort[_.keys(sort)[0]] === 'desc') ? values.reverse() : values,
-                hierarchy: this.visualisation.dataset.getDimensionHierarchy(id),
-                dataset_cut: this.visualisation.dataset.getCut(),
-                required: _.isBoolean(dimension.required) ? dimension.required : false
             };
         },
 
