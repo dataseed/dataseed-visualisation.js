@@ -39,19 +39,17 @@ define(['backbone', 'underscore', '../../../lib/format', 'text!../../../template
                             this.model.getLabel(d, this.index)
                         );
                     }, this)
-                    .indexBy('id')
                     .filter(function (value) {return value.total > 0;})
                     .sortBy(sortProperty)
-                    .value();
+                    .value(),
+
+                // Get value IDs
+                ids = _.pluck(values, 'id');
 
             // Set sort direction
             if (sort[sortProperty] === 'desc') {
                 values.reverse();
             }
-
-            // Get value IDs
-            var values_ids = _.keys(values),
-                values_count = values_ids.length;
 
             // Render
             this.$el.html(this.template({
@@ -60,8 +58,8 @@ define(['backbone', 'underscore', '../../../lib/format', 'text!../../../template
                 state: (this.navigation.accordionState[id] === true),
                 cut: cut,
                 label: _.isUndefined(field) ? this.model.get('label') : field.get('label'),
-                values_count : values_count,
-                selected_count : (cut.length < 1) ? values_count : _.intersection(cut, values_ids).length,
+                values_count : ids.length,
+                selected_count : (cut.length < 1) ? ids.length : _.intersection(cut, ids).length,
                 values: values,
                 dataset: this.dataset,
                 format: format
