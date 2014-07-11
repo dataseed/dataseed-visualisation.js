@@ -4,17 +4,69 @@ define(['backbone', 'underscore', '../../../lib/format', 'text!../../../template
 
     var NavigationDimensionView = Backbone.View.extend({
 
+        normaliseRegex: /[^a-z0-9_\-]/gi,
+
         template: _.template(navigationDimensionTemplate),
 
         initialize: function(opts) {
+            this.dataset = opts.dataset;
             this.navigation = opts.navigation;
+            this.model = opts.model;
             this.dimension = opts.dimension;
             this.index = opts.index;
         },
 
+        /**
+         * Render a dimension as part of a navigation element
+         */
         render: function() {
-            var attrs = this.navigation.getDimension(this.dimension, this.index);
-            this.$el.html(this.template(attrs));
+            var id = this.dimension.field.id,
+                field = this.dataset.fields.findWhere({id: id}),
+                cut = this.model.getCut(this.index),
+
+                // Get sort
+                sort = !_.isUndefined(this.dimension.sort) ? this.dimension.sort : {total: 'desc'},
+                sortProperty = _.keys(sort)[0],
+
+                // Merge observation values with dimension labels
+                values = _.chain(this.model.getObservations(id))
+                    .map(function (d) {
+                        return _.extend(
+                            {
+                                total: d.total,
+                                totalFormat: format.num(d.total)
+                            },
+                            this.model.getLabel(d, this.index)
+                        );
+                    }, this)
+                    // Ignore observations with a value of 0
+                    .filter(function (value) {return value.total > 0;})
+                    .indexBy('id')
+                    .sortBy(sortProperty)
+                    .value();
+
+            // Set sort direction
+            if (sort[sortProperty] === 'desc') {
+                values.reverse();
+            }
+
+            // Get value IDs
+            var values_ids = _.keys(values),
+                values_count = values_ids.length;
+
+            // Render
+            this.$el.html(this.template({
+                id: id,
+                accordion_id: this.model.get('id') + '_' + id.replace(this.normaliseRegex, '_'),
+                state: (this.navigation.accordionState[id] === true),
+                cut: cut,
+                label: _.isUndefined(field) ? this.model.get('label') : field.get('label'),
+                values_count : values_count,
+                selected_count : (cut.length < 1) ? values_count : _.intersection(cut, values_ids).length,
+                values: values,
+                dataset: this.dataset,
+                format: format
+            }));
             return this;
         }
 
@@ -35,13 +87,18 @@ define(['backbone', 'underscore', '../../../lib/format', 'text!../../../template
 
             this.dimensions = _(this.model.get('dimensions')).map(function (dimension, index) {
                 return new NavigationDimensionView({
+                    dataset: this.visualisation.dataset,
                     navigation: this,
+                    model: this.model,
                     dimension: dimension,
                     index: index
                 });
             }, this);
         },
 
+        /**
+         * Render navigation element
+         */
         render: function () {
             this.$el.html(this.template(this.model.attributes));
             var $accordion = this.$('.accordion');
@@ -89,58 +146,17 @@ define(['backbone', 'underscore', '../../../lib/format', 'text!../../../template
             return this;
         },
 
-        getDimension: function (dimension, index) {
-            var id = dimension.field.id,
-                field = this.visualisation.dataset.fields.findWhere({id: id}),
-                cut = this.model.getCut(index),
-
-                // Get sort
-                sort = !_.isUndefined(dimension.sort) ? dimension.sort : {total: 'desc'},
-                sortProperty = _.keys(sort)[0],
-
-                // Merge observation values with dimension labels
-                values = _.chain(this.model.getObservations(id))
-                    .map(function (d) {
-                        return _.extend(
-                            {
-                                total: d.total,
-                                totalFormat: format.num(d.total)
-                            },
-                            this.model.getLabel(d, index)
-                        );
-                    }, this)
-                    // Ignore observations with a value of 0
-                    .filter(function (value) {return value.total > 0;})
-                    .indexBy('id')
-                    .sortBy(sortProperty)
-                    .value();
-
-            if (sort[sortProperty] === 'desc') {
-                values.reverse();
-            }
-
-            var values_ids = _.keys(values),
-                values_count = values_ids.length;
-
-            return {
-                id: id,
-                accordion_id: this.model.get('id') + '_' + id.replace(/[^a-z0-9_\-]/gi, '_'),
-                label: _.isUndefined(field) ? this.model.get('label') : field.get('label'),
-                cut: this.model.getCut(index),
-                values_count : values_count,
-                selected_count : _.isUndefined(cut) ? values_count : _.intersection(cut, values_ids).length,
-                state: (this.accordionState[id] === true),
-                values: values,
-                dataset: this.visualisation.dataset,
-                format: format
-            };
-        },
-
+        /**
+         * Hide/show a dimension
+         */
         toggleAccordion: function(e) {
             var id = $(e.currentTarget).parents('.accordion-group').data('dimension');
             this.accordionState[id] = (this.accordionState[id] !== true);
         },
 
+        /**
+         * Handle a dimension value click
+         */
         toggleCut: function (e) {
             e.preventDefault();
             var $cut = $(e.currentTarget),
