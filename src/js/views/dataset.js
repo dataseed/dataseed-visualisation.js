@@ -16,7 +16,7 @@ define(['backbone', 'underscore', '../models/dataset', '../models/datasetSinglet
                 loaded = true;
 
             // If an ID has been supplied, fetch model from server
-            } else if (!options.id) {
+            } else if (options.id) {
                 this.model = new Dataset(options);
 
             // No data or ID supplied, error
