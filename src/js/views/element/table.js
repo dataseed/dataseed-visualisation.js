@@ -24,7 +24,7 @@ define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../temp
 
         // Chart constants
         margin: 30,
-        rowHeight: 29,
+        contentHeight: 0,
         maxHeight: 400,
 
         render: function() {
@@ -66,21 +66,25 @@ define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../temp
             // Set styles (including cut highlighting)
             this.resetFeatures();
 
+            // Fix table columns
+            this.$('.data-table tr > td:first-child').width(this.$('.table-chevron-left').width());
+
+            var self = this;
+            this.$('.scroll tr').each(function() {
+                self.contentHeight = $(this).outerHeight() + self.contentHeight;
+            });
+
             // Calculate the table height
             var $scroll = this.$('.scroll');
             if (!this.height) {
                 var pos = $scroll.position(),
-                    headerHeight = (pos) ? pos.top : 0,
-                    contentHeight = attrs.values.length * this.rowHeight;
-                this.height = Math.min(headerHeight + contentHeight, this.maxHeight) - this.margin;
+                    headerHeight = (pos) ? pos.top : 0;
+                this.height = Math.min(headerHeight + this.contentHeight, this.maxHeight) - this.margin;
                 this.tableHeight = (this.height - headerHeight) + this.margin;
             }
 
             // Set table height
             $scroll.css('max-height', this.tableHeight);
-
-            // Fix table columns
-            this.$('.data-table tr > td:first-child').width(this.$('.table-chevron-left').width());
 
             return this;
         },
