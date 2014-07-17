@@ -13,6 +13,10 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
 
         render: function() {
             this.$el.html(this.template(_.extend({summary: this.getSummaryText()}, this.model.attributes)));
+
+            // Setting the background and title colours
+            this.$('h1').css('background-color', this.visualisation.styles.getStyle('background', this.model));
+            this.$('h1').css('color', this.visualisation.styles.getStyle('heading', this.model));
             return this;
         },
 

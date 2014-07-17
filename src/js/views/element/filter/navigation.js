@@ -140,6 +140,16 @@ define(['backbone', 'underscore', '../../../lib/format', 'text!../../../template
              */
             this.$('.dimension-filter .num-selected').css('color', styles.getStyle('featureFill', this.model));
 
+            // Set the background colour
+            this.$el.css('background-color', this.visualisation.styles.getStyle('background', this.model));
+
+            // Set the element title colour
+            this.$('h2').css('color', this.visualisation.styles.getStyle('heading', this.model));
+            this.$('h3 a').css('color', this.visualisation.styles.getStyle('heading', this.model));
+
+            // Set the filter scale text
+            this.$('h3 .filter-info').css('color', this.visualisation.styles.getStyle('scaleFeature', this.model));
+
             return this;
         },
 
