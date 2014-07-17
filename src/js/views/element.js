@@ -24,7 +24,7 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
         },
 
         // Add bottom margin to element container
-        marginBottom: 60,
+        marginBottom: 30,
 
         // Only set the element size once
         _sized: false,
@@ -88,7 +88,7 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
                     if (!this._sized && this.chart.height) {
 
                         // Get chart height
-                        var height = this.chart.height;
+                        var height = this.chart.height + this.$('h2').outerHeight();
                         if (this.chart.maxHeight) {
                             height = Math.min(height, this.chart.maxHeight);
                         }
