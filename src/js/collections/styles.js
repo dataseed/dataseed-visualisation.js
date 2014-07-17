@@ -7,6 +7,7 @@ define(['backbone', '../models/visualisation/style'],
         model: Style,
 
         defaults: {
+            'visualisationBackground':  '#f3f3f3',
             'background':               '#fff',
             'heading':                  '#555',
             'featureFill':              '#089fd8',
