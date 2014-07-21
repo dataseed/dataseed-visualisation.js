@@ -5,7 +5,7 @@ define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../temp
     var TableChartView = Backbone.View.extend({
 
         events: {
-            'click tr a': 'featureClick',
+            'click td a': 'featureClick',
             'click .table-sort': 'sortSelect',
             'keyup input': 'searchDebounce',
             'click .search-reset': 'searchReset'
