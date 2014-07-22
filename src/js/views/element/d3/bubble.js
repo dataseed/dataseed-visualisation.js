@@ -17,6 +17,8 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
 
             // Get observations
             var values = this.model.getObservations();
+            // Remove all dimemnsions with negative values
+            values = _.filter(values, function(d) { return d.total >= 0; });
             if (values.length < 1) {
                 return this;
             }
