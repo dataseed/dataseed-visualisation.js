@@ -41,6 +41,16 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
             // Render visualisation elements
             this.model.reset();
             this.resetElements();
+
+            // Set default visualisation background colour
+            this.updateColour();
+        },
+
+        /**
+         * Add visualisation background colour
+         */
+        updateColour: function() {
+            this.$('.visualisation').css('background-color', this.model.styles.getStyle('visualisationBackground'));
         },
 
         /**
@@ -48,6 +58,7 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
          */
         renderElements: function() {
             this.model.elements.forEach(this.renderElement, this);
+            this.updateColour();
         },
 
         /**
