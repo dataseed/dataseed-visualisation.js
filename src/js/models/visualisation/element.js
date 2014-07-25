@@ -11,6 +11,7 @@ function (Backbone, _, format) {
      *      _onSync()
      *      _getField([index])
      *      _getConnection(type, [id])
+     *      buildCutArgs(cutValue, index)
      *
      * Derived elements are supposed to store their connections in either
      * this._connections or this._connection which have both to be meant as
@@ -26,6 +27,11 @@ function (Backbone, _, format) {
         // For the other types (basically numeric and dates) it makes sense to
         // use observation values as labels - see this.getLabel().
         dimensionFields: ['string', 'geo'],
+
+        // Field types whose values could be bucketed. We need to keep track of
+        // them because for those fields cut values should be defined by ranges
+        // of values
+        bucketFields: ['date', 'integer'],
 
         url: function () {
             return '/api/datasets/' + this.dataset.get('id') + '/visualisations/' + this.visualisation.get('id') + '/elements/' + this.get('id');
@@ -107,7 +113,7 @@ function (Backbone, _, format) {
                 if (this.hasCutId(d.id)) {
                     this.removeCut();
                 } else {
-                    this.addCut(d.id);
+                    this.addCut(this.buildCutArgs(d.id));
                 }
 
             } else {

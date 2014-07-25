@@ -102,26 +102,21 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
             // Update dataset cut
             _.each(cut, function (value, key) {
 
-                // Remove all values
                 if (_.isNull(value)) {
+                    // Remove all values
                     delete this.cut[key];
+                }else{
+                    // Append or replace a (list of) value(s)
+                    var cutVal = (_.isArray(value)) ? value : [value];
 
-                // Append a single value
-                } else if (append === true) {
-                    if (_.isUndefined(this.cut[key])) {
-                        this.cut[key] = [];
+                    if (append === true) {
+                        if (_.isUndefined(this.cut[key])) {
+                            this.cut[key] = [];
+                        }
+                        cutVal = this.cut[key].concat(cutVal);
                     }
-                    this.cut[key].push(value);
-
-                // Replace all values
-                } else if (_.isArray(value)) {
-                    this.cut[key] = value;
-
-                // Replace all values with a single value)
-                } else {
-                    this.cut[key] = [value];
+                    this.cut[key] = cutVal;
                 }
-
             }, this);
 
             // Update field connections
@@ -175,7 +170,9 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
             this.addCut(_.object(keys,
                 _.map(keys, function (k, i) {
                     if (!_.isUndefined(this.cut[k]) && !_.isUndefined(values[i])) {
-                        var cut = _.without(this.cut[k], values[i]);
+                        var exclude = !_.isArray(values[i]) ? values[i] : [values[i]],
+                            cut = _.difference(this.cut[k], exclude);
+
                         if (cut.length > 0) {
                            return cut;
                         }

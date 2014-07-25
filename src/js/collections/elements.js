@@ -3,7 +3,7 @@ function (Backbone, MeasureElement, DimensionsElement) {
     'use strict';
 
     var elementTypes = {
-        summary: MeasureElement,
+        summary: MeasureElement
     };
 
     var ElementsCollection = Backbone.Collection.extend({

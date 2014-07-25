@@ -22,6 +22,7 @@ define(['backbone', 'underscore', '../../../lib/format', 'text!../../../template
         render: function() {
             var id = this.dimension.field.id,
                 field = this.dataset.fields.findWhere({id: id}),
+                index = this.index,
                 cut = this.model.getCut(this.index),
 
                 // Get sort
@@ -54,6 +55,7 @@ define(['backbone', 'underscore', '../../../lib/format', 'text!../../../template
             // Render
             this.$el.html(this.template({
                 id: id,
+                index: index,
                 accordion_id: this.model.get('id') + '_' + id.replace(this.normaliseRegex, '_'),
                 state: (this.navigation.accordionState[id] === true),
                 cut: cut,
@@ -168,7 +170,8 @@ define(['backbone', 'underscore', '../../../lib/format', 'text!../../../template
             e.preventDefault();
             var $cut = $(e.currentTarget),
                 dimension = $cut.parents('.filter-group').data('dimension'),
-                cutData = $cut.data('value').value;
+                dimensionIndex = $cut.parents('.filter-group').data('dimension-index'),
+                cutData = this.model.buildCutArgs($cut.data('value').value, dimensionIndex);
 
             if ($cut.closest('.cut-wrapper').hasClass('active')) {
                 this.visualisation.dataset.removeCut([dimension], [cutData]);
