@@ -22,6 +22,9 @@ define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../temp
         sortProperty: 'total',
         sortDirection: -1,
 
+        //Scroll position
+        scrollLocation: 0,
+
         // Chart constants
         margin: 30,
         contentHeight: 0,
@@ -86,6 +89,9 @@ define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../temp
             // Set table height
             $scroll.css('max-height', this.tableHeight);
 
+            // Set the users scroll position
+            $scroll.scrollTop(this.scrollLocation);
+
             return this;
         },
 
@@ -113,6 +119,8 @@ define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../temp
          */
         featureClick: function(e) {
             e.preventDefault();
+            // Retrieve the current scroll position of the table
+            this.scrollLocation = this.$('.scroll').scrollTop();
             var id = $(e.currentTarget).parents('tr').data('value').value;
             if (this.model.featureClick({id: id})) {
                 this.resetFeatures();
