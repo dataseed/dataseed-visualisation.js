@@ -154,7 +154,11 @@ function (Backbone, _, format) {
                 case 'date':
                     var dimensionIndex = index || 0,
                         dimension = this.get('dimensions')[dimensionIndex],
-                        date = new Date(value.id);
+                        date = new Date(value.id),
+                        milliPerMin = 60000;
+
+                    // Removing the user's local timezone and converting it to GMT
+                    date = new Date(date.valueOf() + date.getTimezoneOffset() * milliPerMin);
 
                     return _.extend(value, {
                         label: format.dateLong(date, dimension.bucket_interval),
