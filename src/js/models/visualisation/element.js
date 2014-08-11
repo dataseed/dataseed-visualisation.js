@@ -31,7 +31,7 @@ function (Backbone, _, format) {
         // Field types whose values could be bucketed. We need to keep track of
         // them because for those fields cut values should be defined by ranges
         // of values
-        bucketFields: ['date', 'integer'],
+        bucketFields: ['date'],
 
         url: function () {
             return '/api/datasets/' + this.dataset.get('id') + '/visualisations/' + this.visualisation.get('id') + '/elements/' + this.get('id');
