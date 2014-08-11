@@ -170,7 +170,7 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
             this.addCut(_.object(keys,
                 _.map(keys, function (k, i) {
                     if (!_.isUndefined(this.cut[k]) && !_.isUndefined(values[i])) {
-                        var exclude = !_.isArray(values[i]) ? values[i] : [values[i]],
+                        var exclude = !_.isArray(values[i]) ? [values[i]] : values[i],
                             cut = _.difference(this.cut[k], exclude);
 
                         if (cut.length > 0) {
