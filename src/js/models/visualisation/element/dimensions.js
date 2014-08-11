@@ -145,6 +145,62 @@ function (Backbone, _, Element) {
                 index = 0;
             }
             return this._fields[index];
+        },
+
+        /**
+         * Get all observations ids
+         */
+        getObservationsIds: function (id) {
+            return this._getConnection('observations', id).getDataIds();
+        },
+
+        /**
+         * Helper to build the arguments to pass through addCut() / removeCut()
+         * Those arguments depend on the type of the field we want to cut on.
+         */
+        buildCutArgs: function (cutValue, index) {
+            // If we are cutting on a dimension referring to a numeric/date
+            // field we have to query on intervals. Given that these type of
+            // fields are such that observation ids are equals to their related
+            // value, the interval will be defined like so:
+            //  - the "from endpoint" will be cutValue
+            //  - the "to endpoint" will be the minimum observation value
+            //    greater than "cutValue"
+            if (_.contains(this.bucketFields, this.getFieldType(index))) {
+                var obs_IDs = this.getObservationsIds(),
+                    from = cutValue,
+                    toIdx = _.indexOf(obs_IDs, cutValue) + 1;
+
+                return _.isUndefined(obs_IDs[toIdx]) ?
+                    // d.id is the greatest observation value (APIs
+                    // return observations ordered by their ids).
+                    // Build an interval with no "to endpoint"
+                    [from] :
+                    [from, obs_IDs[toIdx]];
+            } else {
+                return [cutValue];
+            }
+        },
+
+        /**
+         * Override of Element.hasCutId().
+         * For dimensions whose values could be bucketed, the cut is set on
+         * ranges of values. For these dimensions, this helpers returns true
+         * only if:
+         *  - id is included in the dataset cut on the dimension
+         *  - id refers to a "from endpoint" of a range the dimension is cut on
+         *
+         * @see Element.bucketFields
+         * @see DimensionElement.buildCutArgs()
+         */
+        hasCutId: function (id, index) {
+            var ret = Element.prototype.hasCutId.apply(this, arguments);
+
+            if (_.contains(this.bucketFields, this.getFieldType(index))) {
+                var dimensionId = this._getField(index).get('id');
+                ret = ret && (_.indexOf(this.dataset.cut[dimensionId], id) % 2 === 0);
+            }
+            return ret;
         }
 
     });
