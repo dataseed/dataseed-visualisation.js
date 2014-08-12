@@ -158,17 +158,10 @@ function (Backbone, _, format) {
             var field = this._getField(index);
             switch(field.get('type')) {
                 case 'date':
-                    var dimensionIndex = index || 0,
-                        dimension = this.get('dimensions')[dimensionIndex],
-                        date = new Date(value.id),
-                        milliPerMin = 60000;
-
-                    // Removing the user's local timezone and converting it to GMT
-                    date = new Date(date.valueOf() + date.getTimezoneOffset() * milliPerMin);
-
+                    var dimension = this.get('dimensions')[index || 0];
                     return _.extend(value, {
-                        label: format.dateLong(date, dimension.bucket_interval),
-                        label_short: format.dateShort(date)
+                        label: format.dateLong(value.id, dimension.bucket_interval),
+                        label_short: format.dateShort(value.id)
                     });
 
                 case 'integer':

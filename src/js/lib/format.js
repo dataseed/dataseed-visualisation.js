@@ -50,14 +50,14 @@ define(['underscore', 'd3'], function(_, d3) {
         },
 
         _dateShortFormats: [
-            [d3.time.format('.%L'), function(d) { return d.getMilliseconds(); }],
-            [d3.time.format(':%S'), function(d) { return d.getSeconds(); }],
-            [d3.time.format('%I:%M'), function(d) { return d.getMinutes(); }],
-            [d3.time.format('%I %p'), function(d) { return d.getHours(); }],
-            [d3.time.format('%a %d'), function(d) { return d.getDay() && d.getDate() !== 1; }],
-            [d3.time.format('%b %d'), function(d) { return d.getDate() !== 1; }],
-            [d3.time.format('%B'), function(d) { return d.getMonth(); }],
-            [d3.time.format('%Y'), function() { return true; }]
+            [d3.time.format.utc('.%L'), function(d) { return d.getMilliseconds(); }],
+            [d3.time.format.utc(':%S'), function(d) { return d.getSeconds(); }],
+            [d3.time.format.utc('%I:%M'), function(d) { return d.getMinutes(); }],
+            [d3.time.format.utc('%I %p'), function(d) { return d.getHours(); }],
+            [d3.time.format.utc('%a %d'), function(d) { return d.getDay() && d.getDate() !== 1; }],
+            [d3.time.format.utc('%b %d'), function(d) { return d.getDate() !== 1; }],
+            [d3.time.format.utc('%B'), function(d) { return d.getMonth(); }],
+            [d3.time.format.utc('%Y'), function() { return true; }]
         ],
 
         /**
@@ -71,19 +71,19 @@ define(['underscore', 'd3'], function(_, d3) {
         },
 
         _dateLongFormats: {
-            'date_year': d3.time.format('%Y'),
+            'date_year': d3.time.format.utc('%Y'),
             'date_quarter': function(date) {
-                var m = d3.time.format('%m')(date),
-                    y = d3.time.format('%Y')(date),
+                var m = d3.time.format.utc('%m')(date),
+                    y = d3.time.format.utc('%Y')(date),
                     q = Math.ceil(m/3);
                 return 'Q' + q + '-' + y;
             },
-            'date_month': d3.time.format('%B %Y'),
-            'date_week': d3.time.format('%Y Week %W'),
-            'date_hour': d3.time.format('%A, %e %B %Y %I%_p'),
-            'date_minute': d3.time.format('%A, %e %B %Y %H:%M'),
-            'date_second': d3.time.format('%A, %e %B %Y %H:%M:%S'),
-            'date_day': d3.time.format('%A, %e %B %Y')
+            'date_month': d3.time.format.utc('%B %Y'),
+            'date_week': d3.time.format.utc('%Y Week %W'),
+            'date_hour': d3.time.format.utc('%A, %e %B %Y %I%_p'),
+            'date_minute': d3.time.format.utc('%A, %e %B %Y %H:%M'),
+            'date_second': d3.time.format.utc('%A, %e %B %Y %H:%M:%S'),
+            'date_day': d3.time.format.utc('%A, %e %B %Y')
         },
 
         /**
