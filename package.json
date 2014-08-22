@@ -17,6 +17,7 @@
     "gulp-requirejs": "~0.1",
     "gulp-uglify": "~0.3",
     "gulp-util": "~2.2",
+    "gulp-connect": "2.0.6",
     "hogan.js": "~3.0",
     "jasmine-core": "~2.0",
     "karma": "~0.12",

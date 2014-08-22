@@ -7,6 +7,15 @@ var gulp = require('gulp'),
     replace = require('gulp-replace'),
     less = require('gulp-less'),
     csso = require('gulp-csso');
+    connect = require('gulp-connect');
+
+// Web server
+gulp.task('serve', function() {
+    connect.server({
+        livereload: true,
+        root: '.'
+    });
+});
 
 // Lint JS
 gulp.task('lint', function() {
