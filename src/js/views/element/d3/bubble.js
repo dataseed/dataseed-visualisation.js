@@ -1,10 +1,14 @@
-define(['./chart', 'underscore', 'd3'], function(ChartView, _, d3) {
+define(['./chart', 'underscore', 'd3', '../../../lib/format'],
+    function(ChartView, _, d3, format) {
     'use strict';
 
     var BubbleChartView = ChartView.extend({
 
-        scaleMarginX: 5,
-        scaleMarginY: 10,
+        scaleMarginX: 10,
+        scaleMarginY: 20,
+        scaleMarginBottom: 5,
+        scaleLineHeight: 10,
+        scaleTextHeight: 10,
 
         render: function() {
 
@@ -13,40 +17,45 @@ define(['./chart', 'underscore', 'd3'], function(ChartView, _, d3) {
 
             // Get observations
             var values = this.model.getObservations();
+            // Remove all dimemnsions with negative values
+            values = _.filter(values, function(d) { return d.total >= 0; });
             if (values.length < 1) {
                 return this;
             }
+
+            // Use a square bubble chart
+            this.height = this.width;
 
             // Add chart
             var chart = d3.select(this.chartContainerEl).append('svg')
                 .attr('width', this.width)
                 .attr('class', 'bubbleChart')
-                .classed('inactive', _.bind(this.model.isCut, this.model));
+                .classed('inactive', _.bind(this.model.isCut, this.model)),
 
             // Layout observations as bubbles
-            var nodes = d3.layout.pack()
-                .children(function(d) {
-                    return d;
-                })
-                .value(function(d) {
-                    return d.total;
-                })
-                .sort(null)
-                .size([this.width, this.width])
-                .nodes(values)
-                .filter(function (d) {
-                    return (!_.isUndefined(d.id));
-                });
+                nodes = d3.layout.pack()
+                    .children(function(d) {
+                        return d;
+                    })
+                    .value(function(d) {
+                        return d.total;
+                    })
+                    .sort(null)
+                    .size([this.width, this.height])
+                    .nodes(values)
+                    .filter(function (d) {
+                        return (!_.isUndefined(d.id));
+                    }),
 
             // Add bubbles
-            var bubbles = chart.append('g')
-                .selectAll('g.node')
-                    .data(nodes)
-                .enter().append('svg:g')
-                    .attr('class', 'node')
-                    .attr('title', _.bind(this.getTooltip, this))
-                    .attr('transform', function(d) { return 'translate(' + d.x + ',' + d.y + ')'; })
-                    .on('click', _.bind(this.featureClick, this));
+                bubbles = chart.append('g')
+                    .selectAll('g.node')
+                        .data(nodes)
+                    .enter().append('svg:g')
+                        .attr('class', 'node')
+                        .attr('title', _.bind(this.getTooltip, this))
+                        .attr('transform', function(d) { return 'translate(' + d.x + ',' + d.y + ')'; })
+                        .on('click', _.bind(this.featureClick, this));
 
             bubbles.append('circle')
                 .attr('r', function(d) { return d.r; })
@@ -58,13 +67,10 @@ define(['./chart', 'underscore', 'd3'], function(ChartView, _, d3) {
                 .attr('text-anchor', 'middle')
                 .attr('dy', '.3em')
                 .style('fill', this.getStyle('label'))
-                .text(_.bind(this.getLabel, this));
+                .text(_.bind(this.getFeatureLabel, this));
 
             // Attach tooltips
             this.attachTooltips('g');
-
-            // Get chart height
-            var chartHeight = d3.max(nodes, function(d) { return d.y + d.r; });
 
             // Get scale (map input domain to output range)
             this.scale = d3.scale.linear()
@@ -78,74 +84,66 @@ define(['./chart', 'underscore', 'd3'], function(ChartView, _, d3) {
                 ]);
 
             // Calculate scale bubbles
-            var scaleBubbles, scaleWidth, i = 5;
+            var scaleLines, scaleWidth, i = 5;
             do {
 
                 // Get scale "ticks" (the scale bubbles), filtering out values of 0
-                scaleBubbles = _.filter(this.scale.ticks(i));
+                scaleLines = _.filter(this.scale.ticks(i));
 
                 // Caculate scale width
-                scaleWidth = _.reduce(scaleBubbles, this.getScaleWidth, 0, this);
+                scaleWidth = _.reduce(scaleLines, this.getScaleWidth, this.scaleMarginX, this);
 
             } while(--i > 0 && scaleWidth > this.width);
 
-            // Set scale item positions for the getScalePosition() method
-            this.scalePosX = (this.width - scaleWidth) / 2;
-            this.scalePosY = this.scaleMarginY + this.getRadius(scaleBubbles[scaleBubbles.length-1]);
+            // Set scale X position for the getScalePosition() method
+            this.scalePosX = ((this.width - scaleWidth) / 2) + this.scaleMarginX;
 
             // Add scale
             var scaleItems = chart.append('g')
-                    .attr('transform', 'translate(0,' + chartHeight + ')')
-                .selectAll('.scaleItem')
-                    .data(scaleBubbles)
-                .enter().append('g')
-                    .attr('transform', _.bind(this.getScalePosition, this));
+                    .attr('transform', 'translate(0,' + this.height + ')')
+                    .selectAll('.scaleItem')
+                        .data(scaleLines)
+                    .enter().append('g')
+                        .attr('transform', _.bind(this.getScalePosition, this));
 
-            // Add scale bubbles
-            scaleItems.append('circle')
-                    .attr('class', 'scaleBubble')
-                    .style('fill', 'transparent')
+            // Add scale lines
+            scaleItems.append('polyline')
+                    .attr('class', 'scaleLine')
+                    .style('fill', 'none')
                     .style('stroke', this.getStyle('scaleFeature'))
-                    .attr('r', _.bind(this.getRadius, this));
+                    .attr('points', _.bind(this.getScaleLine, this));
 
-            // Add scale bubble labels
+            // Add scale labels
             scaleItems.append('text')
                     .attr('class', 'scaleLabel')
                     .attr('text-anchor', 'middle')
-                    .attr('y', this.scalePosY + this.scaleMarginY)
+                    .attr('y', this.scaleMarginY)
+                    .attr('x', _.bind(this.getRadius, this))
                     .style('fill', this.getStyle('scaleLabel'))
-                    .text(this.numFormatScale);
+                    .text(format.numScale);
 
-            // Set element height to chart height + scale height
-            chart.attr('height', chartHeight + (this.scalePosY * 2) + (this.scaleMarginY * 2));
+            // Add measure label
+            this.height += (this.scaleMarginY * 2) + this.scaleLineHeight + this.scaleTextHeight;
+            chart.append('text')
+                    .attr('text-anchor', 'middle')
+                    .attr('x', this.width / 2)
+                    .attr('y', this.height)
+                    .style('fill', this.getStyle('measureLabel'))
+                    .text(this.model.getMeasureLabel());
 
-            // Update container size
-            this.updateSize();
+            // Set chart height
+            this.height += this.scaleMarginBottom;
+            chart.attr('height', this.height);
 
             return this;
 
         },
 
         /**
-         * Get a bubble's label
+         * Get a bubble's width (i.e. its diameter)
          */
-        getLabel: function(d, i) {
-            // Get this bubble's value's model
-            var value = this.model.getObservation(i),
-                valueLabel = this.model.getLabel(value);
-            if (!valueLabel) {
-                return;
-            }
-
-            // If there's a short label, use it
-            var label = (_.isUndefined(valueLabel.short_label)) ? valueLabel.label : valueLabel.short_label;
-
-            // Ignore labels that are longer than the diameter of the bubble
-            if (this.getStringWidth(label) > (d.r * 2)) {
-                return;
-            }
-
-            return label;
+        getFeatureWidth: function(d, i) {
+            return d.r * 2;
         },
 
         /**
@@ -165,20 +163,28 @@ define(['./chart', 'underscore', 'd3'], function(ChartView, _, d3) {
         },
 
         /**
-         * Get the width of a scale "tick" (bubble)
+         * Get the width of a scale "tick"
          */
         getScaleWidth: function(memo, tick) {
             return memo + (this.getRadius(tick) * 2) + this.scaleMarginX;
         },
 
         /**
-         * Get a scale bubble's position and increment the X position for the next bubble
+         * Get a scale line's position and increment the X position for the next line
          */
         getScalePosition: function(total, i) {
-            var radius = this.getRadius(total),
-                x = this.scalePosX + radius;
-            this.scalePosX += (radius * 2) + this.scaleMarginX;
-            return 'translate(' + x + ',' + this.scalePosY + ')';
+            var x = this.scalePosX;
+            this.scalePosX += (this.getRadius(total) * 2) + this.scaleMarginX;
+            return 'translate(' + x + ',' + this.scaleMarginY + ')';
+        },
+
+        /**
+         * Get a scale line's coordinates
+         */
+        getScaleLine: function(total, i) {
+            var w = this.getRadius(total) * 2,
+                h = this.scaleLineHeight;
+            return '0,0 0,' + h + ' 0,' + (h/2) + ' ' + w + ',' + (h/2) + ' ' + w + ',0 ' + w + ',' + h;
         }
 
     });

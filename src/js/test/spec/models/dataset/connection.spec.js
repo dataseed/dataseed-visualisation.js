@@ -1,4 +1,6 @@
-require(['models/dataset', 'models/dataset/connection'], function(Dataset, Connection) {
+require(['models/dataset', 'models/dataset/connection', 'models/dataset/dimensionalConnection'],
+    function(Dataset, Connection, DimensionalConnection) {
+    /* global describe, beforeEach, expect, it */
 
     describe('A connection model', function() {
 
@@ -11,21 +13,22 @@ require(['models/dataset', 'models/dataset/connection'], function(Dataset, Conne
 
             // Don't make HTTP requests
             Connection.prototype.fetch = function() {};
+            DimensionalConnection.prototype.fetch = function() {};
         });
 
         it('should construct API URLs for dimensions', function() {
-            var conn = new Connection({
-                    dataset: this.dataset,
-                    type: 'dimensions',
-                    dimension: 'test03',
-                    measure: 'test04',
-                    aggregation: 'sum'
-                });
+            var conn = new DimensionalConnection({
+                dataset: this.dataset,
+                type: 'dimensions',
+                dimension: 'test03',
+                measure: 'test04',
+                aggregation: 'sum'
+            });
             expect(conn.url()).toEqual('/api/datasets/test01/dimensions/test03?aggregation=sum&measure=test04');
         });
 
         it('should construct API URLs for dimensions with a cut', function() {
-            var conn = new Connection({
+            var conn = new DimensionalConnection({
                     dataset: this.dataset,
                     type: 'dimensions',
                     dimension: 'test04',
@@ -39,7 +42,7 @@ require(['models/dataset', 'models/dataset/connection'], function(Dataset, Conne
         });
 
         it('should construct API URLs for observations', function() {
-            var conn = new Connection({
+            var conn = new DimensionalConnection({
                     dataset: this.dataset,
                     type: 'observations',
                     dimension: 'test08',
@@ -47,10 +50,19 @@ require(['models/dataset', 'models/dataset/connection'], function(Dataset, Conne
                     aggregation: 'sum'
                 });
             expect(conn.url()).toEqual('/api/datasets/test01/observations/test08?aggregation=sum&measure=test09');
+
+             // TODO move in observations test
+            conn = new Connection({
+                dataset: this.dataset,
+                type: 'observations',
+                measure: 'test09',
+                aggregation: 'sum'
+            });
+            expect(conn.url()).toEqual('/api/datasets/test01/observations/?aggregation=sum&measure=test09');
         });
 
         it('should construct API URLs for observations with a cut', function() {
-            var conn = new Connection({
+            var conn = new DimensionalConnection({
                     dataset: this.dataset,
                     type: 'dimensions',
                     dimension: 'test10',
@@ -61,6 +73,18 @@ require(['models/dataset', 'models/dataset/connection'], function(Dataset, Conne
                     }
                 });
             expect(conn.url()).toEqual('/api/datasets/test01/dimensions/test10?test12=test13&aggregation=sum&measure=test11');
+
+            // TODO move in observations test
+            conn = new Connection({
+                dataset: this.dataset,
+                type: 'observations',
+                measure: 'test11',
+                aggregation: 'sum',
+                cut: {
+                    test12: 'test13'
+                }
+            });
+            expect(conn.url()).toEqual('/api/datasets/test01/observations/?test12=test13&aggregation=sum&measure=test11');
         });
 
         it('should return dimension values', function() {
@@ -74,7 +98,7 @@ require(['models/dataset', 'models/dataset/connection'], function(Dataset, Conne
                         label: 'Test Label 02'
                     }
                 },
-                conn = new Connection({
+                conn = new DimensionalConnection({
                     dataset: this.dataset,
                     type: 'dimensions',
                     dimension: 'test14',
@@ -98,7 +122,7 @@ require(['models/dataset', 'models/dataset/connection'], function(Dataset, Conne
                         total: 8394.3204
                     }
                 ],
-                conn = new Connection({
+                conn = new DimensionalConnection({
                     dataset: this.dataset,
                     type: 'dimensions',
                     dimension: 'test16',
@@ -109,32 +133,6 @@ require(['models/dataset', 'models/dataset/connection'], function(Dataset, Conne
             for (var i = 0; i < data.length; i++) {
                 expect(conn.getValue(i)).toBe(data[i]);
             }
-        });
-
-        it('should sum a total of observations', function() {
-            var data = [
-                    {
-                        id: 'id01',
-                        total: 1000
-                    },
-                    {
-                        id: 'id02',
-                        total: 999.99
-                    },
-                    {
-                        id: 'id02',
-                        total: 0.01
-                    }
-                ],
-                conn = new Connection({
-                    dataset: this.dataset,
-                    type: 'dimensions',
-                    dimension: 'test18',
-                    measure: 'test19',
-                    aggregation: 'sum',
-                    test18: data
-                });
-            expect(conn.getTotal()).toBe(2000.0);
         });
 
     });

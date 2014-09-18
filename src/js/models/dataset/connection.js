@@ -1,25 +1,36 @@
-define(['backbone', 'underscore'],
-        function(Backbone, _) {
+define(['backbone', 'underscore'], function (Backbone, _) {
     'use strict';
 
     var Connection = Backbone.Model.extend({
 
-        url: function() {
-            var url = '/api/datasets/' + this.dataset.get('id') + '/' + this.get('type') + '/' + this.get('dimension'),
-                params = _.extend({}, this.get('cut'), {'aggregation': this.get('aggregation')});
+        apiEndpoint: function () {
+            return '/api/datasets/' + this.dataset.get('id') + '/' + this.get('type') + '/';
+        },
 
-            if (!_.isNull(this.get('measure'))) {
-                params['measure'] = this.get('measure');
-            }
+        url: function () {
+            var url = this.apiEndpoint(),
+                params = _.extend({}, this.get('cut'), {aggregation: this.get('aggregation')}),
 
             // Bucket dimensions
-            var bucket = this.get('bucket');
-            if (this.get('type') == 'dimensions' && !_.isUndefined(bucket) && !_.isNull(bucket)) {
-                params['bucket'] = bucket;
+                bucket = this.get('bucket'),
+                bucket_interval = this.get('bucket_interval');
+
+            if (!_.isNull(this.get('measure'))) {
+                params.measure = this.get('measure');
             }
 
-            // Add cut to query parameters
-            var urlParams = _.map(params, function (value, key, cut) { return key + '=' + value; });
+            if (!_.isUndefined(bucket_interval) && !_.isNull(bucket_interval)) {
+                params.bucket_interval = bucket_interval;
+            }
+
+            if (!_.isUndefined(bucket) && !_.isNull(bucket)) {
+                params.bucket = bucket;
+            }
+
+            // Build up query parameters
+            var urlParams = _.map(params, function (value, key, cut) {
+                return key + '=' + value;
+            });
 
             // Add query parameters to URL
             url += '?' + urlParams.join('&');
@@ -30,9 +41,15 @@ define(['backbone', 'underscore'],
         /**
          * Init
          */
-        initialize: function(options) {
+        initialize: function (options) {
             // Set dataset model
-            this.dataset = options['dataset'];
+            this.dataset = options.dataset;
+
+            // Trigger our own connection:sync event when the connection model
+            // is synched.
+            this.listenTo(this, 'sync', function (conn) {
+                this.trigger('connection:sync', conn);
+            });
 
             // Fetch
             this.fetch();
@@ -41,39 +58,15 @@ define(['backbone', 'underscore'],
         /**
          * Check if data has loaded
          */
-        isLoaded: function() {
+        isLoaded: function () {
             return (!_.isUndefined(this.getData()));
         },
 
         /**
          * Get data
          */
-        getData: function() {
-            return this.get(this.get('dimension'));
-        },
-
-        /**
-         * Get the specified value
-         */
-        getValue: function(k) {
-            return this.getData()[k];
-        },
-
-        /**
-         * Sum the values for this dimension
-         */
-        getTotal: function() {
-            var dimension = this.get('dimension'),
-                currentCut = null;
-            if (this.dataset.isCut(dimension)) {
-                currentCut = this.dataset.getCut(dimension);
-            }
-            return _.reduce(this.getData(), function(m, v) {
-                if (currentCut === null || currentCut === v.id) {
-                    return m + v.total;
-                }
-                return m;
-            }, 0);
+        getData: function () {
+            return this.get('total');
         }
 
     });

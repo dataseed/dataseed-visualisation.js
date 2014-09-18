@@ -1,5 +1,6 @@
-define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element', 'views/element/d3/bubble'],
-    function($, Dataset, Connection, Element, BubbleChartView) {
+define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element/dimensions', 'views/element/d3/bubble'],
+    function($, Dataset, Connection, DimensionsElement, BubbleChartView) {
+    /* global describe, beforeEach, expect, it */
 
     describe('A bubble chart view', function() {
 
@@ -11,15 +12,14 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
             this.dataset = new Dataset({
                     id: 'test01',
                     visualisation_id: 'test02',
-                    fields: [{
-                        id: 'test04'
-                    }, {
-                        id: 'test05'
-                    }]
+                    fields: [
+                        {id: 'test04', type: 'string'},
+                        {id: 'test05', type: 'integer'}
+                    ]
                 });
             this.dataset.reset();
 
-            this.element = new Element({
+            this.element = new DimensionsElement({
                     id: 'test03',
                     dataset: this.dataset,
                     visualisation: this.dataset.visualisation,
@@ -45,23 +45,25 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
         });
 
         it('should not render without data', function() {
-            this.element.observations[0].set({
+            this.element._getConnection('observations').set({
                 test04: []
             }, {
                 silent: true
             });
-            this.element.dimensions[0].set({
+            this.element._getConnection('dimensions').set({
                 test04: {}
             }, {
                 silent: true
             });
+            this.element._connections.observations.loaded = 1;
+            this.element._connections.dimensions.loaded = 1;
             this.view.render();
 
             expect(this.view.el).not.toContainElement('svg');
         });
 
         it('should render bubbles and labels correctly', function(done) {
-            this.element.observations[0].set({
+            this.element._getConnection('observations').set({
                 test04: [
                     {
                         id: 'id01',
@@ -75,7 +77,7 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
             }, {
                 silent: true
             });
-            this.element.dimensions[0].set({
+            this.element._getConnection('dimensions').set({
                 test04: {
                     id01: {
                         id: 'id01',
@@ -89,6 +91,8 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
             }, {
                 silent: true
             });
+            this.element._connections.observations.loaded = 1;
+            this.element._connections.dimensions.loaded = 1;
             this.view.render();
 
             expect(this.view.el).toContainElement('svg');
@@ -96,8 +100,8 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
             expect(this.view.el).toContainElement('text.chartLabel');
             expect(this.view.el).toContainElement('text.scaleLabel');
 
-            expect(this.view.$el.find('circle:not(.scaleBubble)').length).toEqual(2);
             expect(this.view.$el.find('text.chartLabel').length).toEqual(2);
+            expect(this.view.$el.find('circle').length).toEqual(2);
 
             expect(this.view.el).toContainText('Test Bubble Chart');
             expect(this.view.el).toContainText('Test Label 01');

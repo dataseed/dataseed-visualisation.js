@@ -10,11 +10,22 @@
     height: 19px;
     padding: 3px 0 0 4px;
     .border-radius(12px);
-    background: @grayDarker;
+    background: @dsBlue;
 
     .icon-refresh {
         background-position: -240px -25px;
+        -moz-transform: rotate(145deg) scaleX(-1);
+        -o-transform: rotate(145deg) scaleX(-1);
+        -webkit-transform: rotate(145deg) scaleX(-1);
+        -ms-transform: rotate(145deg) scaleX(-1);
+        transform: rotate(145deg) scaleX(-1);
+        filter: FlipH;
+        -ms-filter: "FlipH";
     }
+}
+
+.container-icon:hover {
+    background: @dsMediumGrey;
 }
 
 // VISUALISATION
@@ -31,10 +42,26 @@
 // VISUALISATION HEADER
 // --------------------------------------------------
 
-// Blue lines only for mortality dataset
+/*Styles for only for mortality dataset*/
 div#mortality {
+    /*Blue lines*/
     .summary-text.full {
-        background: transparent url('@{dsBaseUrl}img/lines.png') no-repeat center bottom;
+        background: transparent;
+        background-image: url('@{dsBaseUrl}img/blue-lines.png');
+        background-repeat: no-repeat;
+        background-position: center bottom;
+        background-size: 700px;
+    }
+
+    .summary-text {
+        padding: 25px 0 32px 0;
+        h1 {
+            border: 1px solid #6bc5e8;
+        }
+    }
+
+    article.summaryElement {
+        margin-bottom: 0;
     }
 }
 
@@ -62,11 +89,12 @@ article.summaryElement {
         float: right;
         margin-right: 10px;
 
+        /*Help icon (i)*/
         a {
             display: block;
             width: 18px;
-            height: 19px;
-            padding: 3px 0 0 4px;
+            height: 18px;
+            padding: 4px 0 0 4px;
             .border-radius(12px);
             background-color: @white;
         }
@@ -74,12 +102,11 @@ article.summaryElement {
 
     .icon-info-sign {
         background-position: -120px -97px;
+        vertical-align: baseline;
     }
 }
 
 .summary-text {
-    padding: 25px 0 40px 0;
-
     h1 {
         margin: 0;
         padding: 17px 0 17px 10px;
@@ -88,7 +115,6 @@ article.summaryElement {
         text-align: center;
         color: @headingsColor;
         background-color: @white;
-        border: 1px solid #6bc5e8;
     }
 }
 
@@ -106,6 +132,12 @@ article.summaryElement {
         .container-icon {
             float: right;
             margin-left: 10px;
+
+            i {
+                margin-left: -1px;
+                margin-top: -1px;
+
+            }
         }
 
     }
@@ -121,116 +153,208 @@ article.summaryElement {
 // --------------------------------------------------
 
 .elements {
-    margin-top: 15px;
+    margin-top: 40px;
 }
 
 .element {
     background-color: @white;
     font-size: 11px;
     margin-bottom: 10px;
+    position: relative;
+    overflow: auto;
 
     h2 {
         font-size: 18px;
         font-weight: normal;
         margin: 0px 10px 20px 10px;
-        color: @headingsColor;
+        color: @dsMediumGrey;
         padding-top: 10px;
+    }
+
+    /*Hiding the reset button*/
+    .container-icon.fade.in {
+        display: block;
+    }
+
+    .container-icon.fade {
+        display: none;
+    }
+
+    /*Refresh icon*/
+    .icon-refresh {
+        vertical-align: baseline;
+        margin-top: 2px;
+        margin-left: -1px;
     }
 
 }
 
-    .actions {
-        float: right;
-        margin: 8px 10px 0 0;
+.actions {
+    float: right;
+    margin: 8px 10px 0 0;
 
-        a .container-icon {
-            float: left;
-            width: 18px;
-            height: 21px;
-            padding: 1px 0 0 4px;
-            margin-left: 2px;
+    a .container-icon {
+        float: left;
+        width: 18px;
+        height: 21px;
+        padding: 1px 0 0 4px;
+        margin-left: 2px;
+    }
+
+    .switcher {
+        float: left;
+        margin-left: 2px;
+
+        .dropdown-toggle {
+            font-size: 11px;
+            color: @black;
         }
 
-        .switcher {
-            float: left;
-            margin-left: 2px;
-
-            .dropdown-toggle {
-                font-size: 11px;
-                color: @black;
-            }
-
-            a {
-                display: block;
-                font-family: @sansFontFamily;
-                font-size: 11px;
-            }
-
+        a {
+            display: block;
+            font-family: @sansFontFamily;
+            font-size: 11px;
         }
 
     }
 
-    // Making charts fit in containers
-    svg {
-        width: 100%;
-    }
+}
 
-    rect,
-    circle,
-    path,
-    .chartLabel {
-        cursor: pointer;
-    }
+// Making charts fit in containers
+svg {
+    width: 100%;
+}
 
-    circle.scaleBubble,
-    rect.scale {
-        cursor: auto;
-    }
+rect,
+circle,
+path,
+.chartLabel {
+    cursor: pointer;
+}
+
+rect.scale {
+    cursor: auto;
+}
 
 // TABLE CHART
 // --------------------------------------------------
 
+// Table search bar
+.table-search-wrap {
+    position: relative;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.search-reset,
+.search-icon {
+    position: absolute;
+    top: 9px;
+    width: 15px;
+    height: 15px;
+    background-repeat: no-repeat;
+    background-size: 15px;
+}
+
+.search-icon {
+    left: 19px;
+    background-image: url('@{dsBaseUrl}img/search-icon.gif');
+}
+
+.search-reset {
+    display: none;
+    right: 19px;
+    background-image: url('@{dsBaseUrl}img/search-reset.gif');
+}
+
+input.table-search {
+    width: 100%;
+    height: 30px;
+    padding-left: 30px;
+    padding-right: 30px;
+
+    .gradient(#f2f2f2, white);
+    .border-radius(0px);
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.no-result,
+.found {
+    text-align: center;
+    margin: 5px 0 10px 0;
+}
+
+// no result text
+.no-result {
+    font-size: 15px;
+    padding: 0 30px;
+}
+
+// found text
+.found {
+    font-size: 14px;
+}
+
+.table-sort:hover {
+    color: @dsMediumGrey;
+}
+
+// Sort chevron
+i.icon-sort {
+    .rotate(90deg);
+    width: 14px;
+    height: 14px;
+    background-image: url('@{dsBaseUrl}img/grey-arrow.gif');
+    background-repeat: no-repeat;
+    background-size: 7px;
+    background-position: 4px center;
+}
+
 //chevron up
 .asc {
-    i.icon-chevron-down {
-        .rotate(180deg);
+    i.icon-sort {
+        .rotate(-90deg);
     }
 }
 
 .tableElement {
-    max-height: 600px;
-    overflow: auto;
-
-    //the table header
+    //the table header, sort
     th {
-        border-left: 1px solid #dddddd;
         padding: 0;
+        border: none;
 
         //hide all chevron
         a {
             display: block;
-            text-align: center;
             i {
                 visibility: hidden;
             }
         }
 
-        //show chevron on hover
-        a:hover {
+        //show chevron on hover/active
+        a:hover,
+        a.active {
             i {
                 visibility: visible;
             }
         }
 
-        //show chevron for active th
-        a.active i {
-            visibility: visible;
+        /* Chevron title color */
+        span {
+            color: @dsMediumGrey;
+            font-weight: 400;
+            text-decoration: underline;
+        }
+
+        span:hover {
+            text-decoration: none;
         }
     }
 
-
-    th.table-chevron-left {
-        border-left: none;
+    .table {
+        margin-bottom: 0;
     }
 
     th:hover {
@@ -238,24 +362,28 @@ article.summaryElement {
     }
 
     tr:hover {
-       cursor: pointer;
-       background-color: @tableBackgroundHover;
+        cursor: pointer;
+        background-color: @tableBackgroundHover;
     }
 
     td {
-    padding: 0;
-    overflow: hidden;
+        padding: 0;
+        overflow: hidden;
+        border: none;
 
         a {
             display: block;
-            padding: 5px;
-            padding-bottom: 1000px;
-            margin-bottom: -995px;
+            padding: 5px 5px 5px 17px;
         }
 
         a:hover {
             text-decoration: none;
         }
+    }
+
+    /* Table td section */
+    .scroll {
+        overflow: auto;
     }
 }
 
@@ -279,21 +407,30 @@ article.summaryElement {
         a {
             display: block;
             position: relative;
-            padding: 15px;
-            color: @black;
+            padding: 15px 15px 15px 13px;
+            color: @dsMediumGrey;
             text-decoration: none;
+            outline: 0;
 
             i {
-                position: absolute;
-                top: 0;
-                right: 0;
-                margin: 17px 25px 0 0;
+                background-image: url('@{dsBaseUrl}img/grey-arrow.gif');
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: 8px;
+                display: inline-block;
+                width: 10px;
+                height: 10px;
+                .rotate(90deg);
             }
-
         }
 
         .collapsed i {
-            .rotate(180deg);
+            .rotate(0deg);
+        }
+
+        .filter-info {
+            font-weight: normal;
+            margin-left: 5px;
         }
 
     }
@@ -302,24 +439,40 @@ article.summaryElement {
         td {
             border: none;
             padding: 0 20px;
+
+            .dimension-cut {
+                span.check-btn {
+                    width: 13px;
+                    height: 13px;
+                    display: inline-block;
+                    background: none;
+                    border: 1px solid @dsGrey;
+                }
+
+                span.cut-label{
+                    position: relative;
+                    bottom: 2px;
+                }
+
+                input[type="checkbox"] {
+                    display: none;
+                }
+
+                input:checked + span.check-btn {
+                    background: url('@{dsBaseUrl}img/checkbox-tick-white.gif');
+                    background-color: @dsBlue;
+                    background-repeat: no-repeat;
+                    background-position: center;
+                    background-size: 9px;
+                }
+
+            }
         }
 
         .right {
             text-align: right;
         }
     }
-
-}
-
-// FILTER FORM ELEMENTS
-// --------------------------------------------------
-
-.filterFormElement {
-
-  select {
-    width: auto;
-    display: block;
-  }
 
 }
 

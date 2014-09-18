@@ -1,82 +1,53 @@
-define(['./chart', 'underscore', 'd3'], function(ChartView, _, d3) {
+define(['./chart', 'underscore', 'd3', 'topojson', '../../../lib/format'],
+    function(ChartView, _, d3, topojson, format) {
     'use strict';
 
     var GeoChartView = ChartView.extend({
 
-        scalingFactorX: 150,
-        scalingFactorY: 10,
+        scaleFactor: 100,
+        margin: 10,
 
         scaleTicks: 7,
-
-        scaleGutterLeft: 10,
-        scaleGutterTop: -60,
-
-        scaleItemWidth: 30,
         scaleItemHeight: 15,
-
-        scaleItemMarginLeft: 0,
-        scaleItemMarginTop: 10,
-
         scaleMeasureHeight: 25,
 
         render: function() {
-
             // Setup chart
             ChartView.prototype.render.apply(this, arguments);
 
-            // Get current values
-            var values = this.model.getObservations();
+            // Square chart
+            this.height = this.width;
 
-            // Get polygons (in the form of GeoJSON features) for all data points
-            var data = _.map(values, _.bind(this.getBoundary, this));
+            // Setup GeoJSON, projection, bounds and scaling factor
+            var values = this.model.getObservations(),
+                gjson = this.getGeoJSON(),
+                center = d3.geo.centroid(gjson),
+                mheight = this.height - (this.margin * 2),
+                projection = d3.geo.mercator()
+                    .scale(this.scaleFactor)
+                    .center(center)
+                    .translate([this.width/2, mheight/2]),
+                path = d3.geo.path()
+                    .projection(projection),
+                bounds = path.bounds(gjson),
+                hscale = (this.scaleFactor * this.width)  / (bounds[1][0] - bounds[0][0]),
+                vscale = (this.scaleFactor * mheight) / (bounds[1][1] - bounds[0][1]);
 
-            // Get bounds enclosing all polygons
-            var bounds = d3.geo.bounds(this.createFeature(
-                'MultiPolygon',
-                _.reduce(data, this.concatCoords, [])
-            ));
+            // Calculate scale factor
+            this.scaleFactor = (hscale < vscale) ? hscale : vscale;
 
-            var mapWidth = Math.abs(bounds[1][0] - bounds[0][0]);
-            var mapHeight = Math.abs(bounds[1][1] - bounds[0][1]);
+            // Re-scale and re-center projection
+            projection = projection
+                .scale(this.scaleFactor)
+                .center(center);
 
-            var scale = (this.width / mapWidth) * this.scalingFactorX;
-            this.height = (this.width / mapHeight) * this.scalingFactorY;
-
-            // Set map projection
-            var projection = d3.geo.stereographic()
-                .translate([this.width / 2, this.height / 2])
-                .scale(scale);
-
-            // Set geo path generator using our projection
-            var path = d3.geo.path()
-                .projection(projection);
-
-            // Calculate centre point of map from bounding box
-            var centroid = path.centroid(this.createFeature(
-                'Polygon',
-                [[
-                    [bounds[0][0], bounds[0][1]], // left, top
-                    [bounds[0][0], bounds[1][1]], // left, bottom
-                    [bounds[1][0], bounds[1][1]], // right, bottom
-                    [bounds[1][0], bounds[0][1]], // right, top
-                    [bounds[0][0], bounds[0][1]] // left, top
-                ]]
-            ));
-
-            // Convert centroid from pixel coordinates to lat/lon
-            centroid = projection.invert(centroid);
-
-            // Set the centre point for our projection and update path generator with new projection
-            path = path.projection(projection.rotate([-centroid[0], 0]).center([0, centroid[1]]));
-
-            // Attach map SVG
-            var chart = d3.select(this.chartContainerEl)
-                .append('svg:svg')
-                .attr('height', this.height)
-                .attr('class', 'geoChart')
-                .classed('inactive', _.bind(this.model.isCut, this.model));
-
-            var geo = chart.append('svg:g');
+            // Calculate offset and translate projection
+            path = path.projection(projection);
+            bounds = path.bounds(gjson);
+            projection = projection.translate([
+                this.width - (bounds[0][0] + bounds[1][0])/2,
+                mheight - (bounds[0][1] + bounds[1][1])/2
+            ]);
 
             // Get colour range for the current set of values
             this.colourScale = d3.scale.linear()
@@ -84,59 +55,91 @@ define(['./chart', 'underscore', 'd3'], function(ChartView, _, d3) {
                     d3.min(values, this.getMeasure),
                     d3.max(values, this.getMeasure)
                 ])
-                .range([this.model.visualisation.styles.getStyle('choroplethMin'), this.model.visualisation.styles.getStyle('choroplethMax')]);
+                .range([
+                    this.model.visualisation.styles.getStyle('choroplethMin'),
+                    this.model.visualisation.styles.getStyle('choroplethMax')
+                ]);
 
-            // Build choropleth
-            var features = geo.selectAll('path')
-                .data(data)
-            .enter().append('svg:path')
-                .attr('d', path)
-                .style('fill', _.bind(this.featureFill, this))
-                .attr('title', _.bind(this.getTooltip, this))
-                .on('click', _.bind(this.featureClick, this));
+            // Add SVG
+            var chart = d3.select(this.chartContainerEl)
+                .append('svg')
+                    .attr('width', this.width)
+                    .attr('class', 'geoChart')
+                    .classed('inactive', _.bind(this.model.isCut, this.model));
+
+            // Add geo container
+            chart.append('svg:g')
+                    .attr('transform', 'translate(0, ' + this.margin + ')')
+                    .attr('width', this.width)
+                .selectAll('path')
+                    .data(gjson.features)
+                        .enter()
+                    .append('path')
+                        .attr('d', path)
+                        .style('stroke', this.getStyle('choroplethStroke'))
+                        .style('stroke-width', this.getStyle('choroplethStrokeWidth'))
+                        .style('fill', _.bind(this.featureFill, this))
+                        .attr('title', _.bind(this.getTooltip, this))
+                        .on('click', _.bind(this.featureClick, this));
 
             // Attach tooltips
             this.attachTooltips('path');
 
             // Create scale
             var chartScale = chart.append('svg:g')
-                .attr('transform', 'translate(' + this.scaleGutterLeft + ',' + (this.height + this.scaleGutterTop) + ')');
+                    .attr('transform', 'translate(' + this.margin + ',' + this.height + ')'),
+                scaleTicks = this.colourScale.ticks(this.scaleTicks),
+                scaleY = this.margin;
 
-            var scaleTicks = this.colourScale.ticks(this.scaleTicks);
+            this.scaleItemWidth = Math.floor((this.width - (this.margin * 2)) / scaleTicks.length);
 
             chartScale.selectAll('.scale')
                     .data(scaleTicks)
                 .enter().append('rect')
                     .attr('class', 'scale')
                     .attr('x', _.bind(this.getScaleItemX, this))
-                    .attr('y', this.scaleItemMarginTop)
+                    .attr('y', scaleY)
                     .attr('width', this.scaleItemWidth)
                     .attr('height', this.scaleItemHeight)
                     .attr('fill', this.colourScale);
 
+            scaleY += this.margin + this.scaleItemHeight;
             chartScale.selectAll('.scaleLabel')
                     .data(scaleTicks)
                 .enter().append('text')
                     .attr('class', 'scaleLabel')
                     .attr('x', _.bind(this.getScaleItemX, this))
-                    .attr('y', (this.scaleItemMarginTop * 2) + this.scaleItemHeight)
+                    .attr('y', scaleY)
                     .style('fill', this.getStyle('scaleLabel'))
-                    .text(this.numFormatScale);
+                    .text(format.numScale);
 
+            scaleY += this.scaleMeasureHeight;
             chartScale.append('text')
                     .attr('class', 'scaleLabel')
                     .attr('text-anchor', 'middle')
-                    .attr('x', (this.width - (this.scaleGutterLeft * 2)) / 2)
-                    .attr('y', (this.scaleItemMarginTop * 2) + this.scaleItemHeight + this.scaleMeasureHeight)
+                    .attr('x', (this.width - (this.margin * 2)) / 2)
+                    .attr('y', (this.margin * 2) + this.scaleItemHeight + this.scaleMeasureHeight)
                     .attr('dy', -5)
                     .style('fill', this.getStyle('scaleFeature'))
                     .text(this.model.getMeasureLabel());
 
-            // Update container size
-            this.updateSize();
+            // Set height
+            this.height += scaleY + this.margin;
+            chart.attr('height', this.height);
 
             return this;
 
+        },
+
+        /**
+         * Transform TopoJSON into GeoJSON and cache
+         */
+        getGeoJSON: function() {
+            if (!this.gjson) {
+                var tjson = this.model.getDimensionData('geo');
+                this.gjson = topojson.feature(tjson, tjson.objects.data);
+            }
+            return this.gjson;
         },
 
         /**
@@ -150,54 +153,24 @@ define(['./chart', 'underscore', 'd3'], function(ChartView, _, d3) {
         },
 
         /**
-         * Get boundary GeoJSON data
-         */
-        getBoundary: function (d) {
-            var modelData = this.model.getLabels();
-            if (d.id in modelData) {
-                return modelData[d.id].area;
-            }
-            return;
-        },
-
-        /**
-         * Concatenate the coordinates of multiple GeoJSON features
-         */
-        concatCoords: function(coords, d) {
-            try {
-                coords = coords.concat(d.geometry.coordinates);
-            } catch (e) { }
-            return coords;
-        },
-
-        /**
-         * Helper function to create a GeoJSON feature
-         */
-        createFeature: function(type, coords) {
-            return {
-                'type': 'Feature',
-                'geometry': {
-                    'type': type,
-                    'coordinates': coords
-                }
-            };
-        },
-
-        /**
          * Set colour of geo chart feature
          */
         featureFill: function(d, i) {
-            if (this.model.hasCutValue(i)) {
+            if (this.model.hasCutId(d.id)) {
                 return this.model.visualisation.styles.getStyle('featureFill');
             }
-            return this.colourScale(this.model.getObservation(i).total);
+            var value = this.model.getObservationById(d.id);
+            if (value) {
+                return this.colourScale(value.total);
+            }
+            return this.model.visualisation.styles.getStyle('choroplethMin');
         },
 
         /**
          * Set X position of scale item
          */
         getScaleItemX: function(d, i) {
-            return i * (this.scaleItemWidth + this.scaleItemMarginLeft);
+            return i * this.scaleItemWidth;
         }
 
     });

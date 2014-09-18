@@ -13,39 +13,39 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
          */
         initialize: function(options) {
             // Check if visualisation was supplied in model data
-            if (!_.isUndefined(options['visualisations']) && !_.isUndefined(options['visualisations'][0])) {
+            if (!_.isUndefined(options.visualisations) && !_.isUndefined(options.visualisations[0])) {
                 this.visualisation = new Visualisation(_.extend(
-                    {'dataset': this},
-                    options['visualisations'][0]
+                    {dataset: this},
+                    options.visualisations[0]
                 ));
 
             // Check if visualisation ID was supplied
-            } else if (!_.isUndefined(options['visualisation_id'])) {
+            } else if (!_.isUndefined(options.visualisation_id)) {
                 this.visualisation = new Visualisation({
-                    'id': options['visualisation_id'],
-                    'dataset': this
+                    id: options.visualisation_id,
+                    dataset: this
                 });
 
             } else {
-                console.log('No visualisation model supplied');
+                console.error('No visualisation model supplied');
                 return;
             }
 
             // Initialise cut
-            this.cut = options['cut'] || {};
+            this.cut = options.cut || {};
 
             // Create collection for field models
             this.fields = new FieldsCollection();
 
             // Create connection pool collection
-            this.pool = new ConnectionPool(null, {dataset: this, defaultCut: options['cut']});
+            this.pool = new ConnectionPool(null, {dataset: this, defaultCut: options.cut});
         },
 
         reset: function () {
             // Set model defaults
             var defaults = {
-                'dataset': this.dataset,
-                'defaultCut': this.get('cut')
+                dataset: this.dataset,
+                defaultCut: this.get('cut')
             };
 
             // Set element models in collection from visualisation "elements" attribute
@@ -64,13 +64,16 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
         },
 
         /**
-         * Get the value of the current cut for this dimension
+         * Get the list of values of the current cut for this dimension.
+         * Returns undefined if no cut is set on dimension.
          */
         getCut: function(dimension) {
             if (_.isUndefined(dimension)) {
-                return this.cut;
+                return _.clone(this.cut);
+            } else if (dimension in this.cut) {
+                return _.clone(this.cut[dimension]);
             }
-            return this.cut[dimension];
+            return [];
         },
 
         /**
@@ -84,30 +87,35 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
          * Compares the specified ID to the ID of the current cut for this dimension
          */
         hasCutId: function(dimension, id) {
-            return (this.isCut(dimension) && this.getCut(dimension) === id);
-        },
-
-        /**
-         * Compares the value at the specified index to the value of the current cut for this dimension
-         */
-        hasCutValue: function(dimension, i) {
-            if (this.isCut(dimension)) {
-                var value = this.pool.findWhere({type: 'observations', dimension: dimension}).getValue(i);
-                return (!_.isUndefined(value) && this.getCut(dimension) === value.id);
-            }
-            return false;
+            return (this.isCut(dimension) && _.indexOf(this.cut[dimension], id) > -1);
         },
 
         /**
          * Set cut(s)
+         *
+         * @param cut
+         *      the cut to be set
+         * @param append
+         *      true if we want the cut values to be appended rather than replaced
          */
-        addCut: function (cut) {
-            // Update cut
+        addCut: function (cut, append) {
+            // Update dataset cut
             _.each(cut, function (value, key) {
+
                 if (_.isNull(value)) {
+                    // Remove all values
                     delete this.cut[key];
-                } else {
-                    this.cut[key] = value;
+                }else{
+                    // Append or replace a (list of) value(s)
+                    var cutVal = (_.isArray(value)) ? value : [value];
+
+                    if (append === true) {
+                        if (_.isUndefined(this.cut[key])) {
+                            this.cut[key] = [];
+                        }
+                        cutVal = this.cut[key].concat(cutVal);
+                    }
+                    this.cut[key] = cutVal;
                 }
             }, this);
 
@@ -117,16 +125,24 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
                 // Update cut on every field connection
                 conn.set('cut', this.cut);
 
-                var dimension = conn.get('dimension'),
-                    type = conn.get('type'),
-                    update = this.fields.get(dimension).get('update_dimension');
+                var fetchConn = true;
 
-                if ((_.size(cut) > 1 || !_.has(cut, dimension)) && (type != 'dimensions' || update === true)) {
+                if (!_.isUndefined(conn.get('dimension'))) {
+                    var dimension = conn.get('dimension'),
+                        type = conn.get('type'),
+                        update = this.fields.get(dimension).get('update_dimension');
+
                     // Re-fetch if the field *isn't* included in the updated cut
+                    fetchConn = (_.size(cut) > 1 || !_.has(cut, dimension)) && (type !== 'dimensions' || update === true);
+                }
+
+                // Re-fetch the connection or just let the observers know that
+                // this connection is already synched, so that a re-render could
+                // be initiated
+                if(fetchConn){
                     conn.fetch();
-                } else {
-                    // Otherwise, initiate a re-render
-                    conn.trigger('sync');
+                }else{
+                    conn.trigger('connection:sync', conn);
                 }
 
             }, this);
@@ -135,12 +151,35 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
 
         /**
          * Remove cut(s)
+         * @param keys
+         *      keys
+         * @param values
+         *      (optional) cut values to remove
          */
-        removeCut: function(keys) {
+        removeCut: function(keys, values) {
             if (_.isUndefined(keys)) {
                 keys = _.keys(this.cut);
             }
-            this.addCut(_.object(keys, _.map(keys, function() { return null; })));
+
+            if(_.isUndefined(values)){
+                values = [];
+            }
+
+            // Set a new cut for the dataset filtering out the provided
+            // dimensions/values
+            this.addCut(_.object(keys,
+                _.map(keys, function (k, i) {
+                    if (!_.isUndefined(this.cut[k]) && !_.isUndefined(values[i])) {
+                        var exclude = !_.isArray(values[i]) ? [values[i]] : values[i],
+                            cut = _.difference(this.cut[k], exclude);
+
+                        if (cut.length > 0) {
+                           return cut;
+                        }
+                    }
+                    return null;
+                }, this)
+            ));
         },
 
         /**
@@ -153,7 +192,7 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
             if (!_.isUndefined(this.get('hierarchies'))) {
                 hierarchy = _.chain(this.get('hierarchies'))
                     .find(function (h) {
-                        return h.id == dimensionId;
+                        return h.id === dimensionId;
                     })
                     .value();
             }
@@ -164,8 +203,8 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
                  _.isUndefined(hierarchy.available_levels.upper_bound))
                ){
                 var default_available_levels = {
-                    "lower_bound": 1,
-                    "upper_bound": hierarchy.ancestor_fields.length
+                    lower_bound: 1,
+                    upper_bound: hierarchy.ancestor_fields.length
                 };
                 hierarchy = _.extend({}, default_available_levels, hierarchy.available_levels);
             }

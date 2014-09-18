@@ -7,18 +7,21 @@ define(['backbone', '../models/visualisation/style'],
         model: Style,
 
         defaults: {
-            'background':           '#fff',
-            'heading':              '#555',
-            'featureFill':          '#089fd8',
-            'featureFillActive':    '#c8c8c8',
-            'featureStroke':        '#fff',
-            'featureStrokeActive':  '#fff',
-            'label':                '#fff',
-            'scaleFeature':         '#555',
-            'scaleLabel':           '#555',
-            'measureLabel':         '#555',
-            'choroplethMin':        '#fff',
-            'choroplethMax':        '#000'
+            'visualisationBackground':  '#f3f3f3',
+            'background':               '#fff',
+            'heading':                  '#555',
+            'featureFill':              '#089fd8',
+            'featureFillActive':        '#c8c8c8',
+            'featureStroke':            '#fff',
+            'featureStrokeActive':      '#fff',
+            'label':                    '#fff',
+            'scaleFeature':             '#555',
+            'scaleLabel':               '#555',
+            'measureLabel':             '#555',
+            'choroplethMin':            '#fff',
+            'choroplethMax':            '#000',
+            'choroplethStroke':         '#000',
+            'choroplethStrokeWidth':    '1'
         },
 
         initialize: function(models, options) {
@@ -31,13 +34,15 @@ define(['backbone', '../models/visualisation/style'],
          */
         getStyle: function (type, element, d, i) {
             // If this is a feature, check if it's active
-            if (type.substring(0, 7) === 'feature' &&
-                !_.isUndefined(element) &&
-                !_.isUndefined(i) &&
-                element.isCut() &&
-                !element.hasCutValue(i)) {
-                type += 'Active';
-            }
+            var activeFeature = (
+                    type.substring(0, 7) === 'feature' &&
+                    !_.isUndefined(element) &&
+                    !_.isUndefined(d) &&
+                    element.isCut() &&
+                    !element.hasCutId(d.id)
+                );
+
+            type += (activeFeature) ? 'Active' : '';
 
             var style = this.get(type);
             if (!_.isUndefined(style)) {

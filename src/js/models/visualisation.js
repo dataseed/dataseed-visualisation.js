@@ -12,7 +12,7 @@ define(['backbone', 'underscore', '../collections/elements', '../collections/sty
 
         initialize: function (options) {
             // Set dataset
-            this.dataset = options['dataset'];
+            this.dataset = options.dataset;
 
             // Create collection for element models
             this.elements = new ElementsCollection();
@@ -20,7 +20,7 @@ define(['backbone', 'underscore', '../collections/elements', '../collections/sty
             this.elements.bind('reset', this.updateElementOrder, this);
 
             // Create collection for style models
-            this.styles = new StylesCollection(null, {'visualisation': this});
+            this.styles = new StylesCollection(null, {visualisation: this});
         },
 
         addElement: function (element) {
@@ -31,8 +31,8 @@ define(['backbone', 'underscore', '../collections/elements', '../collections/sty
         reset: function () {
             // Set model defaults
             var defaults = {
-                'dataset': this.dataset,
-                'visualisation': this
+                dataset: this.dataset,
+                visualisation: this
             };
 
             // Set element models in collection from visualisation "elements" attribute

@@ -1,5 +1,5 @@
-define(['./chart', 'underscore', 'd3'],
-    function(ChartView, _, d3) {
+define(['./chart', 'underscore', 'd3', '../../../lib/format'],
+    function(ChartView, _, d3, format) {
     'use strict';
 
     var BarChartView = ChartView.extend({
@@ -22,7 +22,7 @@ define(['./chart', 'underscore', 'd3'],
 
             // Calculate bar widths and heights
             this.barWidth = this.width - (this.gutterLeft * 2);
-            var data = _.map(this.model.getObservations(), function (d) { return d.total; });
+            var data = this.model.getObservations();
             if (data.length < 1) {
                 return this;
             }
@@ -30,32 +30,32 @@ define(['./chart', 'underscore', 'd3'],
             var height = this.barHeight * data.length;
 
             this.scale = d3.scale.linear()
-                .domain([0, d3.max(data)])
+                .domain([0, d3.max(data, function (d) { return d.total; })])
                 .range([0, this.barWidth]);
 
+            this.height = 0;
+
             // Create bar chart
-            var chart = d3.select(this.chartContainerEl)
+            var chartContainer = d3.select(this.chartContainerEl)
                 .append('svg')
                     .attr('width', this.barWidth + this.gutterLeft)
-                    .attr('height', height + this.scaleHeight + this.gutterBottom)
                     .attr('class', 'barChart')
-                    .classed('inactive', _.bind(this.model.isCut, this.model))
-                    .append('g')
-                        .attr('transform', 'translate(' + this.gutterLeft + ',0)');
+                    .classed('inactive', _.bind(this.model.isCut, this.model)),
+
+                chart = chartContainer.append('g')
+                    .attr('transform', 'translate(' + this.gutterLeft + ',0)'),
 
             // Create nodes to hold bars and labels
-            var nodes = chart.selectAll('g')
-                    .data(data)
-                .enter().append('g')
-                    .attr('title', _.bind(this.getTooltip, this))
-                    .attr('transform', _.bind(this.getBarPosition, this))
-                    .attr('width', this.scale)
-                    .attr('height', this.barHeight)
-                    .on('click', _.bind(this.featureClick, this));
+                nodes = chart.selectAll('g')
+                        .data(data)
+                    .enter().append('g')
+                        .attr('title', _.bind(this.getTooltip, this))
+                        .attr('transform', _.bind(this.getBarPosition, this))
+                        .on('click', _.bind(this.featureClick, this));
 
             // Create bars
             nodes.append('rect')
-                    .attr('width', this.scale)
+                    .attr('width', _.bind(this.getFeatureWidth, this))
                     .attr('height', this.barHeight)
                     .style('fill', this.getStyle('featureFill'))
                     .style('stroke', this.getStyle('featureStroke'));
@@ -66,7 +66,7 @@ define(['./chart', 'underscore', 'd3'],
                     .attr('x', this.textX)
                     .attr('y', (this.barHeight / 2) + this.textY)
                     .style('fill', this.getStyle('label'))
-                    .text(_.bind(this.getLabel, this));
+                    .text(_.bind(this.getFeatureLabel, this));
 
             // Attach tooltips
             this.attachTooltips('g');
@@ -80,32 +80,33 @@ define(['./chart', 'underscore', 'd3'],
                     .attr('class', 'scale')
                     .attr('x1', this.scale)
                     .attr('x2', this.scale)
-                    .attr('y1', height + 5)
-                    .attr('y2', height + 10)
+                    .attr('y1', this.height + 5)
+                    .attr('y2', this.height + 10)
                     .style('stroke', this.getStyle('scaleFeature'));
 
+            this.height += this.scaleHeight;
             chart.selectAll('.scaleLabel')
                     .data(scaleTicks)
                 .enter().append('text')
                     .attr('class', 'scaleLabel')
                     .attr('x', this.scale)
-                    .attr('y', height + this.scaleHeight)
+                    .attr('y', this.height)
                     .attr('dy', -5)
                     .attr('text-anchor', 'middle')
                     .style('fill', this.getStyle('scaleLabel'))
-                    .text(this.numFormatScale);
+                    .text(format.numScale);
 
+            this.height += this.gutterBottom;
             chart.append('text')
                     .attr('text-anchor', 'middle')
                     .attr('x', (this.width - (this.gutterLeft * 2)) / 2)
-                    .attr('y', height + this.scaleHeight + this.gutterBottom)
+                    .attr('y', this.height)
                     .attr('dy', -5)
                     .style('fill', this.getStyle('measureLabel'))
                     .text(this.model.getMeasureLabel());
 
-            // Update container size
-            this.updateSize();
-
+            // Set height
+            chartContainer.attr('height', this.height);
             return this;
 
         },
@@ -114,30 +115,18 @@ define(['./chart', 'underscore', 'd3'],
          * Get a bar group's position
          */
         getBarPosition: function (d, i) {
-            return 'translate(0, ' + (i * this.barHeight) + ')';
+            var x = this.height;
+            if (d !== 0) {
+                this.height += this.barHeight;
+            }
+            return 'translate(0, ' + x + ')';
         },
 
         /**
-         * Get a bar's label
+         * Get a bar's width
          */
-        getLabel: function(d, i) {
-            // Get this bubble's value's model
-            var value = this.model.getObservation(i),
-                valueLabel = this.model.getLabel(value);
-
-            if (_.isUndefined(valueLabel)) {
-                return;
-            }
-
-            // If there's a short label, use it
-            var label = (_.isUndefined(valueLabel.short_label)) ? valueLabel.label : valueLabel.short_label;
-
-            // Ignore labels that are longer than the width of the bar
-            if (this.getStringWidth(label) > this.scale(d)) {
-                return;
-            }
-
-            return label;
+        getFeatureWidth: function(d, i) {
+            return this.scale(d.total);
         }
 
     });

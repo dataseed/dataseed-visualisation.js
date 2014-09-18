@@ -1,108 +1,129 @@
-define(['backbone', 'underscore'],
-function (Backbone, _) {
+define(['backbone', 'underscore', '../../lib/format'],
+function (Backbone, _, format) {
     'use strict';
 
+    /**
+     * Abstract base class for element models
+     *
+     * Derived classes should implement:
+     *      initConnections(opts)
+     *      isLoaded()
+     *      _onSync()
+     *      _getField([index])
+     *      _getConnection(type, [id])
+     *      buildCutArgs(cutValue, index)
+     *
+     * Derived elements are supposed to store their connections in either
+     * this._connections or this._connection which have both to be meant as
+     * 'protected' instance properties.
+     *
+     */
     var Element = Backbone.Model.extend({
 
+        // Regex to test for a valid parent property name in a hierarchical dimension
         validParent: /\d+/,
 
-        loaded: 0,
+        // Field types that have an associated dimension connection model.
+        // For the other types (basically numeric and dates) it makes sense to
+        // use observation values as labels - see this.getLabel().
+        dimensionFields: ['string', 'geo'],
+
+        // Field types whose values could be bucketed. We need to keep track of
+        // them because for those fields cut values should be defined by ranges
+        // of values
+        bucketFields: ['date'],
 
         url: function () {
             return '/api/datasets/' + this.dataset.get('id') + '/visualisations/' + this.visualisation.get('id') + '/elements/' + this.get('id');
         },
 
-        initialize: function (options) {
-            this.bind('change', this.change, this);
+        /**
+         * Re-initialise element connections.
+         */
+        resetConnections: function () {
+            if(this._connections){
+                delete this._connections;
+            }
 
+            if(this._connection){
+                delete this._connection;
+            }
+
+            // Init connections if element is not hidden
+            if (this.get('display') === true) {
+                this.initConnections();
+                this.ready();
+            }
+        },
+
+        /**
+         * Initialise element, get connections
+         */
+        initialize: function (opts) {
             // Set dataset and visualisation models
-            this.dataset = options['dataset'];
-            this.visualisation = options['visualisation'];
+            this.dataset = opts.dataset;
+            this.visualisation = opts.visualisation;
 
-            // Get dimensions and observations models
-            this.dimensions = [];
-            this.observations = [];
-
-            _.each(this.get('dimensions'), function (opts) {
-                if (_.isUndefined(opts['field']['id'])) {
-                    return;
-                }
-
-                var values = {
-                        dimension: opts['field']['id'],
-                        bucket: opts['bucket'],
-                        measure: _.isNull(this.get('measure')) ? null : this.get('measure')['id'],
-                        aggregation: this.get('aggregation')
-                    },
-                    observations = this.dataset.pool.getConnection(_.extend({type: 'observations'}, values)),
-                    dimension = this.dataset.pool.getConnection(_.extend({type: 'dimensions'}, values));
-
-                // Bind to sync event and keep references
-                observations.bind('sync', this.change, this);
-                this.observations.push(observations);
-
-                dimension.bind('sync', this.change, this);
-                this.dimensions.push(dimension);
+            // Get dimension(s) field model(s)
+            this._fields = _.map(this.get('dimensions'), function(dimension) {
+                return this.dataset.fields.get(dimension.field.id);
             }, this);
+
+            // Reset and init connections.
+            this.resetConnections();
         },
 
         /**
-         * Dataset connection change event handler
+         * Emit an event that the element is ready to render
          */
-        change: function () {
-            this.loaded++;
-            this.trigger('ready', this);
+        ready: function() {
+            if (this.isLoaded()) {
+                this.trigger('element:ready', this);
+            }
         },
 
         /**
-         * Return true if all required data has loaded
+         * Emit an event that the element is ready to resize and render
          */
-        isLoaded: function () {
-            // Check that all observations and dimensions have completed sync
-            // and that isLoaded returns true
-
-            var dimensionsToUpdate = _.filter(this.dimensions, function (d) {
-                var datasetField = this.dataset.fields.get(d.get('dimension'));
-
-                // A dimension is fetched at least once.
-                // When a cut is added/removed, a dimension it is updated
-                // (re-fetched) only if the "update_dimension" field's attribute
-                // is true
-                return (!d.isLoaded() || (datasetField.get('update_dimension') === true));
-            }, this);
-
-            return (
-                ((this.loaded % (dimensionsToUpdate.length + this.observations.length)) === 0) &&
-                    _.reduce(this.dimensions.concat(this.observations), function (memo, conn) {
-                        return (memo && conn.isLoaded());
-                    }, true)
-                );
+        resize: function() {
+            if (this.isLoaded()) {
+                this.trigger('element:resize', this);
+            }
         },
 
         /**
          * Handle element feature (bar/point/etc) click
          */
-        featureClick: function (index) {
+        featureClick: function (d, i) {
             if (this.get('interactive') === false) {
                 return false;
             }
 
-            var dimension = this.getFieldId(),
-                hierarchy = this.dataset.getDimensionHierarchy(dimension),
-                observation = this.getObservation(index);
+            // Check for a valid feature ID
+            var observation = this.getObservationById(d.id);
+            if (!observation) {
+                return false;
+            }
+
+            var id = this._getField().get('id'),
+                hierarchy = this.dataset.getDimensionHierarchy(id);
 
             // Non-hierarchical dimension
-            if (_.isUndefined(hierarchy)) {
-                if (this.hasCutId(observation.id)) {
+            if (!hierarchy) {
+                if (this.hasCutId(d.id)) {
                     this.removeCut();
                 } else {
-                    this.addCut(observation.id);
+                    this.addCut(this.buildCutArgs(d.id));
                 }
+
             } else {
                 // Hierarchical dimension, handle the drill up/down
-                var level = observation[hierarchy['level_field']];
-                if (this.validParent.test(observation.id)) {
-                    this.dataset.drillDown(dimension, level, this.validParent.exec(observation.id)[0]);
+                if (this.validParent.test(d.id)) {
+                    this.dataset.drillDown(
+                        id,
+                        observation[hierarchy.level_field],
+                        this.validParent.exec(d.id)[0]
+                    );
                 }
             }
 
@@ -110,17 +131,78 @@ function (Backbone, _) {
         },
 
         /**
-         * Send an "addCut" event for th
+         * Get the specified observation
          */
-        addCut: function (value) {
-            this.trigger('addCut', _.object([this.getFieldId()], [value]));
+        getObservation: function(i, id) {
+            return this._getConnection('observations', id).getValue(i);
         },
 
         /**
-         * Send an "addCut" event
+         * Get the specified observation
          */
-        removeCut: function () {
-            this.trigger('removeCut', [this.getFieldId()]);
+        getObservationById: function(oid, fid) {
+            return this._getConnection('observations', fid).getValueById(oid);
+        },
+
+        /**
+         * Get all observations
+         */
+        getObservations: function(id) {
+            return this._getConnection('observations', id).getData();
+        },
+
+        /**
+         * Get label dependent on field type
+         */
+        getLabel: function(value, index) {
+            var field = this._getField(index);
+            switch(field.get('type')) {
+                case 'date':
+                    var dimension = this.get('dimensions')[index || 0];
+                    return _.extend(value, {
+                        label: format.dateLong(value.id, dimension.bucket_interval),
+                        label_short: format.dateShort(value.id)
+                    });
+
+                case 'integer':
+                case 'float':
+                    return _.extend(value, {
+                        label: format.num(value.id)
+                    });
+
+                default:
+                case 'string':
+                case 'geo':
+                    var conn = this._getConnection('dimensions', field.get('id'));
+                    if (conn) {
+                        var label = conn.getValue(value.id);
+                        if (label) {
+                            return label;
+                        }
+                    }
+                    // Unknown field or ID
+                    return _.extend({label: ''}, value);
+            }
+        },
+
+        /**
+         * Get all labels
+         */
+        getLabels: function(id) {
+           var conn = this._getConnection('dimensions', id);
+           if (conn) {
+               return conn.getData();
+           }
+        },
+
+        /**
+         * Get extra dimension data
+         */
+        getDimensionData: function(attribute, id) {
+           var conn = this._getConnection('dimensions', id);
+           if (conn) {
+               return conn.get(attribute);
+           }
         },
 
         /**
@@ -131,107 +213,62 @@ function (Backbone, _) {
         },
 
         /**
-         * Get allowed chart types for this element's dimension
+         * Get dimension field type
          */
-        getChartTypes: function() {
-            var field = this.dataset.fields.get(this.getFieldId());
-            return _.pluck(field.get('charts'), 'type');
-        },
-
-        /**
-         * Returns an element connection
-         * @param type connection type. Possibile values: "dimensions" or "observations"
-         * @param dimensionId the dimension id of the connection we want to get
-         * if undefined, the first element of the dimensions/observations
-         * connection is returned
-         * @returns an Element connection
-         */
-        getElementConnection: function (type, dimensionId) {
-            if (!_.isUndefined(this[type])) {
-                if (_.isUndefined(dimensionId)) {
-                    return this[type][0];
-                }
-                return _.find(this[type], function (conn) {
-                    return conn.get('dimension') === dimensionId;
-                });
+        getFieldType: function(index) {
+            var field = this._getField(index);
+            if (field) {
+                return field.get('type');
             }
         },
 
         /**
-         * Proxy methods
+         * Get dimension field chart types
          */
-        getElementConnectionData: function (type, dimensionId) {
-            var conn = this.getElementConnection(type, dimensionId);
+        getChartTypes: function(index) {
+            var field = this._getField(index);
+            if (field) {
+                return _.pluck(field.get('charts'), 'type');
+            }
+            return [];
+        },
 
-            if (!_.isUndefined(conn)) {
-                return conn.getData();
+        /**
+         * Send an "addCut" event which will be handled by the dataset model
+         * (see addElement() method in the Visualisation model)
+         */
+        addCut: function (value, index) {
+            this.trigger('addCut', _.object([this._getField(index).get('id')], [value]));
+        },
+
+        /**
+         * Send a "removeCut" event which will be handled by the dataset model
+         * (see addElement() method in the Visualisation model)
+         */
+        removeCut: function(index) {
+            if(!_.isUndefined(index)) {
+                this.trigger('removeCut', [this._getField(index).get('id')]);
+            }
+            else {
+                var ids = _.map(this.get('dimensions'), function (d) { return d.field.id; });
+                this.trigger('removeCut', ids);
+
             }
         },
 
-        getLabels: function (dimensionId) {
-            return this.getElementConnectionData("dimensions", dimensionId);
-        },
-
-        getLabel: function (value, dimensionId) {
-            var label = _.extend({'label': ''}, value),
-                conn = this.getElementConnection("dimensions", dimensionId);
-
-            if (!_.isUndefined(conn) && !_.isUndefined(conn.getValue(value.id))) {
-                label = conn.getValue(value.id);
-            }
-
-            return label;
-        },
-
-        getObservations: function (dimensionId) {
-            return this.getElementConnectionData("observations", dimensionId);
-        },
-
-        getObservation: function (i, dimensionId) {
-            var conn = this.getElementConnection("observations", dimensionId);
-
-            if (!_.isUndefined(conn)) {
-                return conn.getValue(i);
-            }
-        },
-
-        getDimension: function (i, dimensionId) {
-            var conn = this.getElementConnection("dimensions", dimensionId);
-
-            if (!_.isUndefined(conn)) {
-                return conn.getValue(i);
-            }
-        },
-
-        getTotal: function (dimensionId) {
-            var conn = this.getElementConnection("observations", dimensionId);
-
-            if (!_.isUndefined(conn)) {
-                return conn.getTotal();
-            }
-        },
-
-        getFieldId: function (index) {
-            if (_.isUndefined(index)) {
-                index = 0;
-            }
-            return this.get('dimensions')[index].field.id;
-        },
-
+        /**
+         * Cut proxy methods
+         */
         getCut: function (index) {
-            return this.dataset.getCut(this.getFieldId(index));
+            return this.dataset.getCut(this._getField(index).get('id'));
         },
 
         isCut: function (index) {
-            return this.dataset.isCut(this.getFieldId(index));
+            return this.dataset.isCut(this._getField(index).get('id'));
         },
 
         hasCutId: function (id, index) {
-            return this.dataset.hasCutId(this.getFieldId(index), id);
-        },
-
-        hasCutValue: function (i, index) {
-            return this.dataset.hasCutValue(this.getFieldId(index), i);
+            return this.dataset.hasCutId(this._getField(index).get('id'), id);
         }
 
     });

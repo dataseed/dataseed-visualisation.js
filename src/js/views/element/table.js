@@ -1,97 +1,135 @@
-define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/element/table.html'],
-    function(Backbone, _, format, tableTemplate) {
+define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../templates/element/table.html', 'text!../../templates/element/tableSearchSuccess.html', 'text!../../templates/element/tableSearchFail.html'],
+    function(Backbone, _, $, format, tableTemplate, tableSearchSuccessTemplate, tableSearchFailTemplate) {
     'use strict';
 
     var TableChartView = Backbone.View.extend({
 
         events: {
-            'click .remove-filter': 'removeFilter',
-            'click .table-row a': 'selectRow',
-            'click .table-sort': 'sortSelect'
+            'click td a': 'featureClick',
+            'click .table-sort': 'sortSelect',
+            'keyup input': 'searchDebounce',
+            'click .search-reset': 'searchReset'
         },
 
+        // Main template
         template: _.template(tableTemplate),
 
+        // Search success/failure templates
+        searchSuccessTemplate: _.template(tableSearchSuccessTemplate),
+        searchFailTemplate: tableSearchFailTemplate,
+
+        searchQuery: '',
         sortProperty: 'total',
         sortDirection: -1,
 
-        validParent: /\d+/,
+        //Scroll position
+        scrollLocation: 0,
+
+        // Chart constants
+        margin: 30,
+        contentHeight: 0,
+        maxHeight: 400,
 
         render: function() {
             var attrs = _.extend({
-                values: this.getTableValues(),
+                format: format,
+                values: _.chain(this.model.getObservations())
+                    .map(function(value, index) {
+                        return {
+                            index: index,
+                            id: value.id,
+                            total: value.total,
+                            totalFormat: format.num(value.total),
+                            label: this.model.getLabel(value).label
+                        };
+                    }, this)
+                    .sortBy(this.sortProperty)
+                    .value(),
+                field: this.model._getField().get('id'),
                 cut: this.model.getCut(),
+                searchQuery: this.searchQuery,
                 sortProperty: this.sortProperty,
-                sortDirection: this.sortDirection
+                sortDirection: this.sortDirection,
+                dataset : this.model.dataset
             }, this.model.attributes);
 
+            // Handle sort direction
+            if (this.sortDirection === -1) {
+                attrs.values.reverse();
+            }
+
+            // Render template
             this.$el.html(this.template(attrs));
 
+            // Set search if we have a query
+            if (this.searchQuery.length > 0) {
+                this.search();
+            }
+
+            // Set styles (including cut highlighting)
             this.resetFeatures();
+
+            // Fix table columns
+            this.$('.data-table tr > td:first-child').width(this.$('.table-chevron-left').width());
+
+            var self = this;
+            this.$('.scroll tr').each(function() {
+                self.contentHeight = $(this).outerHeight() + self.contentHeight;
+            });
+
+            // Calculate the table height
+            var $scroll = this.$('.scroll');
+            if (!this.height) {
+                var pos = $scroll.position(),
+                    headerHeight = (pos) ? pos.top : 0;
+                this.height = Math.min(headerHeight + this.contentHeight, this.maxHeight) - this.margin;
+                this.tableHeight = (this.height - headerHeight) + this.margin;
+            }
+
+            // Set table height
+            $scroll.css('max-height', this.tableHeight);
+
+            // Set the users scroll position
+            $scroll.scrollTop(this.scrollLocation);
+
             return this;
         },
 
-        featureClick: function (index) {
-            if (this.model.get('interactive') === false) {
-                return;
-            }
+        /**
+         * Set table styles
+         */
+        resetFeatures: function() {
+            // Generic styles
+            var styles = this.model.visualisation.styles;
+            this.$('h2').css('color', styles.getStyle('heading', this.model));
+            this.$el.parent().css('background-color', styles.getStyle('background', this.model));
 
-            var dimension = this.model.getFieldId(),
-                dimensionHierarchy = this.model.visualisation.dataset.getDimensionHierarchy(dimension);
-
-            if (_.isUndefined(dimensionHierarchy)) {
-                // the dimension is not hierarchical
-
-                if (this.model.hasCutValue(index)) {
-                    this.model.removeCut();
-                } else {
-                    this.model.addCut(this.model.getObservation(index).id);
-                }
+            if (this.model.isCut()) {
+                // Cut styles
+                this.$('.data-table tr a').css('color', styles.getStyle('featureFillActive', this.model));
+                this.$('.data-table tr.cut-active a').css('color', styles.getStyle('featureFill', this.model));
             } else {
-                // the dimension is hierarchical: this featureClick should
-                // handle the drill up/down
-                var levelField = dimensionHierarchy.level_field,
-                    level = this.model.getObservation(index)[levelField],
-                    cutValue = this.model.getObservation(index).id;
-
-                if (this.validParent.test(cutValue)) {
-                    this.model.visualisation.drillDown(dimension, level, this.validParent.exec(cutValue)[0]);
-                }
+                // No-cut styles
+                this.$('.data-table tr a').css('color', styles.getStyle('featureFill', this.model));
             }
-            this.resetFeatures();
         },
 
-        getTableValues: function() {
-            var values = _.chain(this.model.getObservations())
-                //._map transforms an array to another array
-                //value parameter is the value of the chained getObservation
-                .map(function(value, index) {
-                    //_.extend used to add more objects to the value object
-                    return {
-                        index: index,
-                        id: value.id,
-                        total: value.total,
-                        totalFormat: format.num(value.total),
-                        label: this.model.getLabel(value).label
-                    };
-                }, this)
-                //sort the object by the current sorting property
-                .sortBy(this.sortProperty)
-                //value() to return the value only and not the wrapped methods in _.chain()
-                .value();
-
-            if (this.sortDirection === -1) {
-                values.reverse();
-            }
-
-            return values;
-        },
-
-        selectRow: function(e) {
+        /**
+         * Table row click
+         */
+        featureClick: function(e) {
             e.preventDefault();
-            this.featureClick($(e.currentTarget).parents('tr').data('index'));
+            // Retrieve the current scroll position of the table
+            this.scrollLocation = this.$('.scroll').scrollTop();
+            var id = $(e.currentTarget).parents('tr').data('value').value;
+            if (this.model.featureClick({id: id})) {
+                this.resetFeatures();
+            }
         },
 
+        /**
+         * Table column sort
+         */
         sortSelect: function(e) {
             e.preventDefault();
             var $sort = $(e.currentTarget);
@@ -104,30 +142,119 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
             }
 
             this.render();
-            return;
         },
 
         /**
-         * Reset table chart filters button event handler
+         * Search (at the most every 200ms)
          */
-        removeFilter: function(e) {
+        searchDebounce: _.debounce(function() {
+            this.search(this.$('.table-search').val());
+        }, 200),
+
+        /**
+         * Clear search
+         */
+        searchReset: function(e) {
             e.preventDefault();
-            this.model.removeCut();
-            this.resetFeatures();
+            this.$('.table-search').val('');
+            this.search('');
         },
 
-        resetFeatures: function() {
-            var featureFill = this.model.visualisation.styles.getStyle('featureFill', this.model);
-            if (this.model.isCut()) {
-                var featureFillActive = this.model.visualisation.styles.getStyle('featureFillActive', this.model);
-                this.$('.table-row a').css('color', featureFillActive);
-                this.$('.table-row[data-id="' + this.model.getCut() + '"] a').css('color', featureFill);
+        /**
+         * Run a search
+         */
+        search: function(searchQuery) {
+            if (!_.isUndefined(searchQuery)) {
+                this.searchQuery = searchQuery;
             }
-            else {
-                this.$('.table-row a').css('color', featureFill);
-            }
-        }
 
+            // Get tokenized search terms and then create one long jquery attribute selector string.
+            // Escape special characters and remove double quotes.
+            var tokens = _.map(this.tokenizer(this.searchQuery.toLowerCase()), function(token) {
+                    token = token
+                        .replace(/^"|"$/g, '')  // Remove leading/trailing quotes
+                        .replace(/\\/g, '\\\\') // Escape backslashes
+                        .replace(/"/g, '\\"');  // Escape quotes
+                    return '[data-content*="' + token + '"]';
+                });
+
+            // Remove any messages from previous searches
+            this.$('p').remove();
+
+            // Show table header by default
+            this.$('.sort').show();
+
+            if (tokens.length > 0) {
+                this.$('.search-reset').show();
+
+                // Hide show rows based on search query
+                var matches = this.$('.data-table tr')
+                    .hide()
+                    .filter(tokens.join(''))
+                        .show();
+
+                if (matches.length > 0) {
+                    // Found one or more results
+                    this.$('.table-search-wrap').append(this.searchSuccessTemplate({
+                        num: matches.length,
+                        input: this.searchQuery
+                    }));
+                } else {
+                    // No results
+                    this.$el.append(this.searchFailTemplate);
+                    this.$('.sort').hide();
+                }
+
+            } else {
+                this.$('.search-reset').hide();
+                this.$('tr').show();
+            }
+        },
+
+        /*
+         * Search-text-tokenizer is a text tokenizer for Google-like search query supporting double quoted phrase.
+         * https://github.com/tatsuyaoiw/search-text-tokenizer
+        */
+        tokenizer: function(str) {
+            // trim spaces
+            str = str.replace(/^\s+|\s+$/g, '');
+
+            // retun if string is empty
+            if (!str) {return str;}
+
+            // split by spaces
+            var terms = str.split(/\s/),
+                i = 0,
+                result = [];
+
+            while (terms[i]) {
+                var current = terms[i];
+
+                // phrase if double quoted
+                if (current[0] === '"') {
+
+                    // iterate by the end of quotations
+                    var j = i + 1;
+                    while (terms[j]) {
+                        var next = terms[j];
+                        current += ' ' + next;
+
+                        if (next.slice(-1) === '"') {
+                            terms.splice(j, 1);
+                            break;
+                        } else {
+                            terms.splice(j, 1);
+                        }
+                    }
+                }
+
+                result.push(current);
+
+                i++;
+            }
+
+            return result;
+        }
 
     });
 

@@ -2,7 +2,7 @@ require.config({
     baseUrl: 'src/js',
     shim: {
         'jquery': {
-            exports: 'jQuery'
+            exports: '$'
         },
         'underscore': {
             exports: '_'
@@ -14,6 +14,9 @@ require.config({
         'd3': {
             exports: 'd3'
         },
+        'topojson': {
+            exports: 'topojson'
+        },
         'highcharts': {
             deps: ['jquery'],
             exports: 'Highcharts'
@@ -24,27 +27,27 @@ require.config({
         },
         'tipsy': {
             deps: ['jquery'],
-            exports: 'jQuery.fn.tipsy'
+            exports: '$.fn.tipsy'
         },
         'bootstrap_transition': {
             deps: ['jquery'],
-            exports: 'jQuery.support.transition'
+            exports: '$.support.transition'
         },
         'bootstrap_collapse': {
             deps: ['bootstrap_transition'],
-            exports: 'jQuery.fn.collapse'
+            exports: '$.fn.collapse'
         },
         'bootstrap_modal': {
             deps: ['bootstrap_transition'],
-            exports: 'jQuery.fn.modal'
+            exports: '$.fn.modal'
         },
         'bootstrap_alert': {
             deps: ['bootstrap_transition'],
-            exports: 'jQuery.fn.alert'
+            exports: '$.fn.alert'
         },
         'bootstrap_dropdown': {
             deps: ['bootstrap_transition'],
-            exports: 'jQuery.fn.dropdown'
+            exports: '$.fn.dropdown'
         },
         'spin': {
             exports: 'Spinner'
@@ -58,16 +61,19 @@ require.config({
         text: 'components/requirejs-text/text',
 
         // jQuery
-        jquery: 'components/jquery/jquery.min',
+        jquery: 'components/jquery/jquery',
 
         // Underscore (Lo-Dash - http://lodash.com)
-        underscore: 'components/lodash/dist/lodash.underscore.min',
+        underscore: 'components/lodash/dist/lodash.underscore',
 
         // Backbone
-        backbone: 'components/backbone/backbone-min',
+        backbone: 'components/backbone/backbone',
 
         // D3
         d3: 'components/d3/d3',
+
+        // TopoJSON
+        topojson: 'components/topojson/topojson',
 
         // Highcharts
         highcharts: 'components/highcharts/highcharts.src',

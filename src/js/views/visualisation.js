@@ -8,21 +8,23 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
         template: _.template(visualisationEmbedTemplate),
         templateDefaults: {},
 
-        // Views for visualisation elements
-        elementsViews: {},
-
         events: {
             'click .reset-filters': 'resetFilters'
         },
 
         initialize: function(options) {
+            // Views for visualisation elements
+            this.views = {};
+
+            // Element models event handlers
             this.model.elements.bind('add', this.createElement, this);
             this.model.elements.bind('remove', this.removeElement, this);
-            this.model.elements.bind('ready', this.renderElement, this);
+            this.model.elements.bind('element:ready', this.renderElement, this);
+            this.model.elements.bind('element:resize', this.resizeElement, this);
             this.model.elements.bind('reset', this.resetElements, this);
 
+            // Styles collection event hander
             this.model.styles.bind('ready', this.renderElements, this);
-
         },
 
         /**
@@ -31,19 +33,24 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
         render: function() {
             // Render template
             this.$el.html(this.template(_.extend(
-                {
-                    'dataset_id': this.model.dataset.get('id')
-                },
+                {dataset_id: this.model.dataset.get('id')},
                 this.model.attributes,
                 this.templateDefaults
             )));
 
-            // Get elements container element
-            this.$elements = this.$('.elements');
-
             // Render visualisation elements
             this.model.reset();
             this.resetElements();
+
+            // Set default visualisation background colour
+            this.updateColour();
+        },
+
+        /**
+         * Add visualisation background colour
+         */
+        updateColour: function() {
+            this.$('.visualisation').css('background-color', this.model.styles.getStyle('visualisationBackground'));
         },
 
         /**
@@ -51,6 +58,7 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
          */
         renderElements: function() {
             this.model.elements.forEach(this.renderElement, this);
+            this.updateColour();
         },
 
         /**
@@ -65,9 +73,9 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
          */
         createElement: function(element) {
             var id = element.get('id');
-            this.elementsViews[id] = new ElementView({
-                'model': element,
-                'visualisation': this.model
+            this.views[id] = new ElementView({
+                model: element,
+                visualisation: this.model
             });
         },
 
@@ -75,8 +83,7 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
          * Add and render element view
          */
         addElement: function(element) {
-            this.$elements.append(this.elementsViews[element.id].$el);
-            this.renderElement(element);
+            this.$('.elements').append(this.views[element.id].$el);
         },
 
         /**
@@ -84,15 +91,26 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
          */
         removeElement: function(element) {
             var id = element.get('id');
-            this.elementsViews[id].remove();
-            delete this.elementsViews[id];
+            this.views[id].remove();
+            delete this.views[id];
         },
 
         /**
-         * Render an individual element
+         * Render an individual element.
+         *
+         * This is also the handler for the 'element:ready: event which is
+         * triggered by an element model when the visualisation element is ready
+         * to be rendered (that is, all its connections have been synched)
          */
         renderElement: function(element) {
-            this.elementsViews[element.id].render();
+            this.views[element.id].render();
+        },
+
+        /**
+         * Resize and re-render an individual element.
+         */
+        resizeElement: function(element) {
+            this.views[element.id].resize();
         },
 
         /**

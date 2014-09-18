@@ -198,11 +198,11 @@
 
         <p>Requests to the API must always specify an <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1">Accept header</a> with the <a href="http://tools.ietf.org/html/rfc4627#section-6">JSON MIME type</a> (i.e. "application/json"). So you could fetch a public dataset using:</p>
 
-        <code class="shell prettyprint">curl -H'Accept: application/json' http://getdataseed.com/api/datasets/mortality</code>
+        <code class="shell prettyprint">curl -H'Accept: application/json' https://getdataseed.com/api/datasets/mortality</code>
 
         <p>When sending data to the API you must also specify the MIME type of your request using the <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17">Content-Type header</a> header. The following example shows how to add an observation to an existing dataset:</p>
 
-        <code class="shell prettyprint">curl -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' http://getdataseed.com/api/datasets/my-dataset/observations -d'{ "observations": [ { "id": "o1234", "age": "26", "gender": "M" } ] }'</code>
+        <code class="shell prettyprint">curl -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://getdataseed.com/api/datasets/my-dataset/observations -d'{ "observations": [ { "id": "o1234", "age": "26", "gender": "M" } ] }'</code>
 
         <h4 id="api-intro-responses">Responses</h4>
 
@@ -236,7 +236,7 @@
 
         <p>So, for example, to fetch a private dataset you would do the following:</p>
 
-        <code class="shell prettyprint">curl -u'dataseed@example.com:password' -H'Accept: application/json' http://getdataseed.com/api/datasets/my-dataset</code>
+        <code class="shell prettyprint">curl -u'dataseed@example.com:password' -H'Accept: application/json' https://getdataseed.com/api/datasets/my-dataset</code>
 
         <h3 id="api-dataset">Dataset</h3>
 
@@ -244,7 +244,7 @@
 
         <h5>Request</h5>
 
-        <code class="shell prettyprint">curl -H'Accept: application/json' http://getdataseed.com/api/datasets/mortality</code>
+        <code class="shell prettyprint">curl -H'Accept: application/json' https://getdataseed.com/api/datasets/mortality</code>
 
         <h5>Response</h5>
 
@@ -321,7 +321,7 @@
 
         <h5>Request</h5>
 
-        <code class="shell prettyprint">curl -XPOST -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' http://getdataseed.com/api/datasets/</code>
+        <code class="shell prettyprint">curl -XPOST -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://getdataseed.com/api/datasets/</code>
 
         <pre><code class="json prettyprint">{
     "label": "My Vehicle Dataset",
@@ -357,7 +357,7 @@
 
         <h5>Request</h5>
 
-        <code class="shell prettyprint">curl -XPUT -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' http://getdataseed.com/api/datasets/252b529188c2bdee4c16570a133a329d</code>
+        <code class="shell prettyprint">curl -XPUT -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://getdataseed.com/api/datasets/252b529188c2bdee4c16570a133a329d</code>
 
         <pre><code class="json prettyprint">{
     "label": "My Awesome Vehicle Dataset",
@@ -375,7 +375,7 @@
 
         <h5>Request</h5>
 
-        <code class="shell prettyprint">curl -XDELETE -u'dataseed@example.com:password' -H'Accept: application/json' http://getdataseed.com/api/datasets/252b529188c2bdee4c16570a133a329d</code>
+        <code class="shell prettyprint">curl -XDELETE -u'dataseed@example.com:password' -H'Accept: application/json' https://getdataseed.com/api/datasets/252b529188c2bdee4c16570a133a329d</code>
 
         <h5>Response</h5>
 
@@ -608,45 +608,6 @@ $(document).ready(function() {
     },
     "measure_label":"Number of deaths",
     "type":"navigation",
-    "weight":1,
-    "width":4
-}
-</code></pre>
-                    </li>
-                    <li>
-                        <h6>Filter Form</h6>
-
-                        <p>The navigation element displays all the dimensions'
-                            values as options of a drop down select form
-                            element.</p>
-<pre><code class="html prettyprint">{
-    "aggregation":"sum",
-    "dimensions":[
-        {
-            "bucket":null,
-            "field":{
-                "id":"gender",
-                "type":"string"
-            },
-            "weight":1
-        },
-        {
-            "bucket":null,
-            "field":{
-                "id":"year",
-                "type":"string"
-            },
-            "weight":4
-        }
-    ],
-    "display":true,
-    "id":"filter",
-    "label":"Filter",
-    "measure":{
-        "id":"value"
-    },
-    "measure_label":"Number of deaths",
-    "type":"filterForm",
     "weight":1,
     "width":4
 }
@@ -888,7 +849,7 @@ require.config({
                                 "id": "year",
                                 "label": "Year",
                                 "measure_label": "Number of deaths",
-                                "type": "filterForm",
+                                "type": "navigation",
                                 "required": true,
                                 //Other element attributes here ...
                             },
@@ -943,7 +904,7 @@ require.config({
                                 "id": "year",
                                 "label": "Year",
                                 "measure_label": "Number of deaths",
-                                "type": "filterForm",
+                                "type": "navigation",
                                 "sort": {
                                     "label": "asc"
                                 },
@@ -980,7 +941,7 @@ require.config({
 
         <h5>Request</h5>
 
-        <code class="shell prettyprint">curl -H'Accept: application/json' https://getdataseed.com/api/datasets/mortality/dimensions/gender</code>
+        <code class="shell prettyprint">curl -H'Accept: application/json' 'https://getdataseed.com/api/datasets/mortality/dimensions/gender'</code>
 
         <h5>Response</h5>
 
@@ -1003,7 +964,7 @@ require.config({
 
         <h5>Request</h5>
 
-        <code class="shell prettyprint">curl -XPOST -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://getdataseed.com/api/datasets/mortality/dimensions/gender</code>
+        <code class="shell prettyprint">curl -XPOST -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' 'https://getdataseed.com/api/datasets/mortality/dimensions/gender'</code>
 
         <pre><code class="json prettyprint">{
     "values": [
@@ -1029,7 +990,7 @@ require.config({
 
         <h5>Request</h5>
 
-        <code class="shell prettyprint">curl -XPUT -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://getdataseed.com/api/datasets/mortality/dimensions/gender</code>
+        <code class="shell prettyprint">curl -XPUT -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' 'https://getdataseed.com/api/datasets/mortality/dimensions/gender'</code>
 
         <pre><code class="json prettyprint">{
     "values": [
@@ -1051,7 +1012,7 @@ require.config({
 
         <h5>Request</h5>
 
-        <code class="shell prettyprint">curl -XDELETE -u'dataseed@example.com:password' -H'Accept: application/json' https://getdataseed.com/api/datasets/mortality/dimensions/gender</code>
+        <code class="shell prettyprint">curl -XDELETE -u'dataseed@example.com:password' -H'Accept: application/json' 'https://getdataseed.com/api/datasets/mortality/dimensions/gender'</code>
 
         <h5>Response</h5>
 
@@ -1074,7 +1035,7 @@ require.config({
 
         <h5>Request</h5>
 
-        <code class="shell prettyprint">curl -H'Accept: application/json' https://getdataseed.com/api/datasets/mortality/observations/gender?aggregation=sum&amp;measure=value</code>
+        <code class="shell prettyprint">curl -H'Accept: application/json' 'https://getdataseed.com/api/datasets/mortality/observations/gender?aggregation=sum&amp;measure=value'</code>
 
         <h5>Response</h5>
 
@@ -1091,13 +1052,26 @@ require.config({
     ]
 }</code></pre>
 
+        <p>To get <em>"unfaceted" aggregations</em>, that is, aggregations that
+            are not related to a dimension's facets, we just have to omit the
+            dimension name from the observations Read URL. For example, if we
+            want to get a sum of the "value" measure across all the dataset's
+            observations and dimensions:</p>
+        <h5>Request</h5>
+
+                <code class="shell prettyprint">curl -H'Accept: application/json' 'https://getdataseed.com/api/datasets/mortality/observations/?aggregation=sum&amp;measure=value'</code>
+
+                <h5>Response</h5>
+
+                <pre><code class="json prettyprint">{"total": 5057611.0}</code></pre>
+
         <h4>Create</h4>
 
         <p>Creating (POSTing) observations will delete any existing entries. To append observations use PUT.</p>
 
         <h5>Request</h5>
 
-        <code class="shell prettyprint">curl -XPOST -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://getdataseed.com/api/datasets/mortality/observations/</code>
+        <code class="shell prettyprint">curl -XPOST -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' 'https://getdataseed.com/api/datasets/mortality/observations/'</code>
 
         <pre><code class="json prettyprint">{
     "observations": [
@@ -1127,7 +1101,7 @@ require.config({
 
         <h5>Request</h5>
 
-        <code class="shell prettyprint">curl -XPUT -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://getdataseed.com/api/datasets/mortality/observations</code>
+        <code class="shell prettyprint">curl -XPUT -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' 'https://getdataseed.com/api/datasets/mortality/observations'</code>
 
         <pre><code class="json prettyprint">{
     "observations": [
@@ -1157,7 +1131,7 @@ require.config({
 
         <h5>Request</h5>
 
-        <code class="shell prettyprint">curl -XDELETE -u'dataseed@example.com:password' -H'Accept: application/json' https://getdataseed.com/api/datasets/mortality/observations</code>
+        <code class="shell prettyprint">curl -XDELETE -u'dataseed@example.com:password' -H'Accept: application/json' 'https://getdataseed.com/api/datasets/mortality/observations'</code>
 
         <h5>Response</h5>
 

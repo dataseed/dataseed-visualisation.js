@@ -2,11 +2,11 @@
 
 [![Build Status](https://travis-ci.org/dataseed/dataseed-visualisation.svg)](https://travis-ci.org/dataseed/dataseed-visualisation)
 
-Dataseed is an open platform for data visualisation, exploration and analysis. For more information and a live demo see [http://getdataseed.com](http://getdataseed.com).
+Dataseed is an open platform for data visualisation, exploration and analysis. For more information and a live demo see [https://getdataseed.com](https://getdataseed.com).
 
 This open-source toolkit allows you to create custom visualisations driven by our back-end. Dataseed's back-end supports large datasets, real-time data streams, on-the-fly aggregation (OLAP), and statistical operations.  You can import data via a RESTful API, or by uploading spreadsheets through the UI.
 
-We are currently in beta, so please [sign-up](http://getdataseed.com#find-out-more) to be notified when we're accepting new users, or [send us an email](mailto:team@getdataseed.com) if you'd like to discuss a project.
+We are currently in beta, so please [sign-up](https://getdataseed.com#find-out-more) to be notified when we're accepting new users, or [send us an email](mailto:team@getdataseed.com) if you'd like to discuss a project.
 
 
 ## Features
@@ -53,4 +53,4 @@ A build process is provided that will compile and minify the JS and LESS in /src
 
 ## Developer API
 
-An API is available for Dataseed that allows querying and importing of datasets. Documentation can be found at [getdataseed.com/documentation](http://getdataseed.com/documentation).
+An API is available for Dataseed that allows querying and importing of datasets. Documentation can be found at [getdataseed.com/documentation](https://getdataseed.com/documentation).

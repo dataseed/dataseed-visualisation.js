@@ -1,32 +1,40 @@
-define(['backbone', 'underscore', './element/summary', './element/filter/navigation', './element/filter/filterForm', './element/table', './element/d3/bar', './element/d3/bubble', './element/d3/geo', './element/d3/line', './loadScreen', 'bootstrap_dropdown'],
-    function(Backbone, _, SummaryElementView, NavigationElementView, FilterFormElementView, TableChartView, BarChartView, BubbleChartView, GeoChartView, LineChartView, LoadScreenView) {
+define(['backbone', 'underscore', './element/summary', './element/filter/navigation', './element/table', './element/d3/bar', './element/d3/bubble', './element/d3/geo', './element/d3/line', './loadScreen', 'bootstrap_dropdown'],
+    function(Backbone, _, SummaryElementView, NavigationElementView, TableChartView, BarChartView, BubbleChartView, GeoChartView, LineChartView, LoadScreenView) {
     'use strict';
 
     var ElementView = Backbone.View.extend({
 
         tagName: 'article',
 
-        elementTypes: {
+        chartTypes: {
             // HTML elements
-            'summary':      SummaryElementView,
-            'navigation':   NavigationElementView,
-            'filterForm':   FilterFormElementView,
-            'table':        TableChartView,
+            summary:      SummaryElementView,
+            navigation:   NavigationElementView,
+            table:        TableChartView,
 
             // D3/Highcharts elements
-            'bar':          BarChartView,
-            'bubble':       BubbleChartView,
-            'geo':          GeoChartView,
-            'line':         LineChartView
+            bar:          BarChartView,
+            bubble:       BubbleChartView,
+            geo:          GeoChartView,
+            line:         LineChartView
         },
 
-        element: false,
+        events: {
+            'click .remove-filter': 'reset'
+        },
+
+        // Add bottom margin to element container
+        marginBottom: 30,
+
+        // Only set the element size once
+        _sized: false,
 
         initialize: function(options) {
-            this.visualisation = options['visualisation'];
+            this.visualisation = options.visualisation;
         },
 
         render: function() {
+            // Get element type
             var type = this.model.get('type');
 
             // Set element width and type
@@ -36,38 +44,85 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
                 .addClass(type + 'Element');
 
             // Check if this element should be displayed
-            if (!this.model.get('display')) {
+            if (this.model.get('display') !== true) {
                 this.$el.addClass('hide');
 
-            // Check if this element's data is loaded
-            } else if (this.model.isLoaded()) {
+            } else {
+                // Ensure model has been initialised if this element has been
+                // shown after initially being hidden
+                this.model.initConnections();
 
-                // Check if a chart view exists and is of the correct type
-                if (!(this.element && this.element instanceof this.elementTypes[type])) {
+                // Check if this element's data is loaded
+                if (this.model.isLoaded()) {
 
-                    // Remove existing element view, if it exists
-                    if (this.element) {
-                        this.element.remove();
+                    // Check if a chart view exists and is of the correct type
+                    if (!(this.chart && this.chart instanceof this.chartTypes[type])) {
+
+                        // Remove existing chart view, if it exists
+                        if (this.chart) {
+                            this.chart.remove();
+                        }
+
+                        // Create new chart view
+                        this.chart = new this.chartTypes[type] ({
+                            parent: this.$el,
+                            model: this.model,
+                            visualisation: this.visualisation
+                        });
+
+                        // Add chart
+                        this.$el.append(this.chart.$el);
+
                     }
 
-                    // Create new element view
-                    this.element = new this.elementTypes[type] ({
-                        parent: this.$el,
-                        model: this.model,
-                        visualisation: this.visualisation
-                    });
+                    // Render chart
+                    this.chart.render();
 
-                    // Add element
-                    this.$el.append(this.element.$el);
+                    // Show reset button when the chart is cut
+                    if (this.model.isCut()) {
+                        this.$('.container-icon').addClass('in');
+                        this.$('.remove-filter').tipsy({gravity: 's'});
+                    }
+
+                    // Set element height if the chart has one and this is the first render
+                    if (!this._sized && this.chart.height) {
+
+                        // Get chart height
+                        var height = this.chart.height + this.$('h2').outerHeight();
+                        if (this.chart.maxHeight) {
+                            height = Math.min(height, this.chart.maxHeight);
+                        }
+
+                        // Set element height
+                        this.$el.height(height + this.marginBottom);
+
+                        // Don't set height again
+                        this._sized = true;
+
+                    }
 
                 }
-
-                // Render
-                this.element.render();
 
             }
 
             return this;
+        },
+
+        /**
+         * Resize the element
+         */
+        resize: function() {
+            this._sized = false;
+            this.render();
+        },
+
+        /**
+         * Reset chart filters button event handler
+         */
+        reset: function(e) {
+            e.preventDefault();
+            this.model.removeCut();
+            $('.tipsy').remove();
         }
 
     });

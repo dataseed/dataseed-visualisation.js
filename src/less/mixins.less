@@ -1,0 +1,12 @@
+// MIXINS
+// --------------------------------
+
+// Background gradient
+// -------------------------------
+.gradient (@startColor: #eee, @endColor: white) {
+  background: linear-gradient(to bottom, @startColor, @endColor);
+  background: -webkit-linear-gradient(top, @startColor, @endColor);
+  background: -moz-linear-gradient(top, @startColor, @endColor);
+  background: -ms-linear-gradient(top, @startColor, @endColor);
+  background: -o-linear-gradient(top, @startColor, @endColor);
+}
