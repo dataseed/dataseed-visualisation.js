@@ -1,5 +1,5 @@
-define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element/dimensions', 'views/element/filter/navigation'],
-    function($, Dataset, Connection, DimensionsElement, NavigationElementView) {
+define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element/dimensionalElement', 'views/element/filter/navigation'],
+    function($, Dataset, Connection, DimensionalElement, NavigationElementView) {
     /* global describe, beforeEach, expect, it */
 
     describe('A navigation element view', function() {
@@ -20,7 +20,7 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
                 });
             this.dataset.reset();
 
-            this.element = new DimensionsElement({
+            this.element = new DimensionalElement({
                     id: 'test03',
                     dataset: this.dataset,
                     visualisation: this.dataset.visualisation,
@@ -50,6 +50,14 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
         });
 
         it('should not render without data', function() {
+            // Test data
+            this.element._getConnection('observations', 'test04').set(
+                {test04: []}, {silent: true}
+            );
+            this.element._getConnection('observations', 'test05').set(
+                {test05: []}, {silent: true}
+            );
+
             this.view.render();
             expect(this.view.el).not.toContainElement('tr, th, td');
         });

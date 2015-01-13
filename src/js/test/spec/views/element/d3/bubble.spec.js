@@ -1,5 +1,5 @@
-define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element/dimensions', 'views/element/d3/bubble'],
-    function($, Dataset, Connection, DimensionsElement, BubbleChartView) {
+define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element/dimensionalElement', 'views/element/d3/bubble'],
+    function($, Dataset, Connection, DimensionalElement, BubbleChartView) {
     /* global describe, beforeEach, expect, it */
 
     describe('A bubble chart view', function() {
@@ -19,7 +19,7 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
                 });
             this.dataset.reset();
 
-            this.element = new DimensionsElement({
+            this.element = new DimensionalElement({
                     id: 'test03',
                     dataset: this.dataset,
                     visualisation: this.dataset.visualisation,

@@ -10,6 +10,9 @@ define(['backbone', 'underscore', '../collections/elements', '../collections/sty
             return '/api/datasets/' + this.dataset.get('id') + '/visualisations/' + this.get('id');
         },
 
+        /**
+         * Initialise visualisation model
+         */
         initialize: function (options) {
             // Set dataset
             this.dataset = options.dataset;
@@ -23,11 +26,17 @@ define(['backbone', 'underscore', '../collections/elements', '../collections/sty
             this.styles = new StylesCollection(null, {visualisation: this});
         },
 
+        /**
+         * Handle element "add" event
+         */
         addElement: function (element) {
             element.bind('addCut', this.dataset.addCut, this.dataset);
             element.bind('removeCut', this.dataset.removeCut, this.dataset);
         },
 
+        /**
+         * Build dependent element and style models from visualisation's attributes
+         */
         reset: function () {
             // Set model defaults
             var defaults = {
@@ -46,6 +55,10 @@ define(['backbone', 'underscore', '../collections/elements', '../collections/sty
             }, this));
         },
 
+        /**
+         * Update "weight" values for this visualisation's elements to ensure that
+         * they're sequential and don't exceed the largest allowed "weight" value
+         */
         updateElementOrder: function () {
             // Start from current largest weight
             var offsetElement = this.elements.max(function (element) {
@@ -60,8 +73,24 @@ define(['backbone', 'underscore', '../collections/elements', '../collections/sty
 
             // Update element weights
             this.elements.forEach(function (element, index) {
-                element.set('weight', offset + index + 1, {'silent': true});
+                element.set('weight', offset + index + 1, {silent: true});
             });
+        },
+
+        /**
+         * Save visualisation and dependent models
+         */
+        save: function(attrs, opts) {
+            opts = _.defaults({success: _.bind(this.saveChildren, this)}, opts);
+            return Backbone.Model.prototype.save.call(this, attrs, opts);
+        },
+
+        /**
+         * Save element's child models (elements and styles)
+         */
+        saveChildren: function(model, response, opts) {
+            this.elements.save();
+            this.styles.save();
         }
 
     });

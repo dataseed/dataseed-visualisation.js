@@ -1,5 +1,5 @@
-define(['backbone', '../models/dataset/connection', '../models/dataset/dimensionalConnection' ],
-    function(Backbone, Connection, DimensionalConnection) {
+define(['backbone', 'underscore', '../models/dataset/connection', '../models/dataset/dimensionalConnection' ],
+    function(Backbone, _, Connection, DimensionalConnection) {
     'use strict';
 
     var ConnectionPool = Backbone.Collection.extend({
@@ -26,7 +26,7 @@ define(['backbone', '../models/dataset/connection', '../models/dataset/dimension
                 var defaults = {
                     id: id,
                     dataset: this.dataset,
-                    cut: this.defaultCut
+                    cut: this.defaultCut || this.dataset.cut
                 };
                 this.add(_.extend(defaults, opts));
             }

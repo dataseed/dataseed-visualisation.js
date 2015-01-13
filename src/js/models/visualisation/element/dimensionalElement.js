@@ -9,7 +9,7 @@ function (Backbone, _, Element) {
      *   - a connection of type 'dimensions' to get the dimensions values for d, if d is non
      *     date/numeric
      */
-    var DimensionsElement = Element.extend({
+    var DimensionalElement = Element.extend({
 
         // Maps field types to the related allowed values and labels for the
         // bucket_interval attribute.
@@ -46,13 +46,13 @@ function (Backbone, _, Element) {
             };
 
             // Initiate connections
-            _.each(this.get('dimensions'), function (dimension, index) {
+            this.dimensions.each( function (dimension, index) {
 
                 // Get common connection options
                 var opts = {
-                    dimension: dimension.field.id,
-                    bucket: dimension.bucket,
-                    bucket_interval: dimension.bucket_interval,
+                    dimension: dimension.get('field').id,
+                    bucket: dimension.get('bucket'),
+                    bucket_interval: dimension.get('bucket_interval'),
                     measure: _.isNull(this.get('measure')) ? null : this.get('measure').id,
                     aggregation: this.get('aggregation')
                 };
@@ -78,8 +78,8 @@ function (Backbone, _, Element) {
             // Get connection
             var conn = this.dataset.pool.getConnection(_.extend({type: type}, opts));
 
-            // Bind to sync event and keep a reference
-            conn.bind('connection:sync', this._onSync, this);
+            // Bind to sync event
+            this.listenTo(conn,'connection:sync', this._onSync);
 
             // Keep reference
             this._connections[type].pool[opts.dimension] = conn;
@@ -101,6 +101,32 @@ function (Backbone, _, Element) {
             this.ready();
         },
 
+        /*
+         * Helper to get an array of all the element's connections instances (both
+         * observations and dimensions)
+         */
+        getConnections: function () {
+            if (_.isUndefined(this._connections)) {
+                return [];
+            }
+
+            return _.reduce(
+                [this._connections.observations.pool, this._connections.dimensions.pool],
+                function (connections, pool) {
+                    return connections.concat(_.map(pool, function (conn) {
+                        return conn;
+                    }));
+                },
+                []
+            );
+        },
+
+        removeConnections: function () {
+            if (this._connections) {
+                delete this._connections;
+            }
+        },
+
         /**
          * Check if all connections have loaded
          */
@@ -109,20 +135,20 @@ function (Backbone, _, Element) {
                 return false;
             }
             var obs = this._connections.observations,
-                dims = this._connections.dimensions;
+                dims = this._connections.dimensions,
+                // True if all observations have loaded
+                observationsAllLoaded = (obs.num > 0 && obs.loaded > 0 && (obs.loaded % obs.num) === 0),
+                // True if all dimensions have loaded
+                dimensionsAllLoaded = (dims.loaded > 0 && (dims.loaded % dims.num) === 0);
             return (
                 // All observations have loaded, and...
-                obs.num > 0 && obs.loaded > 0 && (obs.loaded % obs.num) === 0 &&
+                observationsAllLoaded &&
                 (
                     // There are no dimensions, or...
                     (dims.num === 0) ||
-                    (
-                        // All dimensions have loaded and...
-                        (dims.loaded > 0 && (dims.loaded % dims.num) === 0) &&
-
-                        // Dimensions and observations have loaded an equal number of times
-                        (dims.loaded / obs.loaded === dims.num / obs.num)
-                    )
+                    // All dimensions have loaded and
+                    // Dimensions and observations have loaded an equal number of times
+                    (dimensionsAllLoaded && (dims.loaded / obs.loaded === dims.num / obs.num))
                 )
             );
         },
@@ -138,65 +164,50 @@ function (Backbone, _, Element) {
         },
 
         /**
-         * Get dimension field
-         */
-        _getField: function(index) {
-            if (!index) {
-                index = 0;
-            }
-            return this._fields[index];
-        },
-
-        /**
          * Get all observations ids
          */
-        getObservationsIds: function (id) {
+        _getObservationsIds: function (id) {
             return this._getConnection('observations', id).getDataIds();
         },
 
         /**
          * Helper to build the arguments to pass through addCut() / removeCut()
-         * Those arguments depend on the type of the field we want to cut on.
          */
         buildCutArgs: function (cutValue, index) {
-            // If we are cutting on a dimension referring to a numeric/date
-            // field we have to query on intervals. Given that these type of
-            // fields are such that observation ids are equals to their related
-            // value, the interval will be defined like so:
-            //  - the "from endpoint" will be cutValue
-            //  - the "to endpoint" will be the minimum observation value
-            //    greater than "cutValue"
-            if (_.contains(this.bucketFields, this.getFieldType(index))) {
-                var obs_IDs = this.getObservationsIds(),
-                    from = cutValue,
-                    toIdx = _.indexOf(obs_IDs, cutValue) + 1;
+            // When cutting on bucketed fields, use an interval based on the
+            // observation IDs (i.e. the values themselves):
+            // * from - the passed cutValue
+            // * to - the next largest observation value
+            if (this.isBucketed(index)) {
 
-                return _.isUndefined(obs_IDs[toIdx]) ?
-                    // d.id is the greatest observation value (APIs
-                    // return observations ordered by their ids).
-                    // Build an interval with no "to endpoint"
-                    [from] :
-                    [from, obs_IDs[toIdx]];
-            } else {
-                return [cutValue];
+                // Check that d.id isn't the last observation value
+                var IDs = this._getObservationsIds(),
+                    toIdx = _.indexOf(IDs, cutValue) + 1;
+                if (!_.isUndefined(IDs[toIdx])) {
+                    return [cutValue, IDs[toIdx]];
+                }
             }
+
+            // The cut is either on a non-bucketed field, or on the last
+            // observation value of a bucketed field (so there is no "to" value)
+            return [cutValue];
         },
 
         /**
          * Override of Element.hasCutId().
          * For dimensions whose values could be bucketed, the cut is set on
-         * ranges of values. For these dimensions, this helpers returns true
+         * ranges of values. For these dimensions, this helper returns true
          * only if:
          *  - id is included in the dataset cut on the dimension
          *  - id refers to a "from endpoint" of a range the dimension is cut on
          *
          * @see Element.bucketFields
-         * @see DimensionElement.buildCutArgs()
+         * @see this.buildCutArgs()
          */
         hasCutId: function (id, index) {
             var ret = Element.prototype.hasCutId.apply(this, arguments);
 
-            if (_.contains(this.bucketFields, this.getFieldType(index))) {
+            if (this.isBucketed(index)) {
                 var dimensionId = this._getField(index).get('id');
                 ret = ret && (_.indexOf(this.dataset.cut[dimensionId], id) % 2 === 0);
             }
@@ -205,6 +216,6 @@ function (Backbone, _, Element) {
 
     });
 
-    return DimensionsElement;
+    return DimensionalElement;
 
 });

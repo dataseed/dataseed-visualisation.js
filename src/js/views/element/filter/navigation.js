@@ -1,5 +1,5 @@
-define(['backbone', 'underscore', '../../../lib/format', 'text!../../../templates/element/filter/navigationDimension.html', 'text!../../../templates/element/filter/navigationElement.html', 'bootstrap_collapse'],
-    function (Backbone, _, format, navigationDimensionTemplate, navigationElementTemplate) {
+define(['backbone', 'underscore', 'jquery', '../../../lib/format', 'text!../../../templates/element/filter/navigationDimension.html', 'text!../../../templates/element/filter/navigationElement.html', 'bootstrap_collapse'],
+    function (Backbone, _, $, format, navigationDimensionTemplate, navigationElementTemplate) {
     'use strict';
 
     var NavigationDimensionView = Backbone.View.extend({
@@ -20,7 +20,7 @@ define(['backbone', 'underscore', '../../../lib/format', 'text!../../../template
          * Render a dimension as part of a navigation element
          */
         render: function() {
-            var id = this.dimension.field.id,
+            var id = this.dimension.get('field').id,
                 field = this.dataset.fields.findWhere({id: id}),
                 index = this.index,
                 cut = this.model.getCut(this.index),
@@ -73,6 +73,10 @@ define(['backbone', 'underscore', '../../../lib/format', 'text!../../../template
 
     var NavigationElementView = Backbone.View.extend({
 
+        className: "inner-element",
+
+        height: 400,
+
         events: {
             'click td .dimension-cut input': 'toggleCut',
             'click h3 a': 'toggleAccordion'
@@ -83,8 +87,9 @@ define(['backbone', 'underscore', '../../../lib/format', 'text!../../../template
         initialize: function(options) {
             this.visualisation = options.visualisation;
             this.accordionState = {};
+            this.numberOfObservations = {};
 
-            this.dimensions = _(this.model.get('dimensions')).map(function (dimension, index) {
+            this.dimensions = this.model.dimensions.map(function (dimension, index) {
                 return new NavigationDimensionView({
                     dataset: this.visualisation.dataset,
                     navigation: this,
@@ -106,19 +111,22 @@ define(['backbone', 'underscore', '../../../lib/format', 'text!../../../template
                 $accordion.append(dimension.render().el);
             }, this);
 
-            // Show reset if there is a cut on the filter dimensions
-            for (var i = 0; i < this.model._fields.length; i++) {
-                if(this.model.isCut(i)) {
-                    this.$('.container-icon').addClass('in');
-                    this.$('.remove-filter').tipsy({gravity: 's'});
-                }
-            }
-
             /*
              * Set the style for the filter DOM elements depending on the
              * current cut set.
              */
             var styles = this.visualisation.styles;
+
+            // Only get number of observations once.
+            if (!this._calculated) {
+                this.model.dimensions.each(function(dimension, index) {
+                    var dimensionId = dimension.get('field').id;
+                    // Get the total number of observations for each dimension.
+                    this.numberOfObservations[dimensionId] = this.model.getObservations(dimensionId).length;
+                }, this);
+
+                this._calculated = true;
+            }
 
             // DOM elements related to dimensions not included in the cut
             this.$('.table .dimension-cut .cut-label').css('color', styles.getStyle('featureFill', this.model));
@@ -136,6 +144,10 @@ define(['backbone', 'underscore', '../../../lib/format', 'text!../../../template
             this.$('.table.cut .active .dimension-cut .cut-label').css('color', styles.getStyle('featureFill', this.model));
             this.$('.table.cut .active .cut-totals').css('color', styles.getStyle('featureFill', this.model));
 
+            // Calculate the height of the accordion
+            var accordionHeight = this.height - this.$('h2').outerHeight();
+            $accordion.css('height', accordionHeight);
+
             /*
              * Set the style for the DOM elements that do not visually depend on
              * the cut
@@ -143,14 +155,15 @@ define(['backbone', 'underscore', '../../../lib/format', 'text!../../../template
             this.$('.dimension-filter .num-selected').css('color', styles.getStyle('featureFill', this.model));
 
             // Set the background colour
-            this.$el.css('background-color', this.visualisation.styles.getStyle('background', this.model));
+            this.$el.css('background-color', styles.getStyle('background', this.model));
 
             // Set the element title colour
-            this.$('h2').css('color', this.visualisation.styles.getStyle('heading', this.model));
-            this.$('h3 a').css('color', this.visualisation.styles.getStyle('heading', this.model));
+            this.$('h2').css('color', styles.getStyle('heading', this.model));
+            this.$('h2').css('border-color', styles.getStyle('visualisationBackground', this.model));
+            this.$('h3 a').css('color', styles.getStyle('heading', this.model));
 
             // Set the filter scale text
-            this.$('h3 .filter-info').css('color', this.visualisation.styles.getStyle('scaleFeature', this.model));
+            this.$('h3 .filter-info').css('color', styles.getStyle('scaleFeature', this.model));
 
             return this;
         },
@@ -171,10 +184,13 @@ define(['backbone', 'underscore', '../../../lib/format', 'text!../../../template
             var $cut = $(e.currentTarget),
                 dimension = $cut.parents('.filter-group').data('dimension'),
                 dimensionIndex = $cut.parents('.filter-group').data('dimension-index'),
-                cutData = this.model.buildCutArgs($cut.data('value').value, dimensionIndex);
+                cutData = this.model.buildCutArgs($cut.data('value').value, dimensionIndex),
+                numberOfCuts = this.visualisation.dataset.getCut(dimension).length;
 
             if ($cut.closest('.cut-wrapper').hasClass('active')) {
                 this.visualisation.dataset.removeCut([dimension], [cutData]);
+            } else if (numberOfCuts === this.numberOfObservations[dimension] - 1) {
+                this.visualisation.dataset.removeCut([dimension]);
             } else {
                 this.visualisation.dataset.addCut(_.object([dimension], [cutData]), true);
             }

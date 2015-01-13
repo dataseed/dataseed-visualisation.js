@@ -4,6 +4,8 @@ define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../temp
 
     var TableChartView = Backbone.View.extend({
 
+        className: "inner-element",
+
         events: {
             'click td a': 'featureClick',
             'click .table-sort': 'sortSelect',
@@ -27,30 +29,26 @@ define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../temp
 
         // Chart constants
         margin: 30,
-        contentHeight: 0,
         maxHeight: 400,
 
         render: function() {
             var attrs = _.extend({
                 format: format,
+                cut: this.model.isCut(),
                 values: _.chain(this.model.getObservations())
                     .map(function(value, index) {
                         return {
-                            index: index,
                             id: value.id,
                             total: value.total,
-                            totalFormat: format.num(value.total),
-                            label: this.model.getLabel(value).label
+                            label: this.model.getLabel(value).label,
+                            cut: this.model.hasCutId(value.id)
                         };
                     }, this)
                     .sortBy(this.sortProperty)
                     .value(),
-                field: this.model._getField().get('id'),
-                cut: this.model.getCut(),
                 searchQuery: this.searchQuery,
                 sortProperty: this.sortProperty,
-                sortDirection: this.sortDirection,
-                dataset : this.model.dataset
+                sortDirection: this.sortDirection
             }, this.model.attributes);
 
             // Handle sort direction
@@ -67,30 +65,27 @@ define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../temp
             }
 
             // Set styles (including cut highlighting)
-            this.resetFeatures();
+            this.setFeatures();
 
-            // Fix table columns
+            // Fix table columns' width
             this.$('.data-table tr > td:first-child').width(this.$('.table-chevron-left').width());
 
-            var self = this;
-            this.$('.scroll tr').each(function() {
-                self.contentHeight = $(this).outerHeight() + self.contentHeight;
-            });
-
             // Calculate the table height
-            var $scroll = this.$('.scroll');
             if (!this.height) {
-                var pos = $scroll.position(),
-                    headerHeight = (pos) ? pos.top : 0;
-                this.height = Math.min(headerHeight + this.contentHeight, this.maxHeight) - this.margin;
-                this.tableHeight = (this.height - headerHeight) + this.margin;
+                var header = this.$('.table-search-wrap').outerHeight() +
+                             this.$('.table-sort-wrap').outerHeight(),
+                    content = this.$('.scroll').outerHeight();
+
+                this.height = Math.min(header + content, this.maxHeight);
+                this.tableHeight = this.height - header;
             }
 
-            // Set table height
-            $scroll.css('max-height', this.tableHeight);
+            // Set table height and scroll position
+            this.$('.scroll')
+                .css('max-height', this.tableHeight)
+                .scrollTop(this.scrollLocation);
 
-            // Set the users scroll position
-            $scroll.scrollTop(this.scrollLocation);
+            this.$el.css('min-height', this.$el.height());
 
             return this;
         },
@@ -98,11 +93,15 @@ define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../temp
         /**
          * Set table styles
          */
-        resetFeatures: function() {
+        setFeatures: function() {
             // Generic styles
             var styles = this.model.visualisation.styles;
-            this.$('h2').css('color', styles.getStyle('heading', this.model));
-            this.$el.parent().css('background-color', styles.getStyle('background', this.model));
+            this.$('h2').css({
+                'color': styles.getStyle('heading', this.model),
+                'border-color': styles.getStyle('visualisationBackground', this.model)
+            });
+            this.$('.table th a span').css('color', styles.getStyle('heading', this.model));
+            this.$el.css('background-color', styles.getStyle('background', this.model));
 
             if (this.model.isCut()) {
                 // Cut styles
@@ -123,7 +122,7 @@ define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../temp
             this.scrollLocation = this.$('.scroll').scrollTop();
             var id = $(e.currentTarget).parents('tr').data('value').value;
             if (this.model.featureClick({id: id})) {
-                this.resetFeatures();
+                this.setFeatures();
             }
         },
 
@@ -199,10 +198,12 @@ define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../temp
                         num: matches.length,
                         input: this.searchQuery
                     }));
+
                 } else {
                     // No results
-                    this.$el.append(this.searchFailTemplate);
+                    this.$('.table-search-wrap').append(this.searchFailTemplate);
                     this.$('.sort').hide();
+
                 }
 
             } else {

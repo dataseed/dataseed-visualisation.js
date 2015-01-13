@@ -1,5 +1,5 @@
-define(['backbone', '../models/visualisation/style'],
-        function(Backbone, Style) {
+define(['backbone', 'underscore', '../models/visualisation/style'],
+    function(Backbone, _, Style) {
     'use strict';
 
     var StylesCollection = Backbone.Collection.extend({
@@ -7,11 +7,11 @@ define(['backbone', '../models/visualisation/style'],
         model: Style,
 
         defaults: {
-            'visualisationBackground':  '#f3f3f3',
+            'visualisationBackground':  '#f5f6f9',
             'background':               '#fff',
             'heading':                  '#555',
-            'featureFill':              '#089fd8',
-            'featureFillActive':        '#c8c8c8',
+            'featureFill':              '#4972bd',
+            'featureFillActive':        '#88939d',
             'featureStroke':            '#fff',
             'featureStrokeActive':      '#fff',
             'label':                    '#fff',
@@ -26,11 +26,24 @@ define(['backbone', '../models/visualisation/style'],
 
         initialize: function(models, options) {
             // Set visualisation model
-            this.visualisation = options['visualisation'];
+            this.visualisation = options.visualisation;
         },
 
         /*
-         * Get a CSS style value
+         * Lookup a CSS style value given its identifier
+         */
+        lookupStyle: function (type) {
+            var style = this.get(type);
+            if (!_.isUndefined(style)) {
+                return style.get('value');
+            }
+
+            // Use default style
+            return this.defaults[type];
+        },
+
+        /*
+         * Get the more appropriate CSS style value for a feature
          */
         getStyle: function (type, element, d, i) {
             // If this is a feature, check if it's active
@@ -43,14 +56,7 @@ define(['backbone', '../models/visualisation/style'],
                 );
 
             type += (activeFeature) ? 'Active' : '';
-
-            var style = this.get(type);
-            if (!_.isUndefined(style)) {
-                return style.get('value');
-            }
-
-            // Use default style
-            return this.defaults[type];
+            return this.lookupStyle(type);
         },
 
         /*
@@ -65,7 +71,12 @@ define(['backbone', '../models/visualisation/style'],
                     style.set('value', value);
                 } else {
                     // Create new
-                    this.addStyle(key, value);
+                    this.add({
+                        id: key,
+                        value: value,
+                        dataset: this.visualisation.dataset,
+                        visualisation: this.visualisation
+                    });
                 }
             }, this);
 
@@ -74,23 +85,35 @@ define(['backbone', '../models/visualisation/style'],
         },
 
         /**
-         * Add style model to collection
-         */
-        addStyle: function(id, value) {
-            var style = new Style({
-                'dataset': this.visualisation.dataset,
-                'visualisation': this.visualisation,
-                'id': id,
-                'value': value
-            });
-            this.add(style);
-        },
-
-        /**
          * Save all styles in collection
          */
         save: function(attrs, opts) {
             this.invoke('save', attrs, opts);
+        },
+
+        /**
+         * Get a serialized representation of styles' state
+         */
+        getState: function() {
+            return this.models.map(function(model) {
+                return {id: model.get('id'), value: model.get('value')};
+            });
+        },
+
+        /**
+         * Update styles' state from serialized representations returned by getState()
+         * Set any other styles models back to their default state
+         */
+        setState: function(states) {
+            // Update models
+            this.models.forEach(function(model) {
+                var id = model.get('id'),
+                    state = _.findWhere(states, {id: id});
+                model.set('value', (state) ? state.value : this.defaults[id]);
+            }, this);
+
+            // Trigger render
+            this.trigger('ready');
         }
 
     });

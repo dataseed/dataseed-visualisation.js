@@ -1,5 +1,5 @@
-define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element/dimensions', 'views/element/d3/bar'],
-    function($, Dataset, Connection, DimensionsElement, BarChartView) {
+define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element/dimensionalElement', 'views/element/d3/dc/bar'],
+    function($, Dataset, Connection, DimensionalElement, BarChartView) {
     /* global describe, beforeEach, expect, it */
 
     describe('A bar chart view', function() {
@@ -19,23 +19,23 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
                 });
             this.dataset.reset();
 
-            this.element = new DimensionsElement({
-                    id: 'test03',
-                    dataset: this.dataset,
-                    visualisation: this.dataset.visualisation,
-                    type: 'bar',
-                    width: 3,
-                    display: true,
-                    dimensions: [{
-                        field: {
-                            id: 'test04'
-                        }
-                    }],
-                    measure: {
-                        id: 'test05'
-                    },
-                    label: 'Test Bar Chart'
-                });
+            this.element = new DimensionalElement({
+                id: 'test03',
+                dataset: this.dataset,
+                visualisation: this.dataset.visualisation,
+                type: 'bar',
+                width: 3,
+                display: true,
+                dimensions: [{
+                    field: {
+                        id: 'test04'
+                    }
+                }],
+                measure: {
+                    id: 'test05'
+                },
+                label: 'Test Bar Chart'
+            });
 
             this.view = new BarChartView({
                     parent: this.$el,
@@ -96,12 +96,12 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
             this.view.render();
 
             expect(this.view.el).toContainElement('svg');
-            expect(this.view.el).toContainElement('rect');
-            expect(this.view.el).toContainElement('text.chartLabel');
+            expect(this.view.el).toContainElement('g.row rect');
+            expect(this.view.el).toContainElement('g.row text.row');
             expect(this.view.el).toContainElement('text.scaleLabel');
 
             expect(this.view.$el.find('rect').length).toEqual(2);
-            expect(this.view.$el.find('text.chartLabel').length).toEqual(2);
+            expect(this.view.$el.find('text.row').length).toEqual(2);
 
             expect(this.view.el).toContainText('Test Bar Chart');
             expect(this.view.el).toContainText('Test Label 01');

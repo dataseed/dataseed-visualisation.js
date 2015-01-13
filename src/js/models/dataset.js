@@ -27,8 +27,7 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
                 });
 
             } else {
-                console.error('No visualisation model supplied');
-                return;
+                throw new Error('No visualisation model supplied');
             }
 
             // Initialise cut

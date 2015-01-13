@@ -14,14 +14,20 @@ define(['./chart', 'underscore', 'd3', 'topojson', '../../../lib/format'],
         render: function() {
             // Setup chart
             ChartView.prototype.render.apply(this, arguments);
+            this.$container.empty();
 
             // Square chart
             this.height = this.width;
 
-            // Setup GeoJSON, projection, bounds and scaling factor
+            // Get GeoJSON
             var values = this.model.getObservations(),
-                gjson = this.getGeoJSON(),
-                center = d3.geo.centroid(gjson),
+                gjson = this.getGeoJSON();
+            if (!gjson) {
+                return this;
+            }
+
+            // Setup projection, bounds and scaling factor
+            var center = d3.geo.centroid(gjson),
                 mheight = this.height - (this.margin * 2),
                 projection = d3.geo.mercator()
                     .scale(this.scaleFactor)
@@ -61,7 +67,7 @@ define(['./chart', 'underscore', 'd3', 'topojson', '../../../lib/format'],
                 ]);
 
             // Add SVG
-            var chart = d3.select(this.chartContainerEl)
+            var chart = d3.select(this.container)
                 .append('svg')
                     .attr('width', this.width)
                     .attr('class', 'geoChart')
@@ -137,6 +143,9 @@ define(['./chart', 'underscore', 'd3', 'topojson', '../../../lib/format'],
         getGeoJSON: function() {
             if (!this.gjson) {
                 var tjson = this.model.getDimensionData('geo');
+                if (!tjson) {
+                    return null;
+                }
                 this.gjson = topojson.feature(tjson, tjson.objects.data);
             }
             return this.gjson;
@@ -145,8 +154,8 @@ define(['./chart', 'underscore', 'd3', 'topojson', '../../../lib/format'],
         /**
          * Overriden: Reset all chart features
          */
-        resetFeatures: function() {
-            d3.select(this.chartContainerEl)
+        setFeatures: function() {
+            d3.select(this.container)
                 .select('svg')
                     .selectAll('g path')
                         .style('fill', _.bind(this.featureFill, this));

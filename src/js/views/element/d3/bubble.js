@@ -14,6 +14,7 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
 
             // Setup chart
             ChartView.prototype.render.apply(this, arguments);
+            this.$container.empty();
 
             // Get observations
             var values = this.model.getObservations();
@@ -27,7 +28,7 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
             this.height = this.width;
 
             // Add chart
-            var chart = d3.select(this.chartContainerEl).append('svg')
+            var chart = d3.select(this.container).append('svg')
                 .attr('width', this.width)
                 .attr('class', 'bubbleChart')
                 .classed('inactive', _.bind(this.model.isCut, this.model)),

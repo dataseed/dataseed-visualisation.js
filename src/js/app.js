@@ -7,7 +7,7 @@ define(['module', 'jquery', 'underscore', 'backbone', './lib/sync', './views/dat
 
     // Get base URL
     var config = module.config(),
-        base_url = (_.isUndefined(config['BASE_URL'])) ? 'https://getdataseed.com' : config['BASE_URL'];
+        base_url = (_.isUndefined(config['BASE_URL'])) ? 'https://dataseedapp.com' : config['BASE_URL'];
 
     // Setup external API access
     var _ajax = $.ajax;

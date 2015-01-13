@@ -1,5 +1,5 @@
-define(['jquery', 'models/dataset', 'models/visualisation/element/dimensions', 'views/element'],
-    function($, Dataset, DimensionsElement, ElementView) {
+define(['jquery', 'models/dataset', 'models/visualisation/element/dimensionalElement', 'views/element'],
+    function($, Dataset, DimensionalElement, ElementView) {
     /* global describe, beforeEach, expect, it */
 
     describe('An element view', function() {
@@ -17,7 +17,7 @@ define(['jquery', 'models/dataset', 'models/visualisation/element/dimensions', '
                 });
             this.dataset.reset();
 
-            this.element = new DimensionsElement({
+            this.element = new DimensionalElement({
                     id: 'test03',
                     dataset: this.dataset,
                     visualisation: this.dataset.visualisation,
@@ -84,7 +84,7 @@ define(['jquery', 'models/dataset', 'models/visualisation/element/dimensions', '
             this.element._connections.dimensions.loaded = 1;
             this.view.render();
 
-            expect(this.view.el).toBeMatchedBy('.element.barElement.span9');
+            expect(this.view.el).toBeMatchedBy('.element.barElement.col-sm-9');
         });
 
     });

@@ -1,6 +1,6 @@
 // This view renders the base visualisation
-define(['backbone', 'underscore', '../models/visualisation', './element', 'text!../templates/visualisation.html'],
-    function(Backbone, _, Visualisation, ElementView, visualisationEmbedTemplate) {
+define(['backbone', 'underscore', 'jquery', '../models/visualisation', './element', 'text!../templates/visualisation.html'],
+    function(Backbone, _, $, Visualisation, ElementView, visualisationEmbedTemplate) {
     'use strict';
 
     var VisualisationEmbedView = Backbone.View.extend({
@@ -12,15 +12,18 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
             'click .reset-filters': 'resetFilters'
         },
 
+        elementViewType: ElementView,
         initialize: function(options) {
             // Views for visualisation elements
-            this.views = {};
+            this._views = {};
 
             // Element models event handlers
             this.model.elements.bind('add', this.createElement, this);
             this.model.elements.bind('remove', this.removeElement, this);
             this.model.elements.bind('element:ready', this.renderElement, this);
+            this.model.elements.bind('element:needResize', this.needResizeElement, this);
             this.model.elements.bind('element:resize', this.resizeElement, this);
+            this.model.elements.bind('element:scrollTo', this.scrollToElement, this);
             this.model.elements.bind('reset', this.resetElements, this);
 
             // Styles collection event hander
@@ -38,9 +41,9 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
                 this.templateDefaults
             )));
 
+
             // Render visualisation elements
             this.model.reset();
-            this.resetElements();
 
             // Set default visualisation background colour
             this.updateColour();
@@ -72,27 +75,26 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
          * Create new element view
          */
         createElement: function(element) {
-            var id = element.get('id');
-            this.views[id] = new ElementView({
+            this._views[element.cid] = new this.elementViewType({
                 model: element,
                 visualisation: this.model
             });
+            this.addElement(element);
         },
 
         /**
          * Add and render element view
          */
         addElement: function(element) {
-            this.$('.elements').append(this.views[element.id].$el);
+            this._views[element.cid].$el.appendTo(this.$('.elements'));
         },
 
         /**
          * An element has been removed from the collection
          */
         removeElement: function(element) {
-            var id = element.get('id');
-            this.views[id].remove();
-            delete this.views[id];
+            this._views[element.cid].remove();
+            delete this._views[element.cid];
         },
 
         /**
@@ -103,14 +105,38 @@ define(['backbone', 'underscore', '../models/visualisation', './element', 'text!
          * to be rendered (that is, all its connections have been synched)
          */
         renderElement: function(element) {
-            this.views[element.id].render();
+            this._views[element.cid].render();
+        },
+
+        needResizeElement: function(element) {
+            this._views[element.cid].needResize();
         },
 
         /**
          * Resize and re-render an individual element.
          */
         resizeElement: function(element) {
-            this.views[element.id].resize();
+            this._views[element.cid].resize();
+        },
+
+        /**
+         * Scroll page to an element
+         */
+        scrollToElement: function(element) {
+            // Get element coordinates
+            var $el = this._views[element.cid].$el,
+                elTop = $el.offset().top,
+                elBottom = elTop + $el.outerHeight(),
+
+                // Get viewport coordinates
+                $win = $(window),
+                viewportTop = $win.scrollTop(),
+                viewportBottom = viewportTop + $win.height();
+
+            // If the element isn't visible then scroll the document
+            if ((elTop > viewportBottom) || (elBottom < viewportTop)) {
+                $('html, body').animate({scrollTop: elTop}, 1000);
+            }
         },
 
         /**

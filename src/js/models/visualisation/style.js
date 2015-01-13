@@ -5,13 +5,15 @@ define(['backbone', 'underscore'],
     var Style = Backbone.Model.extend({
 
         url: function() {
-            return '/api/datasets/' + this.dataset.get('id') + '/visualisations/' + this.visualisation.get('id') + '/styles/' + this.get('id');
+            return '/api/datasets/' + this.dataset.get('id') +
+                   '/visualisations/' + this.visualisation.get('id') +
+                   '/styles/' + this.get('id');
         },
 
         initialize: function(options) {
             // Set dataset and visualisation models
-            this.dataset = options['dataset'];
-            this.visualisation = options['visualisation'];
+            this.dataset = options.dataset;
+            this.visualisation = options.visualisation;
         }
 
     });

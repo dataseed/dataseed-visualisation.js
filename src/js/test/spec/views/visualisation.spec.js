@@ -21,7 +21,6 @@ define(['jquery', 'models/dataset', 'views/visualisation'],
             vis.render();
 
             expect(vis.el).toContainElement('div.visualisation');
-            expect(vis.el).toContainElement('a.reset-filters');
         });
 
     });

@@ -21,8 +21,7 @@ define(['backbone', 'underscore', '../models/dataset', '../models/datasetSinglet
 
             // No data or ID supplied, error
             } else {
-                console.error('No dataset model supplied');
-                return;
+                throw new Error('No dataset model supplied');
             }
         },
 
