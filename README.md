@@ -46,9 +46,11 @@ A build process is provided that will compile and minify the JS and LESS in /src
 1. ```git clone git@github.com:dataseed/dataseed-visualisation.git```
 2. ```cd dataseed-visualisation```
 3. ```npm install```
-4. ```npm install -g bower```
+4. ```npm install -g bower gulp```
 5. ```bower install```
 6. ```gulp```
+7. ```gulp serve```
+8. Load in a browser:  ```http://localhost:8080```
 
 
 ## Developer API
