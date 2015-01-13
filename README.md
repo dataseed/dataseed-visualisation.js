@@ -50,7 +50,7 @@ A build process is provided that will compile and minify the JS and LESS in /src
 5. ```bower install```
 6. ```gulp```
 7. ```gulp serve```
-8. Load in a browser:  ```http://localhost:8080```
+8. Load in a browser: [http://localhost:8080](http://localhost:8080)
 
 
 ## Developer API
