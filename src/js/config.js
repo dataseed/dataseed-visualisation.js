@@ -14,6 +14,9 @@ require.config({
         'd3': {
             exports: 'd3'
         },
+        'crossfilter': {
+            exports: 'crossfilter'
+        },
         'topojson': {
             exports: 'topojson'
         },
@@ -72,6 +75,10 @@ require.config({
         // D3
         d3: 'components/d3/d3',
 
+        // DC.js
+        dc: 'components/dc.js/dc',
+        crossfilter: 'components/crossfilter/crossfilter',
+
         // TopoJSON
         topojson: 'components/topojson/topojson',
 
@@ -83,25 +90,16 @@ require.config({
         tipsy: 'components/tipsy/src/javascripts/jquery.tipsy',
 
         // Bootstrap JS
-        bootstrap_transition: 'components/bootstrap/js/bootstrap-transition',
-        bootstrap_collapse: 'components/bootstrap/js/bootstrap-collapse',
-        bootstrap_dropdown: 'components/bootstrap/js/bootstrap-dropdown',
-        bootstrap_modal: 'components/bootstrap/js/bootstrap-modal',
-        bootstrap_alert: 'components/bootstrap/js/bootstrap-alert',
+        bootstrap_transition: 'components/bootstrap/js/transition',
+        bootstrap_collapse: 'components/bootstrap/js/collapse',
+        bootstrap_dropdown: 'components/bootstrap/js/dropdown',
+        bootstrap_modal: 'components/bootstrap/js/modal',
+        bootstrap_alert: 'components/bootstrap/js/alert',
 
         // Spinner
         spin: 'components/spin/spin',
 
         // Markdown.js
-        markdown: 'components/markdown/lib/markdown',
-
-        outlayer: 'components/outlayer',
-        eventie: 'components/eventie',
-        'doc-ready': 'components/doc-ready',
-        eventEmitter: 'components/eventEmitter',
-        'get-size': 'components/get-size',
-        'get-style-property': 'components/get-style-property',
-        'matches-selector': 'components/matches-selector'
-
+        markdown: 'components/markdown/lib/markdown'
     }
 });

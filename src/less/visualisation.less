@@ -1,243 +1,156 @@
-// VISUALISATION PAGE
-// --------------------------------------------------
-
-// ICONS
-// --------------------------------------------------
-
-.container-icon {
-    display: block;
-    width: 18px;
-    height: 19px;
-    padding: 3px 0 0 4px;
-    .border-radius(12px);
-    background: @dsBlue;
-
-    .icon-refresh {
-        background-position: -240px -25px;
-        -moz-transform: rotate(145deg) scaleX(-1);
-        -o-transform: rotate(145deg) scaleX(-1);
-        -webkit-transform: rotate(145deg) scaleX(-1);
-        -ms-transform: rotate(145deg) scaleX(-1);
-        transform: rotate(145deg) scaleX(-1);
-        filter: FlipH;
-        -ms-filter: "FlipH";
-    }
-}
-
-.container-icon:hover {
-    background: @dsMediumGrey;
-}
-
 // VISUALISATION
 // --------------------------------------------------
-
 .visualisation {
-    background-color: #f3f3f3;
+    padding-bottom: 20px;
 
-    .container {
-        position: relative;
+    > .container {
+        padding-top: 20px;
     }
 }
 
-// VISUALISATION HEADER
-// --------------------------------------------------
-
-/*Styles for only for mortality dataset*/
-div#mortality {
-    /*Blue lines*/
-    .summary-text.full {
-        background: transparent;
-        background-image: url('@{dsBaseUrl}img/blue-lines.png');
-        background-repeat: no-repeat;
-        background-position: center bottom;
-        background-size: 700px;
-    }
-
-    .summary-text {
-        padding: 25px 0 32px 0;
-        h1 {
-            border: 1px solid #6bc5e8;
-        }
-    }
-
-    article.summaryElement {
-        margin-bottom: 0;
-    }
-}
-
-article.summaryElement {
-    background-color: transparent;
-}
-
-.sub-heading {
-    background: @grayDarker;
-    .clearfix();
-
-    h1 {
-        font-size: 30px;
-        margin: 30px 0 0 0;
-        line-height: 1em;
-    }
-
-    h2 {
-        font-size: 14px;
-        margin-bottom: 15px;
-        float: left;
-    }
-
+/*Embedded Message*/
+.power-message {
     p {
         float: right;
-        margin-right: 10px;
+        margin-top: 30px;
+        font-size: 13px;
 
-        /*Help icon (i)*/
         a {
-            display: block;
-            width: 18px;
-            height: 18px;
-            padding: 4px 0 0 4px;
-            .border-radius(12px);
-            background-color: @white;
+            font-size: 13px;
+            color: @dsLighterBlue;
         }
     }
-
-    .icon-info-sign {
-        background-position: -120px -97px;
-        vertical-align: baseline;
-    }
 }
 
-.summary-text {
-    h1 {
-        margin: 0;
-        padding: 17px 0 17px 10px;
-        font-size: 21px;
-        font-weight: normal;
-        text-align: center;
-        color: @headingsColor;
-        background-color: @white;
-    }
-}
-
-.global-actions {
-    position: absolute;
-    top: 0;
-    right: 10px;
-    padding-top: 10px;
-    z-index: 1;
-
-    a {
-        font-weight: bold;
-        color: @blue;
-
-        .container-icon {
-            float: right;
-            margin-left: 10px;
-
-            i {
-                margin-left: -1px;
-                margin-top: -1px;
-
-            }
-        }
-
-    }
-
-    a:hover {
-        text-decoration: none;
-    }
-
-}
-
-
-// CHART ELEMENTS
+// ELEMENTS
 // --------------------------------------------------
-
-.elements {
-    margin-top: 40px;
+article.highlight {
+    z-index: 1050; /* Just on top of modal backdrop */
 }
 
-.element {
-    background-color: @white;
-    font-size: 11px;
-    margin-bottom: 10px;
+// SUMMARY ELEMENT
+// --------------------------------------------------
+.summaryElement {
+    margin: 10px 0;
+    height: 50px;
+
+    h1 {
+        padding: 0 10px;
+        text-align: center;
+        font-size: 16px;
+        margin: 0;
+        width: 100%;
+        // Vertically centres text within element. Moves text 50% from top.
+        position: absolute;
+        top: 50%;
+        .translate(0, -50%);
+    }
+
+    .inner-element {
+        position: relative;
+        height: 100%;
+        .border-radius(3px);
+    }
+
+    .actions {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        z-index: 1;
+    }
+}
+
+// ELEMENT CHART
+// --------------------------------------------------
+.inner-element {
     position: relative;
-    overflow: auto;
+
+    .edit-actions {
+        display: none;
+        height: 30px;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.25);
+        position: absolute;
+        bottom: 0;
+        .border-bottom-radius(3px);
+
+        .show-modal {
+            margin-left: 15px;
+        }
+
+        i {
+            margin-top: 7px;
+            color: white;
+        }
+    }
+
+    .border-radius(3px);
+
+    .actions {
+        position: absolute;
+        right: 15px;
+        top: 10px;
+    }
 
     h2 {
-        font-size: 18px;
-        font-weight: normal;
-        margin: 0px 10px 20px 10px;
-        color: @dsMediumGrey;
-        padding-top: 10px;
+        padding: 10px 30px 10px 10px;
+        font-size: 16px;
+        margin-bottom: 15px;
+        margin-top: 0;
+        border-bottom: 1px solid @dsInputBorder;
+        word-break: break-all;
     }
 
-    /*Hiding the reset button*/
-    .container-icon.fade.in {
-        display: block;
+    .glyphicon-repeat {
+        font-size: 14px;
+        .scale(-1, 1);
     }
 
-    .container-icon.fade {
+    g {
+        cursor: pointer;
+    }
+
+    .chart-container {
+        font-size: 0;
+        line-height: normal;
+
+        svg {
+            font-size: 12px;
+        }
+    }
+}
+
+.remove-filter {
+    .container-icon {
         display: none;
     }
-
-    /*Refresh icon*/
-    .icon-refresh {
-        vertical-align: baseline;
-        margin-top: 2px;
-        margin-left: -1px;
-    }
-
 }
 
-.actions {
-    float: right;
-    margin: 8px 10px 0 0;
-
-    a .container-icon {
-        float: left;
-        width: 18px;
-        height: 21px;
-        padding: 1px 0 0 4px;
-        margin-left: 2px;
-    }
-
-    .switcher {
-        float: left;
-        margin-left: 2px;
-
-        .dropdown-toggle {
-            font-size: 11px;
-            color: @black;
-        }
-
-        a {
-            display: block;
-            font-family: @sansFontFamily;
-            font-size: 11px;
-        }
-
-    }
-
+.remove-filter:hover {
+    text-decoration: none;
 }
 
-// Making charts fit in containers
-svg {
-    width: 100%;
-}
-
-rect,
-circle,
-path,
-.chartLabel {
-    cursor: pointer;
-}
-
-rect.scale {
-    cursor: auto;
+// DC CHART ELEMENTS
+// --------------------------------------------------
+.lineElement .inner-element,
+.barElement .inner-element {
+    margin-bottom: 10px;
 }
 
 // TABLE CHART
 // --------------------------------------------------
+
+.tableElement {
+    overflow: hidden;
+
+    .scroll {
+        overflow: auto;
+    }
+
+    th {
+        word-break: break-all;
+    }
+}
 
 // Table search bar
 .table-search-wrap {
@@ -272,24 +185,15 @@ input.table-search {
     height: 30px;
     padding-left: 30px;
     padding-right: 30px;
+    margin-bottom: 15px;
 
-    .gradient(#f2f2f2, white);
     .border-radius(0px);
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
+    .box-sizing("border-box");
 }
 
-.no-result,
-.found {
-    text-align: center;
-    margin: 5px 0 10px 0;
-}
-
-// no result text
 .no-result {
     font-size: 15px;
-    padding: 0 30px;
+    padding: 0 30px 30px 30px;
 }
 
 // found text
@@ -297,19 +201,18 @@ input.table-search {
     font-size: 14px;
 }
 
-.table-sort:hover {
-    color: @dsMediumGrey;
+.table-sort-wrap {
+    margin-bottom: 0;
 }
+
 
 // Sort chevron
 i.icon-sort {
+    display: inline-block;
     .rotate(90deg);
     width: 14px;
     height: 14px;
-    background-image: url('@{dsBaseUrl}img/grey-arrow.gif');
-    background-repeat: no-repeat;
-    background-size: 7px;
-    background-position: 4px center;
+    background: url('@{dsBaseUrl}img/grey-arrow.gif') 4px center / 7px no-repeat;
 }
 
 //chevron up
@@ -319,251 +222,115 @@ i.icon-sort {
     }
 }
 
-.tableElement {
-    //the table header, sort
-    th {
-        padding: 0;
-        border: none;
-
-        //hide all chevron
-        a {
-            display: block;
-            i {
-                visibility: hidden;
-            }
-        }
-
-        //show chevron on hover/active
-        a:hover,
-        a.active {
-            i {
-                visibility: visible;
-            }
-        }
-
-        /* Chevron title color */
-        span {
-            color: @dsMediumGrey;
-            font-weight: 400;
-            text-decoration: underline;
-        }
-
-        span:hover {
-            text-decoration: none;
-        }
-    }
-
-    .table {
+// NAVIGATION CHART
+// --------------------------------------------------
+.navigationElement {
+    h2 {
         margin-bottom: 0;
     }
+    .accordion {
+        overflow-y: auto;
 
-    th:hover {
-        background-color: #c8c8c8;
-    }
-
-    tr:hover {
-        cursor: pointer;
-        background-color: @tableBackgroundHover;
-    }
-
-    td {
-        padding: 0;
-        overflow: hidden;
-        border: none;
-
-        a {
-            display: block;
-            padding: 5px 5px 5px 17px;
+        h3 {
+            padding: 0 10px;
         }
 
-        a:hover {
-            text-decoration: none;
-        }
-    }
 
-    /* Table td section */
-    .scroll {
-        overflow: auto;
-    }
-}
-
-// LINE CHART
-// --------------------------------------------------
-
-.axis path,
-.axis line {
-  shape-rendering: crispEdges;
-}
-
-// FACETED NAVIGATION
-// --------------------------------------------------
-
-.navigationElement {
-
-    h3 {
-        margin: 0;
-        font-size: 13px;
-
-        a {
-            display: block;
-            position: relative;
-            padding: 15px 15px 15px 13px;
-            color: @dsMediumGrey;
-            text-decoration: none;
-            outline: 0;
-
-            i {
-                background-image: url('@{dsBaseUrl}img/grey-arrow.gif');
-                background-repeat: no-repeat;
-                background-position: center;
-                background-size: 8px;
-                display: inline-block;
-                width: 10px;
-                height: 10px;
-                .rotate(90deg);
-            }
-        }
-
-        .collapsed i {
-            .rotate(0deg);
-        }
-
-        .filter-info {
-            font-weight: normal;
-            margin-left: 5px;
-        }
-
-    }
-
-    .table {
         td {
-            border: none;
-            padding: 0 20px;
+            border-top: 0;
+            vertical-align: middle;
+            padding: 0 8px;
 
-            .dimension-cut {
-                span.check-btn {
-                    width: 13px;
-                    height: 13px;
-                    display: inline-block;
-                    background: none;
-                    border: 1px solid @dsGrey;
-                }
-
-                span.cut-label{
-                    position: relative;
-                    bottom: 2px;
-                }
-
-                input[type="checkbox"] {
-                    display: none;
-                }
-
-                input:checked + span.check-btn {
-                    background: url('@{dsBaseUrl}img/checkbox-tick-white.gif');
-                    background-color: @dsBlue;
-                    background-repeat: no-repeat;
-                    background-position: center;
-                    background-size: 9px;
-                }
-
+            input {
+                height: auto;
             }
         }
-
-        .right {
-            text-align: right;
-        }
     }
-
 }
 
 // TOOLTIPS
 // --------------------------------------------------
 
+// Base Tipsy Styles
 .tipsy {
+    font-size: 10px;
     position: absolute;
-    font-size: 13px;
-    font-weight: bold;
     padding: 5px;
     z-index: 100000;
 }
 
 .tipsy-inner {
-    background-color: @black;
-    color: @white;
+    background-color: #000;
+    color: #FFF;
+    max-width: 200px;
+    padding: 5px 8px 4px 8px;
+    text-align: center;
+}
+
+/* Rounded corners */
+.tipsy-inner {
+    .border-radius(3px);
+}
+
+.tipsy-arrow {
+    position: absolute;
+    width: 0;
+    height: 0;
+    line-height: 0;
+    border: 5px dashed #000;
+}
+
+/* Rules to colour arrows */
+.tipsy-arrow-s {
+    border-top-color: #000;
+}
+.tipsy-s .tipsy-arrow {
+    bottom: 0;
+    left: 50%;
+    margin-left: -5px;
+    border-top-style: solid;
+    border-bottom: none;
+    border-left-color: transparent;
+    border-right-color: transparent;
+}
+
+.tipsy-arrow-w {
+    border-right-color: #000;
+}
+
+.tipsy-w {
+    margin-left: 10px;
+}
+.tipsy-w .tipsy-arrow {
+    left: 0;
+    top: 50%;
+    margin-top: -5px;
+    border-right-style: solid;
+    border-left: none;
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+}
+// Custom Tipsy Styles
+.tipsy {
+    position: absolute;
+    font-size: 13px;
+    padding: 5px;
+    z-index: 100000;
+}
+
+.tipsy-inner {
+    background-color: @dsTooltip;
+    color: white;
     max-width: 200px;
     padding: 5px 8px;
     text-align: left;
 }
 
-// DATASET INFO
-// --------------------------------------------------
-#dataset-info {
-    margin: 0 0 40px 0;
-    padding-top: 5px;
-
-    article {
-        background-color: #dfdede;
-        margin-bottom: 4px;
-    }
-
-    h1 {
-        margin: 0;
-        font-size: 13px;
-
-        a {
-            display: block;
-            position: relative;
-            padding: 15px;
-            color: @black;
-            text-decoration: none;
-
-            span {
-                display: block;
-                position: absolute;
-                top: 0;
-                right: 0;
-                margin: 17px 25px 0 0;
-                width: 34px;
-                height: 16px;
-                background: url('@{dsBaseUrl}img/arrows.png') no-repeat 0 0;
-            }
-
-        }
-
-    }
-
-    .info-body {
-        overflow: hidden;
-        padding: 0 15px;
-
-        h2 {
-            margin: 0;
-            color: #525252;
-            font-size: 13px;
-        }
-
-        p {
-            margin-top: 0;
-            font-size: 13px;
-        }
-
-    }
-
+.tipsy-arrow-s {
+    border-top-color: @dsTooltip;
 }
 
-
-// HELP
-// --------------------------------------------------
-.modal h3 {
-    margin: 5px 0;
-    font-size: 17px;
-}
-
-.modal.fade {
-  z-index:-1;
-}
-
-.modal.fade.in {
-  z-index:1050;
+.tipsy-arrow-w {
+    border-right-color: @dsTooltip;
 }
 

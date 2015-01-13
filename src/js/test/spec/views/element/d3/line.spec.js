@@ -1,5 +1,5 @@
-define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element/dimensions', 'views/element/d3/line'],
-    function($, Dataset, Connection, DimensionsElement, LineChartView) {
+define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element/dimensionalElement', 'views/element/d3/dc/line'],
+    function($, Dataset, Connection, DimensionalElement, LineChartView) {
     /* global describe, beforeEach, expect, it */
 
     describe('A line chart view', function() {
@@ -19,7 +19,7 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
                 });
             this.dataset.reset();
 
-            this.element = new DimensionsElement({
+            this.element = new DimensionalElement({
                     id: 'test03',
                     dataset: this.dataset,
                     visualisation: this.dataset.visualisation,

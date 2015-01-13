@@ -1,8 +1,10 @@
-define(['backbone', 'underscore', 'd3', '../../../lib/format', 'text!../../../templates/element/chart.html', 'tipsy'],
-    function(Backbone, _, d3, format, chartTemplate) {
+define(['backbone', 'underscore', 'jquery', 'd3', '../../../lib/format', 'text!../../../templates/element/chart.html', 'tipsy'],
+    function(Backbone, _, $, d3, format, chartTemplate) {
     'use strict';
 
     var ChartView = Backbone.View.extend({
+
+        className: 'inner-element',
 
         template: _.template(chartTemplate),
 
@@ -16,39 +18,55 @@ define(['backbone', 'underscore', 'd3', '../../../lib/format', 'text!../../../te
 
             // Re-render the chart on resize (at most, every 300 milliseconds)
             $(window).resize(_.throttle(_.bind(this.render, this), 300));
+
+            this.listenTo(this.model, 'change:label', this.updateChartLabel);
         },
 
         /**
          * Default render functionality
          */
         render: function() {
-            // Render template
-            this.$el.html(this.template(this.model.attributes));
+            // Render template only if it's the first time this view is being
+            // rendered
+            if(!this.rendered){
+                this.$el.html(this.template(this.model.attributes));
+
+                this.$container = this.$('.chart-container');
+
+                // Keep reference to container DOM element for d3
+                this.container = this.$container.get(0);
+                this.rendered = true;
+            }
 
             // Set custom colours
-            this.$parent.css('background-color', this.model.visualisation.styles.getStyle('background'));
-            this.$('h2').css('color', this.model.visualisation.styles.getStyle('heading'));
+            var styles = this.model.visualisation.styles;
+            this.$el.css('background-color', styles.getStyle('background'));
+            this.$('h2').css({
+                'color': styles.getStyle('heading'),
+                'border-color': styles.getStyle('visualisationBackground')
+            });
 
             // Get parent element width
             this.width = this.$parent.width();
 
-            // Kepp reference to container DOM element for d3
-            this.chartContainerEl = this.$('.chart-container').get(0);
             return this;
         },
 
+        updateChartLabel: function(){
+            this.$parent.find('h2').text(this.model.get('label'));
+        },
 
         /**
-         * Reset all chart features
+         * Set all chart features
          */
-        resetFeatures: function() {
+        setFeatures: function() {
             // Set chart status
-            d3.select(this.chartContainerEl)
+            d3.select(this.container)
                 .select('svg')
                     .classed('inactive', _.bind(this.model.isCut, this.model));
 
             // Set feature statuses
-            d3.select(this.chartContainerEl)
+            d3.select(this.container)
                 .select('svg')
                     .selectAll('g rect, .node circle')
                         .style('fill', this.getStyle('featureFill'))
@@ -60,8 +78,23 @@ define(['backbone', 'underscore', 'd3', '../../../lib/format', 'text!../../../te
          */
         featureClick: function(d, i) {
             if (this.model.featureClick(d, i)) {
-                this.resetFeatures();
+                this.setFeatures();
             }
+        },
+
+        /**
+         * Helper function to calculate a string's width in pixels
+         */
+        getStringWidth: function(str) {
+            return this.getStringSize(str).width;
+        },
+
+        /**
+         * Returns true if the feature related to d is not big enough to
+         * contain the label
+         */
+        ignoreLabel: function(d, i, label){
+            return this.getStringWidth(label) > this.getFeatureWidth(d, i);
         },
 
         /**
@@ -78,7 +111,7 @@ define(['backbone', 'underscore', 'd3', '../../../lib/format', 'text!../../../te
             label = (_.isUndefined(label.short_label)) ? label.label : label.short_label;
 
             // Ignore labels that are longer than the diameter of the bubble
-            if (this.getStringWidth(label) > this.getFeatureWidth(d, i)) {
+            if (this.ignoreLabel(d, i, label)) {
                 return;
             }
 
@@ -86,16 +119,11 @@ define(['backbone', 'underscore', 'd3', '../../../lib/format', 'text!../../../te
         },
 
         /**
-         * Helper function to calculate a string's width in pixels
+         * Helper function to calculate a string's width and height in pixels
          */
-        getStringWidth: function(str) {
-            var html = $('<span>' + str + '</span>')
-                .css('font-size', this.$el.css('font-size'))
-                .hide()
-                .prependTo('body');
-            var width = html.width();
-            html.remove();
-            return width;
+        getStringSize: function (str) {
+            var fontSize = parseFloat(this.$el.css('font-size'));
+            return {height: fontSize, width: str.length * fontSize / 2};
         },
 
         /**

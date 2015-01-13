@@ -24,17 +24,17 @@ define(['underscore', 'd3'], function(_, d3) {
         /**
          * Format a number with commas
          */
-        numInteger: d3.format('0,'),
+        numInteger: d3.format('0'),
 
         /**
          * Format a number with commas to 2 d.p.
          */
-        numFloat: d3.format('0,.2f'),
+        numFloat: d3.format('0.2f'),
 
         /**
          * Format a number with an SI prefix (e.g. k, M)
          */
-        numScale: d3.format(',s'),
+        numScale: d3.format('s'),
 
         /**
          * Format a timestamp using the shortest date format

@@ -1,59 +1,53 @@
-// TWITTER BOOTSTRAP
+// TWITTER BOOTSTRAP BASE STYLES
 // --------------------------------------------------
 
-// CSS Reset
-@import "../js/components/bootstrap/less/reset.less";
-
 // Core variables and mixins
-@import "variables.less"; // Modify this for custom colors, font-sizes, etc
-@import "mixins.less"; // Custom mixins, modify for custom less mixins
-@import "../js/components/bootstrap/less/mixins.less";
+@import "../js/components/bootstrap/less/mixins/vendor-prefixes.less";
+@import "../js/components/bootstrap/less/theme.less";
+
+// CSS Reset
+@import "../js/components/bootstrap/less/normalize.less";
+
+// Iconography
+@import "../js/components/bootstrap/less/glyphicons.less";
+
+// TWITTER BOOTSTRAP
+// --------------------------------------------------
 
 // Grid system and page structure
 @import "../js/components/bootstrap/less/scaffolding.less";
 @import "../js/components/bootstrap/less/grid.less";
-@import "../js/components/bootstrap/less/layouts.less";
 
-// Icons
-@import "../js/components/bootstrap/less/sprites.less";
-
-// Dropdowns
-@import "../js/components/bootstrap/less/dropdowns.less";
+// Buttons
+@import "../js/components/bootstrap/less/buttons.less";
 
 // Animations
 @import "../js/components/bootstrap/less/component-animations.less";
 
+// Dropdowns
+@import "../js/components/bootstrap/less/dropdowns.less";
+
+// Button groups
+@import "../js/components/bootstrap/less/button-groups.less";
+
 // Close buttons
 @import "../js/components/bootstrap/less/close.less";
-
-// Buttons
-@import "../js/components/bootstrap/less/buttons.less";
-@import "../js/components/bootstrap/less/button-groups.less";
 
 // Utilities
 @import "../js/components/bootstrap/less/utilities.less";
 
-// Forms
-@import "../js/components/bootstrap/less/forms.less";
-
 // Responsive classes
 @import "../js/components/bootstrap/less/responsive-utilities.less";
 
-// Large desktops
-@import "../js/components/bootstrap/less/responsive-1200px-min.less";
 
-// Tablets to regular desktops
-@import "../js/components/bootstrap/less/responsive-768px-979px.less";
+// DATASEED VARIABLES
+// --------------------------------------------------
 
-// Phones to portrait tablets and narrow desktops
-@import "../js/components/bootstrap/less/responsive-767px-max.less";
-
-// From 979px and below, show a button to toggle navbar contents
-@import "../js/components/bootstrap/less/responsive-navbar.less";
+@import "variables.less";
 
 
 // DATASEED
 // --------------------------------------------------
 
-// Visualisation
+@import "mixins.less";
 @import "visualisation.less";

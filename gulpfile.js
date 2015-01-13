@@ -6,7 +6,7 @@ var gulp = require('gulp'),
     uglify = require('gulp-uglify'),
     replace = require('gulp-replace'),
     less = require('gulp-less'),
-    csso = require('gulp-csso');
+    csso = require('gulp-csso'),
     connect = require('gulp-connect');
 
 // Web server
@@ -26,7 +26,8 @@ gulp.task('lint', function() {
             '!src/js/test/karma.perf.conf.js'
         ])
         .pipe(jshint({sub: true}))
-        .pipe(jshint.reporter('default'));
+        .pipe(jshint.reporter('default'))
+        .pipe(jshint.reporter('fail'));
 });
 
 // Test JS
@@ -62,7 +63,7 @@ var rjs_config = {
 };
 
 // D3
-gulp.task('js-d3', function() {
+gulp.task('js-d3', ['lint', 'test'], function() {
     return rjs(_.extend({out: 'dataseed.js'}, rjs_config))
         .pipe(uglify({outSourceMap: false}))
         .pipe(replace(/\s+/g, ' '))
@@ -70,7 +71,7 @@ gulp.task('js-d3', function() {
 });
 
 // Highcharts
-gulp.task('js-highcharts', function() {
+gulp.task('js-highcharts', ['lint', 'test'], function() {
     var basePath = 'views/element/',
         paths = _.object(_.map(['chart', 'bar', 'bubble', 'geo', 'line'], function(module) {
             return [basePath + 'd3/' + module, basePath + 'highcharts/' + module];
@@ -82,7 +83,7 @@ gulp.task('js-highcharts', function() {
 });
 
 // Compile LESS
-gulp.task('less', function () {
+gulp.task('less', ['lint', 'test'], function () {
     return gulp.src('src/less/dataseed.less')
         .pipe(less({paths: ['src/less/']}))
         .pipe(csso())

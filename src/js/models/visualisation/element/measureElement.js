@@ -6,7 +6,9 @@ function (Backbone, _, Element) {
      * Element related to only one observations connection to get aggregation
      * data.
      * Beware: the element still have a dimensions attribute but it is not taken
-     * into account to set its connections.
+     * into account to set its connections. E.g. the summary element uses the
+     * dimensions attribute to set the value for the text placeholders
+     *
      */
     var MeasureElement = Element.extend({
 
@@ -26,7 +28,20 @@ function (Backbone, _, Element) {
             });
 
             // Bind to sync event
-            this._connection.bind('sync', this._onSync, this);
+            this.listenTo(this._connection, 'connection:sync', this._onSync);
+        },
+
+        getConnections: function () {
+            if (_.isUndefined(this._connection)) {
+                return [];
+            }
+            return [this.connection];
+        },
+
+        removeConnections: function () {
+            if (this._connection) {
+                delete this._connection;
+            }
         },
 
         /**
@@ -40,7 +55,10 @@ function (Backbone, _, Element) {
          * Check if connection data is loaded
          */
         isLoaded: function() {
-            return this._connection.isLoaded();
+            if (this._connection) {
+                return this._connection.isLoaded();
+            }
+            return false;
         },
 
         /**
@@ -48,13 +66,6 @@ function (Backbone, _, Element) {
          */
         _getConnection: function() {
             return this._connection;
-        },
-
-        /**
-         * Get observations field
-         */
-        _getField: function() {
-            return this._fields[0];
         }
 
     });

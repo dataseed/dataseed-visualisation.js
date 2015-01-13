@@ -1,10 +1,14 @@
-define(['backbone', 'underscore', './element/summary', './element/filter/navigation', './element/table', './element/d3/bar', './element/d3/bubble', './element/d3/geo', './element/d3/line', './loadScreen', 'bootstrap_dropdown'],
-    function(Backbone, _, SummaryElementView, NavigationElementView, TableChartView, BarChartView, BubbleChartView, GeoChartView, LineChartView, LoadScreenView) {
+define(['backbone', 'underscore', 'jquery', './element/summary', './element/filter/navigation', './element/table', './element/d3/dc/bar', './element/d3/bubble', './element/d3/geo', './element/d3/dc/line', './loadScreen', 'bootstrap_dropdown'],
+    function(Backbone, _, $, SummaryElementView, NavigationElementView, TableChartView, BarChartView, BubbleChartView, GeoChartView, LineChartView, LoadScreenView) {
     'use strict';
 
     var ElementView = Backbone.View.extend({
 
         tagName: 'article',
+
+        events: {
+            'click .remove-filter': 'reset'
+        },
 
         chartTypes: {
             // HTML elements
@@ -17,10 +21,6 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
             bubble:       BubbleChartView,
             geo:          GeoChartView,
             line:         LineChartView
-        },
-
-        events: {
-            'click .remove-filter': 'reset'
         },
 
         // Add bottom margin to element container
@@ -40,7 +40,7 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
             // Set element width and type
             this.$el.removeClass()
                 .addClass('element')
-                .addClass('span' + (this.model.get('width') * 3))
+                .addClass('col-sm-' + (this.model.get('width') * 3))
                 .addClass(type + 'Element');
 
             // Check if this element should be displayed
@@ -48,9 +48,6 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
                 this.$el.addClass('hide');
 
             } else {
-                // Ensure model has been initialised if this element has been
-                // shown after initially being hidden
-                this.model.initConnections();
 
                 // Check if this element's data is loaded
                 if (this.model.isLoaded()) {
@@ -80,25 +77,32 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
 
                     // Show reset button when the chart is cut
                     if (this.model.isCut()) {
-                        this.$('.container-icon').addClass('in');
-                        this.$('.remove-filter').tipsy({gravity: 's'});
+                        this.$('.remove-filter')
+                            .tipsy({gravity: 's'})
+                            .children('.container-icon')
+                                .show();
+                    } else {
+                        this.$('.remove-filter')
+                            .children('.container-icon')
+                                .hide();
                     }
 
                     // Set element height if the chart has one and this is the first render
-                    if (!this._sized && this.chart.height) {
+                    if (!this._sized && (this.chart.height || this.chart.chartHeight)) {
+                        var titleHeight = this.$('h2').outerHeight(),
+                            chartHeight = this.chart.height || this.chart.chartHeight,
+                            marginBottom = this.chart.margins ? this.chart.margins.bottom : this.marginBottom;
 
-                        // Get chart height
-                        var height = this.chart.height + this.$('h2').outerHeight();
+                        // Ensure chart height is no larger than the maximum allowed
                         if (this.chart.maxHeight) {
-                            height = Math.min(height, this.chart.maxHeight);
+                            chartHeight = Math.min(chartHeight, this.chart.maxHeight);
                         }
 
                         // Set element height
-                        this.$el.height(height + this.marginBottom);
+                        this.$el.height(titleHeight + chartHeight + marginBottom);
 
                         // Don't set height again
                         this._sized = true;
-
                     }
 
                 }
@@ -109,10 +113,18 @@ define(['backbone', 'underscore', './element/summary', './element/filter/navigat
         },
 
         /**
+         * Set the this._sized flag to false so that any following call to
+         * this.render() will make the element be resized.
+         */
+        needResize: function(){
+            this._sized = false;
+        },
+
+        /**
          * Resize the element
          */
         resize: function() {
-            this._sized = false;
+            this.needResize();
             this.render();
         },
 
