@@ -52,9 +52,7 @@ A build process is provided that will compile and minify the JS and LESS in /src
 
 This will serve the [https://github.com/dataseed/dataseed-visualisation/blob/master/index.html](index.html) file which includes the compiled css and js from [https://github.com/dataseed/dataseed-visualisation/tree/master/dist](/dist) and loads the demo "mortality" visualisation.
 
-You should only modify the js and less within the [https://github.com/dataseed/dataseed-visualisation/tree/master/src](/src) directory, after which you will need to run the build process:
-
-```gulp```
+You should only modify the js and less within the [https://github.com/dataseed/dataseed-visualisation/tree/master/src](/src) directory, after which you will need to run the build process with: ```gulp```
 
 To see your changes immediately you can serve up the [https://github.com/dataseed/dataseed-visualisation/blob/master/index-src.html](index-src.html) file which includes the uncompiled js and less from [https://github.com/dataseed/dataseed-visualisation/tree/master/src](/src).
 
