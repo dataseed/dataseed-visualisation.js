@@ -6,21 +6,20 @@ Dataseed is an open platform for data visualisation, exploration and analysis. F
 
 This open-source toolkit allows you to create custom visualisations driven by our back-end. Dataseed's back-end supports large datasets, real-time data streams, on-the-fly aggregation (OLAP), and statistical operations.  You can import data via a RESTful API, or by uploading spreadsheets through the UI.
 
-We are currently in beta, so please [sign-up](https://getdataseed.com#find-out-more) to be notified when we're accepting new users, or [send us an email](mailto:team@getdataseed.com) if you'd like to discuss a project.
+We are currently in beta, so please [sign-up](https://getdataseed.com#get-invited) to be notified when we're accepting new users, or [send us an email](mailto:team@getdataseed.com) if you'd like to discuss a project.
 
 
 ## Features
 
-* Cloud-hosted data storage and OLAP analytics engine
-* RESTful JSON API for importing and querying data
-* Open-source javascript front-end, built with backbone.js, grunt.js, bower, bootstrap - all the good stuff
-* SVG charts built with d3.js
-* Responsive and ready for desktop / tablet / mobile
-* Versatile multi-dimensional data model
-* Linked-data approach. Compatible with Datacube and SDMX
+* Powerful cloud-hosted OLAP analytics engine
 * Support for real-time data streams
+* RESTful JSON API for importing and querying data
+* Open-source javascript front-end, built with backbone.js, gulp, bootstrap - all the good stuff
+* SVG charts build with d3.js and dc.js
+* Versatile multi-dimensional data model
 * Statistical operations including mean, min, max, variance, sum of squares and standard deviation
-
+* Responsive and ready for desktop / tablet / mobile
+* Paid support plans, custom development, training, and consultancy are available - just ask
 
 ## Getting Started
 
@@ -34,7 +33,7 @@ You will see a visualisation of an example dataset. If you've already create a d
 
 ## Installation
 
-A build process is provided that will compile and minify the JS and LESS in /src into a single .js and .css file in /dist.
+A build process is provided that will compile and minify the JS and LESS in /src into a single .js and .css file in /dist, as well as run jasmine tests.
 
 ### Requirements
 
@@ -48,9 +47,18 @@ A build process is provided that will compile and minify the JS and LESS in /src
 3. ```npm install```
 4. ```npm install -g bower gulp```
 5. ```bower install```
-6. ```gulp```
-7. ```gulp serve```
-8. Load in a browser: [http://localhost:8080](http://localhost:8080)
+6. ```gulp serve```
+7. Load in a browser: [http://localhost:8080](http://localhost:8080)
+
+This will serve the [https://github.com/dataseed/dataseed-visualisation/blob/master/index.html](index.html) file which includes the compiled css and js from [https://github.com/dataseed/dataseed-visualisation/tree/master/dist](/dist) and loads the demo "mortality" visualisation.
+
+You should only modify the js and less within the [https://github.com/dataseed/dataseed-visualisation/tree/master/src](/src) directory, after which you will need to run the build process:
+
+```gulp```
+
+To see your changes immediately you can serve up the [https://github.com/dataseed/dataseed-visualisation/blob/master/index-src.html](index-src.html) file which includes the uncompiled js and less from [https://github.com/dataseed/dataseed-visualisation/tree/master/src](/src).
+
+Load in a browser: [http://localhost:8080/index-src.html](http://localhost:8080/index-src.html)
 
 
 ## Developer API
