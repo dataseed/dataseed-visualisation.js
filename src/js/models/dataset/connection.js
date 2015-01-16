@@ -40,10 +40,18 @@ define(['backbone', 'underscore'], function (Backbone, _) {
 
         /**
          * Init
+         *
+         * Note: this class is not meant to be instantiated directly.
+         * Use always the ConnectionPool.getConnection() and
+         * ConnectionPool.getConnection() interfaces to handle elements'
+         * connections.
          */
         initialize: function (options) {
             // Set dataset model
             this.dataset = options.dataset;
+
+            // Connection's usage count (updated by ConnectionPool)
+            this.usage = 0;
 
             // Trigger our own connection:sync event when the connection model
             // is synched.

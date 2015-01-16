@@ -115,12 +115,11 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
             // Init connections if element is not hidden
             if (this.get('display') === true) {
                 this.initConnections();
-                // This will trigger the element rendering if all its
-                // connections are loaded; otherwise the element will be
-                // rendered by the last call to Element._onSync()
+                // the call to ready() will trigger the element rendering if
+                // all its connections are loaded; otherwise the element will
+                // be rendered by the last call to Element._onSync()
                 this.ready();
             }
-
             return this;
         },
 
@@ -207,6 +206,7 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
                 bucket: null,
                 bucket_interval: null
             });
+            this.resetConnections();
         },
 
         /**
@@ -278,6 +278,7 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
             }
 
             this.set(attrs);
+            this.resetConnections();
         },
 
         /**
@@ -314,6 +315,7 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
                 bucket_interval: bucketInterval,
                 bucket: bucket
             });
+            this.resetConnections();
         },
 
         /**

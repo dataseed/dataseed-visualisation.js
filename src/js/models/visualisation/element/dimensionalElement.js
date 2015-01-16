@@ -123,6 +123,9 @@ function (Backbone, _, Element) {
 
         removeConnections: function () {
             if (this._connections) {
+                _.each(this.getConnections(), function (conn) {
+                    this.dataset.pool.releaseConnection(conn);
+                }, this);
                 delete this._connections;
             }
         },

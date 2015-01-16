@@ -6,7 +6,7 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
 
         scaleMarginX: 10,
         scaleMarginY: 20,
-        scaleMarginBottom: 5,
+        scaleMarginBottom: 20,
         scaleLineHeight: 10,
         scaleTextHeight: 10,
 

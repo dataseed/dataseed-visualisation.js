@@ -2,27 +2,8 @@
     <div class="container">
     <h1>For Developers</h1>
         <div class="row">
-            <article class="col-md-8">
-                <h2 id="introduction">Introduction</h2>
-                <p>It's easy to build real-time data-driven visualisations, or add analytics to your existing applications.  We provide a hosted back-end with analytics capabilities, into which you can load your data via a RESTful API, or from Amazon S3.</p>
-                <p>The simplest way to start is to load in a dataset from a csv and fork our example Datacube visualisation on <a href="https://github.com/dataseed/dataseed-visualisation">Github</a>, it's written entirely in js and provided as open source under the GPL2 license.</p>
-
-                <h3>Benefits</h3>
-                <ul>
-                    <li><p>Powerful cloud-hosted OLAP analytics engine</p></li>
-                    <li><p>Support for real-time data streams</p></li>
-                    <li><p>RESTful JSON API for importing and querying data</p></li>
-                    <li><p>Open-source javascript front-end, built with <a href="http://backbonejs.org/">backbone.js</a>, <a href="http://gulpjs.com/">gulp</a>, <a href="https://github.com/twitter/bower">bower</a>, <a href="http://twitter.github.com/bootstrap/">bootstrap</a> - all the good stuff</p></li>
-                    <li><p>SVG charts build with <a href="http://d3js.org/">d3.js</a></p></li>
-                    <li><p>Versatile multi-dimensional data model</p></li>
-                    <li><p>Linked-data approach. Compatible with <a href="http://publishing-statistical-data.googlecode.com/svn/trunk/specs/src/main/html/cube.html">Datacube</a> and <a href="http://sdmx.org/">SDMX</a></p></li>
-                    <li><p>Statistical operations including mean, min, max, variance, sum of squares and standard deviation</p></li>
-                    <li><p>Responsive and ready for desktop / tablet / mobile</p></li>
-                </ul>
-            </article>
-
             <!--TOC BEGIN-->
-            <article class="col-md-4">
+            <article class="col-md-4 col-md-push-8">
                 <ul class="nav nav-list nav-stacked">
                     <li><a href="#intro">Introduction</a></li>
                     <li>
@@ -74,6 +55,25 @@
                 </ul>
             </article>
             <!--TOC END-->
+
+            <article class="col-md-8 col-md-pull-4">
+                <h2 id="introduction">Introduction</h2>
+                <p>It's easy to build real-time data-driven visualisations, or add analytics to your existing applications.  We provide a hosted back-end with analytics capabilities, into which you can load your data via a RESTful API.</p>
+                <p>If you want to modify your visualisation's appearance beyond what our UI allows, you can clone the <a href="https://github.com/dataseed/dataseed-visualisation">dataseed-visualisation repo on Github</a> - it's written entirely in js and provided as open source under the GPL2 license.</p>
+
+                <h3>Benefits</h3>
+                <ul>
+                    <li><p>Powerful cloud-hosted OLAP analytics engine</p></li>
+                    <li><p>Support for real-time data streams</p></li>
+                    <li><p>RESTful JSON API for importing and querying data</p></li>
+                    <li><p>Open-source javascript front-end, built with <a href="http://backbonejs.org/">backbone.js</a>, <a href="http://gulpjs.com/">gulp</a>, <a href="http://twitter.github.com/bootstrap/">bootstrap</a> - all the good stuff</p></li>
+                    <li><p>SVG charts build with <a href="http://d3js.org/">d3.js</a> and <a href="http://dc-js.github.io/dc.js/">dc.js</a></p></li>
+                    <li><p>Versatile multi-dimensional data model</p></li>
+                    <li><p>Statistical operations including mean, min, max, variance, sum of squares and standard deviation</p></li>
+                    <li><p>Responsive and ready for desktop / tablet / mobile</p></li>
+                    <li><p>Paid support plans, custom development, training, and consultancy are available - <a href="mailto:enterprise@getdataseed.com">just ask</a></p></li>
+                </ul>
+            </article>
         </div>
 
         <h2 id="getting-started">Getting Started</h2>
@@ -81,21 +81,28 @@
         <h3 id="getting-started-glossary">Glossary</h3>
 
         <ul>
-            <li>Dataset - A set of fields and values (like a table) and visualisations of them. Each column in the table is a field and each row an observation</li>
+            <li>Dataset - like a table. Each column in the table is a field and each row an observation</li>
             <li>Field - A "column" in the Dataset</li>
             <li>Observation - A "row" in the Dataset</li>
             <li>Measure - A type of Field used in a chart as a numeric value, optionally aggregated (e.g. distance driven by a vehicle)</li>
             <li>Dimension - A type of Field used in a chart as a non-numeric dimension (e.g. a vehicle's model or make)</li>
             <li>Visualisation - A set of Elements using the Measures and Dimensions from the Visualisation's Dataset</li>
-            <li>Element - A feature of a Visualisation such as a chart or aggregate summary</li>
+            <li>Element - A component of a Visualisation such as a chart or aggregate summary</li>
             <li>Chart - A graphical representation of a Measure and a Dimension (e.g. Number of miles driven by vehicle model)</li>
         </ul>
 
-        <h3 id="getting-started-embed">Basic Embedding</h3>
+        <h3 id="getting-started-embed">Embedding visualisations</h3>
 
-        <p>The simplest way to embed a visualisation is to use the "Export" button on the visualisation in Dataseed. The export will provide you with a snippet of HTML that you can copy-and-paste into your site.</p>
+        <p>The simplest way to embed a visualisation is to use the "Export" button on your visualisation's toolbar. You will be provided with a snippet of HTML that you can copy-and-paste into your site.</p>
 
-        <p>For help on more advanced embedding have a look at the <a href="#js">Javascript Library</a>.</p>
+        <p>For help on more advanced embedding, providing full control of the visualisation's appearance, have a look at the <a href="#js">Javascript Library</a>.</p>
+        
+        <h3 id="getting-started-drupal">Importing data through the API</h3>
+        
+        <p>In order to add data through the API, you will first need to create a dataset then add observations (rows).  To create a dataset, you can either use the UI to import a spreadsheet, or use the <a href="#api-dataset">POST /dataset</a> API call.  To add observations, use the <a href="#api-observations">POST or PUT /observations</a> API call.</p>
+
+        <p>For full details please see the <a href="#api">Dataseed API documentation</a></p>
+        
 
         <h3 id="getting-started-drupal">Drupal</h3>
 
@@ -103,44 +110,30 @@
 
         <h2 id="js">Javascript Library</h2>
 
-        <p>The <a href="https://github.com/dataseed/dataseed-visualisation">Dataseed Javascript Library</a> allows visualisations to be integrated with existing Javascript applications. A working knowledge of Javascript is necessary to use the library, for a simpler method of including visualisations on your site see <a href="#getting-started-embed">Basic Embedding</a>.</p>
+        <p>The <a href="https://github.com/dataseed/dataseed-visualisation">Dataseed-visualisation Javascript Library</a> allows visualisations to be integrated with existing Javascript applications. A working knowledge of Javascript is necessary to use the library, for a simpler method of including visualisations on your site see <a href="#getting-started-embed">Basic Embedding</a>.</p>
 
         <p>The library consists of models and views for fetching and rendering visualisations built on the <a href="http://backbonejs.org/">Backbone.js</a> framework with <a href="http://requirejs.org/">RequireJS</a> used for module and dependency handling.</p>
 
         <h3 id="js-dependencies">Dependencies</h3>
 
         <p>The library uses the <a href="http://nodejs.org/">Node.js</a> platform for building the JS and related tasks. You can install Node.js using the packages on the <a href="http://nodejs.org/download/">download page</a> or through your OS's package manager.</p>
+        
+        
 
         <h3 id="js-setup">Setup</h3>
 
-        <ol>
-            <li>
-                First, grab a copy of the library from Github:
-                <code class="shell prettyprint">git clone https://github.com/dataseed/dataseed-visualisation.git</code>
-            </li>
-            <li>
-                Enter the repo:
-                <code class="shell prettyprint">cd dataseed-visualisation</code>
-            </li>
-            <li>
-                Install dependencies with npm:
-                <code class="shell prettyprint">npm install</code>
-            </li>
-            <li>
-                Get third-party libraries using <a href="http://bower.io/">Bower</a>:
-                <code class="shell prettyprint">bower install</code>
-            </li>
-        </ol>
-
-        <p>To test that everything has been setup correctly open the index-src.html file in a browser and you should see the <a href="{{ url_for('page.VisualisationView:visualise', dataset_id='mortality', visualisation_id='1') }}">mortality visualisation</a>.</p>
+        <p>The <a href="https://github.com/dataseed/dataseed-visualisation">README on Github</a> contains the latest instructions for setting up and building the project.</p>
 
         <h3 id="js-build">Building</h3>
 
-        <p>The build process is managed by <a href="http://gruntjs.com/">Grunt</a> and includes Javascript aggregation and minification as well as <a href="http://lesscss.org/">LESS</a> compilation. To run the build use:</p>
+        <p>The build process is managed by <a href="http://gulpjs.com/">Gulp</a> and includes Javascript aggregation and minification, <a href="http://lesscss.org/">LESS</a> compilation, and <a href="http://jasmine.github.io/">jasmine</a> tests. To run the build use:</p>
 
-        <code class="shell prettyprint">grunt build</code>
+        <code class="shell prettyprint">gulp</code>
 
-        <p>To test that the build completed successfully open the index.html file in a browser.</p>
+        <h3 id="js-build">Modifying code</h3>
+        <p>Only modify js or css code in the "src" directory.  In order to view your changes in a browser immediately without having to build, you will need to run a web server.  We have provided one using the gulp-connect plugin, just run the below command and load <a href="http://localhost:8080/index-src.html">http://localhost:8080/index-src.html</a> in your browser.</p>
+        
+        <code class="shell prettyprint">gulp serve</code>
 
         <h3 id="js-examples">Example</h3>
 
@@ -148,35 +141,35 @@
 
         <pre><code class="html prettyprint">&lt;!doctype html&gt;
 &lt;html dir="ltr" lang="en"&gt;
-&lt;head&gt;
-&lt;meta charset="utf-8" /&gt;
-&lt;meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /&gt;
-&lt;title&gt;Dataseed Interactive Data Visualization&lt;/title&gt;
-&lt;meta name="viewport" content="width=device-width" /&gt;
-&lt;!--[if lt IE 9]&gt;
-  &lt;script src="http://html5shim.googlecode.com/svn/trunk/html5.js"&gt;&lt;/script&gt;
-&lt;![endif]--&gt;
-&lt;link href="src/less/dataseed.less" rel="stylesheet/less" type="text/css" /&gt;
-&lt;script src="src/components/less/dist/less-1.4.0.js"&gt;&lt;/script&gt;
-&lt;/head&gt;
-&lt;body&gt;
-&lt;button id="start"&gt;Show me the visualisation!&lt;/button&gt;
-&lt;div id="vis"&gt;&lt;/div&gt;
-&lt;script src="src/components/requirejs/require.js" data-main="src/js/config"&gt;&lt;/script&gt;
-&lt;script&gt;
-    $(document).ready(function() {
-        $('#start').click(function() {
-            require(['./dataseed/views/dataset', 'app'], function(DatasetEmbedView) {
-                new DatasetEmbedView({
-                    'el': $('#vis'),
-                    'id': 'mortality',
-                    'visualisation_id': '1'
+  &lt;head&gt;
+    &lt;meta charset="utf-8" /&gt;
+    &lt;meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /&gt;
+    &lt;title&gt;Dataseed Interactive Data Visualization&lt;/title&gt;
+    &lt;meta name="viewport" content="width=device-width" /&gt;
+    &lt;!--[if lt IE 9]&gt;
+      &lt;script src="http://html5shim.googlecode.com/svn/trunk/html5.js"&gt;&lt;/script&gt;
+    &lt;![endif]--&gt;
+    &lt;link href="src/less/dataseed.less" rel="stylesheet/less" type="text/css" /&gt;
+    &lt;script src="src/components/less/dist/less-1.4.0.js"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;button id="start"&gt;Show me the visualisation!&lt;/button&gt;
+    &lt;div id="vis"&gt;&lt;/div&gt;
+    &lt;script src="src/components/requirejs/require.js" data-main="src/js/config"&gt;&lt;/script&gt;
+    &lt;script&gt;
+        $(document).ready(function() {
+            $('#start').click(function() {
+                require(['./dataseed/views/dataset', 'app'], function(DatasetEmbedView) {
+                    new DatasetEmbedView({
+                        'el': $('#vis'),
+                        'id': 'mortality',
+                        'visualisation_id': '1'
+                    });
                 });
             });
         });
-    });
-&lt;/script&gt;
-&lt;/body&gt;
+    &lt;/script&gt;
+  &lt;/body&gt;
 &lt;/html&gt;</code></pre>
 
         <!--
@@ -191,7 +184,7 @@
 
         <h3 id="api-intro">Introduction</h3>
 
-        <p>The API for Dataseed is implemented as a set of <a href="http://www.json.org/">JSON</a> resources (e.g. a <a href="#api-vis">Visualisation</a>), each with their own URL. The resources may be read or altered using the standard <a href="http://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#Request_methods">HTTP verbs</a>. We have tried to follow <a href="http://en.wikipedia.org/wiki/Representational_state_transfer">RESTful</a> principals in the design of the API wherever possible.</p>
+        <p>The API for Dataseed is implemented as a set of <a href="http://www.json.org/">JSON</a> resources (e.g. a <a href="#api-vis">Visualisation</a>), each with their own URL. The resources may be read or altered using the standard <a href="http://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#Request_methods">HTTP verbs</a>. We have tried to follow <a href="http://en.wikipedia.org/wiki/Representational_state_transfer">RESTful</a> principles in the design of the API wherever possible.</p>
 
         <p>The examples in this documentation use the <a href="http://en.wikipedia.org/wiki/CURL">cURL</a> command line tool to interact with the API. If you have cURL installed (Linux and OS X users should have it by default) you can copy and paste the commands into a terminal to see them in action! For authenticated commands you'll need to replace the example account details with your own (see <a href="#api-intro-auth">Authentication</a>).</p>
 
@@ -204,6 +197,8 @@
         <p>When sending data to the API you must also specify the MIME type of your request using the <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17">Content-Type header</a> header. The following example shows how to add an observation to an existing dataset:</p>
 
         <code class="shell prettyprint">curl -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://dataseedapp.com/api/datasets/my-dataset/observations -d'{ "observations": [ { "id": "o1234", "age": "26", "gender": "M" } ] }'</code>
+        
+        <p>You can also get HTML responses to GET requests made in a browser, e.g. <a href="https://dataseedapp.com/api/datasets/mortality">https://dataseedapp.com/api/datasets/mortality</a></p>
 
         <h4 id="api-intro-responses">Responses</h4>
 
@@ -397,109 +392,108 @@
 
 <pre id="visualisation-model-example"><code class="html prettyprint">&lt;!doctype html&gt;
 &lt;html dir="ltr" lang="en"&gt;
-&lt;head&gt;
-&lt;meta charset="utf-8" /&gt;
-&lt;meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /&gt;
-&lt;title&gt;Dataseed Interactive Data Visualization&lt;/title&gt;
-&lt;meta name="viewport" content="width=device-width" /&gt;
-&lt;!--[if lt IE 9]&gt;
-  &lt;script src="http://html5shim.googlecode.com/svn/trunk/html5.js"&gt;&lt;/script&gt;
-&lt;![endif]--&gt;
-&lt;link href="src/less/dataseed.less" rel="stylesheet/less" type="text/css" /&gt;
-&lt;script src="src/components/less/dist/less-1.4.0.js"&gt;&lt;/script&gt;
-&lt;/head&gt;
-&lt;body&gt;
-&lt;button id="start"&gt;Show me the visualisation!&lt;/button&gt;
-&lt;div id="vis"&gt;&lt;/div&gt;
-&lt;script src="src/components/requirejs/require.js" data-main="src/js/config"&gt;&lt;/script&gt;
-&lt;script&gt;
-require.config({
-    "config": {
-        "models/datasetSingleton": {
-            "DATASET": {
-                "id": "mortality",
-                "label": "Mortality",
-                "public": true,
-                "imports": [],
-                "fields": [
-                    {
-                        "id": "year",
-                        "label": "Year",
-                        "description": null,
-                        "aggregations": [],
-                        "charts": [{"type": "bar"}, {"type": "bubble"}, {"type": "table"}]
-                    },
-                    {
-                        "id": "gender",
-                        "label": "Gender",
-                        "description": null,
-                        "aggregations": [],
-                        "charts": [{"type": "bar"}, {"type": "bubble"}, {"type": "table"}]
-                    },
-                    {
-                        "id": "value",
-                        "label": "Value",
-                        "description": null,
-                        "aggregations": [{"type": "sum"}, {"type": "mean"}, {"type": "min"}, {"type": "max"}],
-                        "charts": []
-                    }
+  &lt;head&gt;
+    &lt;meta charset="utf-8" /&gt;
+    &lt;meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /&gt;
+    &lt;title&gt;Dataseed Interactive Data Visualization&lt;/title&gt;
+    &lt;meta name="viewport" content="width=device-width" /&gt;
+    &lt;!--[if lt IE 9]&gt;
+      &lt;script src="http://html5shim.googlecode.com/svn/trunk/html5.js"&gt;&lt;/script&gt;
+    &lt;![endif]--&gt;
+    &lt;link href="src/less/dataseed.less" rel="stylesheet/less" type="text/css" /&gt;
+    &lt;script src="src/components/less/dist/less-1.4.0.js"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;button id="start"&gt;Show me the visualisation!&lt;/button&gt;
+    &lt;div id="vis"&gt;&lt;/div&gt;
+    &lt;script src="src/components/requirejs/require.js" data-main="src/js/config"&gt;&lt;/script&gt;
+    &lt;script&gt;
+      require.config({
+       "config": {
+           "models/datasetSingleton": {
+               "DATASET": {
+                   "id": "mortality",
+                   "label": "Mortality",
+                   "public": true,
+                   "imports": [],
+                   "fields": [
+                        {
+                            "id": "year",
+                            "label": "Year",
+                            "description": null,
+                            "aggregations": [],
+                            "charts": [{"type": "bar"}, {"type": "bubble"}, {"type": "table"}]
+                        },
+                        {
+                            "id": "gender",
+                            "label": "Gender",
+                            "description": null,
+                            "aggregations": [],
+                            "charts": [{"type": "bar"}, {"type": "bubble"}, {"type": "table"}]
+                        },
+                        {
+                            "id": "value",
+                            "label": "Value",
+                            "description": null,
+                            "aggregations": [{"type": "sum"}, {"type": "mean"}, {"type": "min"}, {"type": "max"}],
+                            "charts": []
+                        }
+                    ],
+                    "visualisations": [
+                        {
+                            "id": "1",
+                            "label": "Mortality in England and Wales",
+                            "description": "Explore and compare the number of deaths by disease, sex, area and year",
+                            "public": true,
+                            "elements": [
+                                {
+                                    "id": "year",
+                                    "label": "Year",
+                                    "measure_label": "Number of deaths",
+                                    "type": "bar",
+                                    "aggregation": "sum",
+                                    "measure": {"id": "value"},
+                                    "dimensions": [{"field": {"id": "year", "type": "string"}}],
+                                    "width": 1,
+                                    "weight": 2,
+                                    "display": true
+                                },
+                                {
+                                    "id": "gender",
+                                    "label": "Gender",
+                                    "measure_label": "Number of deaths",
+                                    "type": "bar",
+                                    "aggregation": "sum",
+                                    "measure": {"id": "value"},
+                                    "dimensions": [{"field": {"id": "gender", "type": "string"}}],
+                                    "width": 1,
+                                    "weight": 5,
+                                    "display": true
+                                }
+                            ],
+                            "styles": []
+                        }
+                    ],
+                    "modified": "2013-09-06T10:33:39.789859",
+                    "created": "2013-09-06T10:33:39.789859"
+                } // end "DATASET"
+            }
+        } // end "config"
+    });
 
-                ],
-                "visualisations": [
-                    {
-                        "id": "1",
-                        "label": "Mortality in England and Wales",
-                        "description": "Explore and compare the number of deaths by disease, sex, area and year",
-                        "public": true,
-                        "elements": [
-                            {
-                                "id": "year",
-                                "label": "Year",
-                                "measure_label": "Number of deaths",
-                                "type": "bar",
-                                "aggregation": "sum",
-                                "measure": {"id": "value"},
-                                "dimensions": [{"field": {"id": "year", "type": "string"}}],
-                                "width": 1,
-                                "weight": 2,
-                                "display": true
-                            },
-                            {
-                                "id": "gender",
-                                "label": "Gender",
-                                "measure_label": "Number of deaths",
-                                "type": "bar",
-                                "aggregation": "sum",
-                                "measure": {"id": "value"},
-                                "dimensions": [{"field": {"id": "gender", "type": "string"}}],
-                                "width": 1,
-                                "weight": 5,
-                                "display": true
-                            }
-                        ],
-                        "styles": []
-                    }
-                ],
-                "modified": "2013-09-06T10:33:39.789859",
-                "created": "2013-09-06T10:33:39.789859"
-            } // end "DATASET"
-        }
-    } // end "config"
-});
-
-$(document).ready(function() {
-    $('#start').click(function() {
-        require(['./dataseed/views/dataset', 'app'], function(DatasetEmbedView) {
-            new DatasetEmbedView({
-                'el': $('#vis'),
-                'id': 'mortality',
-                'visualisation_id': '1'
+    $(document).ready(function() {
+        $('#start').click(function() {
+            require(['./dataseed/views/dataset', 'app'], function(DatasetEmbedView) {
+                new DatasetEmbedView({
+                    'el': $('#vis'),
+                    'id': 'mortality',
+                    'visualisation_id': '1'
+                });
             });
         });
     });
-});
-&lt;/script&gt;
-&lt;/body&gt;
+    &lt;/script&gt;
+  &lt;/body&gt;
 &lt;/html&gt;</code></pre>
 
         <h4>Elements</h4>

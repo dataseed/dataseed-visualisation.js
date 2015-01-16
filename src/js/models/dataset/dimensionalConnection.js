@@ -9,13 +9,6 @@ define(['backbone', 'underscore', './connection'],
         },
 
         /**
-         * Init
-         */
-        initialize: function (options) {
-            Connection.prototype.initialize.apply(this, arguments);
-        },
-
-        /**
          * Get data
          */
         getData: function() {

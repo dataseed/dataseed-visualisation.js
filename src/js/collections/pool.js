@@ -20,18 +20,26 @@ define(['backbone', 'underscore', '../models/dataset/connection', '../models/dat
         },
 
         getConnection: function (opts) {
-            var id = this.getConnectionId(opts);
+            var id = this.getConnectionId(opts),
+                conn = this.get(id);
 
-            if (_.isUndefined(this.get(id))) {
+            if (_.isUndefined(conn)) {
                 var defaults = {
                     id: id,
                     dataset: this.dataset,
                     cut: this.defaultCut || this.dataset.cut
                 };
-                this.add(_.extend(defaults, opts));
+                conn = this.add(_.extend(defaults, opts));
             }
 
-            return this.get(id);
+            conn.usage++;
+            return conn;
+        },
+
+        releaseConnection: function (conn) {
+            if(--conn.usage === 0){
+                this.remove(conn);
+            }
         },
 
         getConnectionId: function(opts) {

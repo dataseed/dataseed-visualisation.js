@@ -40,6 +40,7 @@ function (Backbone, _, Element) {
 
         removeConnections: function () {
             if (this._connection) {
+                this.dataset.pool.releaseConnection(this._connection);
                 delete this._connection;
             }
         },

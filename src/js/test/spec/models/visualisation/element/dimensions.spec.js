@@ -67,14 +67,7 @@ define(['models/dataset', 'models/dataset/connection', 'models/visualisation/ele
 
             // Assert the connection URLs are correct
             expect(element._connections['observations'].pool.test04.url()).toBe("/api/datasets/test01/observations/test04?aggregation=sum&measure=test05");
-
-            // Dimension connection URL doesn't change: a connection ID of type
-            // dimension doesn't depend on measure/aggregation: for this dimension,
-            // ConnectionPool.getConnection() called within the flow that starts
-            // from Element.resetConnection() returns the same connection that
-            // has been added to the dataset's pool when the Element has been
-            // instantiated.
-            expect(element._connections['dimensions'].pool.test04.url()).toBe("/api/datasets/test01/dimensions/test04?aggregation=rows");
+            expect(element._connections['dimensions'].pool.test04.url()).toBe("/api/datasets/test01/dimensions/test04?aggregation=sum&measure=test05");
         });
 
         it('should return the correct measure label', function() {
