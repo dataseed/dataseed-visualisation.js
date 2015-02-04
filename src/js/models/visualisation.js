@@ -91,6 +91,32 @@ define(['backbone', 'underscore', '../collections/elements', '../collections/sty
         saveChildren: function(model, response, opts) {
             this.elements.save();
             this.styles.save();
+        },
+
+        /**
+         * Builds the most appropriate element's dimensions depending on its
+         * type:
+         * - if the element is mono-dimensional, the element dimension is set
+         *   to the first dataset's field
+         * - otherwise the element's dimensions will take into account either
+         *   all the dataset's fields or all the dataset's string fields
+         *   depending on whether, respectively, the element type is summary
+         *   or navigation
+         *
+         *   @returns an Array of element's dimensions attributes
+         */
+        defaultElementDimensions: function (type) {
+            return _.compact(this.dataset.fields.map(function (field, index) {
+                if ((index < 1 && type !== 'navigation') ||
+                    (type === 'summary') ||
+                    (type === 'navigation' && field.get('type') === 'string')) {
+                    return {
+                        id: field.get('id'),
+                        field: field.pick('id', 'type'),
+                        weight: index
+                    };
+                }
+            }));
         }
 
     });

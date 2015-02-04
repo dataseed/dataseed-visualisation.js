@@ -34,7 +34,6 @@ define(['models/dataset', 'models/dataset/connection', 'models/visualisation/ele
                 id: 'test03',
                 dataset: this.dataset,
                 visualisation: this.dataset.visualisation,
-                display: true,
                 measure: null,
                 aggregation: 'rows',
                 dimensions: [

@@ -50,7 +50,7 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
             {name: 'mean', label: 'Average'}
         ],
 
-        // Field types whose values could be bucketed. We need to keep track of
+        // Field types whose values can be bucketed. We need to keep track of
         // them because for those fields cut values should be defined by ranges
         // of values
         bucketFields: ['date', 'float', 'integer'],
@@ -112,14 +112,12 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
             this.stopConnectionsListeners();
             this.removeConnections();
 
-            // Init connections if element is not hidden
-            if (this.get('display') === true) {
-                this.initConnections();
-                // the call to ready() will trigger the element rendering if
-                // all its connections are loaded; otherwise the element will
-                // be rendered by the last call to Element._onSync()
-                this.ready();
-            }
+            this.initConnections();
+
+            // the call to ready() will trigger the element rendering if
+            // all its connections are loaded; otherwise the element will
+            // be rendered by the last call to Element._onSync()
+            this.ready();
             return this;
         },
 
@@ -190,7 +188,7 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
         /**
          * Update the element's dimension(s)
          */
-        updateDimension: function(id, index) {
+        updateDimension: function(id, index, bucketing) {
             // Remove any cut defined on the current element's dimension.
             // We need this to make sure it's not possible to change a
             // visualisation so that there is no element for a dimension
@@ -199,13 +197,11 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
                 this.removeCut(index || 0);
             }
 
-            // Set the element's field ID (and type). We have to
-            // unset bucket settings as these are field specific.
-            this.dimensions.at(index || 0).set({
-                field: this.dataset.fields.get(id).pick('id', 'type'),
-                bucket: null,
-                bucket_interval: null
-            });
+            // Set the element's dimension's field
+            this.dimensions.at(index || 0).set(_.extend(
+                {field: this.dataset.fields.get(id).pick('id', 'type')},
+                {bucket: null, bucket_interval: null},
+                bucketing));
             this.resetConnections();
         },
 
@@ -219,37 +215,16 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
             if (!_.isUndefined(dimensions)) {
                 this.dimensions.set(dimensions);
             } else{
-                var multidimensional = _.contains(this.elementTypes.multiDimensional, this.get('type')),
-                    // rebuild the element's dimensions collection only if the
-                    // current one is not appropriate for the element's type
-                    // (i.e. we are switching between mono and
-                    // multi-dimensional)
-                    rebuildDimensions = (multidimensional && this.dimensions.length === 1) ||
-                        (!multidimensional && this.dimensions.length > 1);
+                var multidimensional = _.contains(this.elementTypes.multiDimensional, this.get('type'));
 
-                if (rebuildDimensions) {
-                    var dimensionsCollection = _.map(this.getDimensionFields(), function (model) {
-                        return {
-                            field: model.pick('id', 'type'),
-                            id: model.get('id'),
-                            dataset: this.dataset,
-                            visualisation: this.visualisation,
-                            element: this
-                        };
-                    }, this);
-
-                    if (multidimensional) {
-                        // for multi-dimensional elements, dimensions collection
-                        // is built by taking into account all the allowed
-                        // dimension fields
-                        this.dimensions.set(dimensionsCollection);
-                    } else {
-                        this.removeCut();
-
-                        // for mono-dimensional elements the dimensions collection
-                        // should only contain the first allowed dimension field
-                        this.dimensions.reset([_.first(dimensionsCollection)]);
-                    }
+                // Rebuild the element's dimensions collection only if the
+                // current one is not appropriate for the element's type
+                // (i.e. we are switching between mono and
+                // multi-dimensional)
+                if ((multidimensional && this.dimensions.length === 1) ||
+                    (!multidimensional && this.dimensions.length > 1)) {
+                    this.dimensions.reset(this.visualisation.defaultElementDimensions(this.get('type')));
+                    this.removeCut();
                 }
             }
             this.resetConnections();
@@ -535,6 +510,25 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
         },
 
         /**
+         * Checks whether the provided dimension field can be bucketed if
+         * "attached" as a dimension for this element.
+         *
+         * Note: bucketing is supported only on charts which at the moment
+         * are all mono-dimensional
+         *
+         * @param dimensionField Field model related to the element's
+         *   dimension
+         *
+         * @returns true if this element is mono-dimensional and dimension
+         *   refers to a field whose values can be bucketed
+         */
+        canBeBucketed: function (dimensionField) {
+            return (_.contains(this.elementTypes.monoDimensional, this.get('type')) &&
+            _.contains(this.bucketFields, dimensionField.get('type'))
+            );
+        },
+
+        /**
          * Return true if the dimension is bucketed
          */
         isBucketed: function(index) {
@@ -560,9 +554,7 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
          * by getState()
          *
          * Note: the models contained in this.dimensions which are not
-         * contained in state.dimensions will be left untouched. This is
-         * because we want to keep this method's semantic consistent with
-         * Backbone collections' set()
+         * contained in state.dimensions will be left untouched.
          */
         setState: function(state) {
             this.set(state.element, {silent: false});

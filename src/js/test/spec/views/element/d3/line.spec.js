@@ -25,7 +25,6 @@ define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visuali
                     visualisation: this.dataset.visualisation,
                     type: 'line',
                     width: 3,
-                    display: true,
                     dimensions: [{
                         field: {
                             id: 'test04'

@@ -8,6 +8,9 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
             return '/api/datasets/' + this.get('id');
         },
 
+        // Types of the fields that can be used as measures
+        measureFieldTypes:['integer', 'float'],
+
         /**
          * Initialise dataset's visualisation model
          */
@@ -58,8 +61,8 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
          */
         getMeasureFields: function() {
             return this.fields.filter(function(field) {
-                return (_.size(field.get('aggregations')) > 0);
-            });
+                return (_.contains(this.measureFieldTypes, field.get('type')));
+            }, this);
         },
 
         /**

@@ -139,9 +139,13 @@ article.highlight {
 
 // TABLE CHART
 // --------------------------------------------------
+.chart-container table{
+    font-size: 12px;
+}
 
 .tableElement {
     overflow: hidden;
+    min-height: 235px;
 
     .scroll {
         overflow: auto;
@@ -157,6 +161,17 @@ article.highlight {
     position: relative;
     padding-left: 10px;
     padding-right: 10px;
+
+    input.table-search {
+        width: 100%;
+        height: 30px;
+        padding-left: 30px;
+        padding-right: 30px;
+        margin-bottom: 15px;
+
+        .border-radius(0px);
+        .box-sizing("border-box");
+    }
 }
 
 .search-reset,
@@ -171,24 +186,13 @@ article.highlight {
 
 .search-icon {
     left: 19px;
-    background-image: url('@{dsBaseUrl}img/search-icon.gif');
+    background-image: url('../../img/search-icon.gif');
 }
 
 .search-reset {
     display: none;
     right: 19px;
-    background-image: url('@{dsBaseUrl}img/search-reset.gif');
-}
-
-input.table-search {
-    width: 100%;
-    height: 30px;
-    padding-left: 30px;
-    padding-right: 30px;
-    margin-bottom: 15px;
-
-    .border-radius(0px);
-    .box-sizing("border-box");
+    background-image: url('../../img/search-reset.gif');
 }
 
 .no-result {
@@ -212,7 +216,7 @@ i.icon-sort {
     .rotate(90deg);
     width: 14px;
     height: 14px;
-    background: url('@{dsBaseUrl}img/grey-arrow.gif') 4px center / 7px no-repeat;
+    background: url('../../img/grey-arrow.gif') 4px center / 7px no-repeat;
 }
 
 //chevron up
