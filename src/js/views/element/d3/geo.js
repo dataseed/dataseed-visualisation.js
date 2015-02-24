@@ -1,5 +1,5 @@
-define(['./chart', 'underscore', 'd3', 'topojson', '../../../lib/format'],
-    function(ChartView, _, d3, topojson, format) {
+define(['underscore', 'd3', 'topojson', '../chart', '../../../lib/format'],
+    function(_, d3, topojson, ChartView, format) {
     'use strict';
 
     var GeoChartView = ChartView.extend({
@@ -8,6 +8,7 @@ define(['./chart', 'underscore', 'd3', 'topojson', '../../../lib/format'],
         margin: 10,
 
         scaleTicks: 7,
+        scaleHeight: 60,
         scaleItemHeight: 15,
         scaleMeasureHeight: 25,
 
@@ -16,9 +17,6 @@ define(['./chart', 'underscore', 'd3', 'topojson', '../../../lib/format'],
             ChartView.prototype.render.apply(this, arguments);
             this.$container.empty();
 
-            // Square chart
-            this.height = this.width;
-
             // Get GeoJSON
             var values = this.model.getObservations(),
                 gjson = this.getGeoJSON();
@@ -26,9 +24,15 @@ define(['./chart', 'underscore', 'd3', 'topojson', '../../../lib/format'],
                 return this;
             }
 
+            // Calculate map height
+            var mheight = this.height - this.scaleHeight - this.margin;
+            if (mheight < 1) {
+                // Don't render, if there isn't enough vertical space
+                return this;
+            }
+
             // Setup projection, bounds and scaling factor
             var center = d3.geo.centroid(gjson),
-                mheight = this.height - (this.margin * 2),
                 projection = d3.geo.mercator()
                     .scale(this.scaleFactor)
                     .center(center)
@@ -70,12 +74,12 @@ define(['./chart', 'underscore', 'd3', 'topojson', '../../../lib/format'],
             var chart = d3.select(this.container)
                 .append('svg')
                     .attr('width', this.width)
+                    .attr('height', this.height)
                     .attr('class', 'geoChart')
                     .classed('inactive', _.bind(this.model.isCut, this.model));
 
             // Add geo container
-            chart.append('svg:g')
-                    .attr('transform', 'translate(0, ' + this.margin + ')')
+            chart.append('g')
                     .attr('width', this.width)
                 .selectAll('path')
                     .data(gjson.features)
@@ -92,10 +96,9 @@ define(['./chart', 'underscore', 'd3', 'topojson', '../../../lib/format'],
             this.attachTooltips('path');
 
             // Create scale
-            var chartScale = chart.append('svg:g')
-                    .attr('transform', 'translate(' + this.margin + ',' + this.height + ')'),
-                scaleTicks = this.colourScale.ticks(this.scaleTicks),
-                scaleY = this.margin;
+            var chartScale = chart.append('g')
+                    .attr('transform', 'translate(' + this.margin + ',' + mheight + ')'),
+                scaleTicks = this.colourScale.ticks(this.scaleTicks);
 
             this.scaleItemWidth = Math.floor((this.width - (this.margin * 2)) / scaleTicks.length);
 
@@ -104,22 +107,20 @@ define(['./chart', 'underscore', 'd3', 'topojson', '../../../lib/format'],
                 .enter().append('rect')
                     .attr('class', 'scale')
                     .attr('x', _.bind(this.getScaleItemX, this))
-                    .attr('y', scaleY)
+                    .attr('y', this.margin)
                     .attr('width', this.scaleItemWidth)
                     .attr('height', this.scaleItemHeight)
                     .attr('fill', this.colourScale);
 
-            scaleY += this.margin + this.scaleItemHeight;
             chartScale.selectAll('.scaleLabel')
                     .data(scaleTicks)
                 .enter().append('text')
                     .attr('class', 'scaleLabel')
                     .attr('x', _.bind(this.getScaleItemX, this))
-                    .attr('y', scaleY)
+                    .attr('y', (this.margin * 2) + this.scaleItemHeight)
                     .style('fill', this.getStyle('scaleLabel'))
                     .text(format.numScale);
 
-            scaleY += this.scaleMeasureHeight;
             chartScale.append('text')
                     .attr('class', 'scaleLabel')
                     .attr('text-anchor', 'middle')
@@ -128,10 +129,6 @@ define(['./chart', 'underscore', 'd3', 'topojson', '../../../lib/format'],
                     .attr('dy', -5)
                     .style('fill', this.getStyle('scaleFeature'))
                     .text(this.model.getMeasureLabel());
-
-            // Set height
-            this.height += scaleY + this.margin;
-            chart.attr('height', this.height);
 
             return this;
 

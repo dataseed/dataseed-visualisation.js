@@ -138,15 +138,6 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
         },
 
         /**
-         * Emit an event that the element is ready to resize and render
-         */
-        resize: function() {
-            if (this.isLoaded()) {
-                this.trigger('element:resize', this);
-            }
-        },
-
-        /**
          * Handle element feature (bar/point/etc) click
          */
         featureClick: function (d, i) {
@@ -552,22 +543,19 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
         /**
          * Update element state from the serialized representation returned
          * by getState()
-         *
-         * Note: the models contained in this.dimensions which are not
-         * contained in state.dimensions will be left untouched.
          */
         setState: function(state) {
             this.set(state.element, {silent: false});
-            this.dimensions.forEach(function(dimension, index) {
-                dimension.set(state.dimensions[index], {silent: true});
-            });
+            this.updateDimensions(state.dimensions);
         },
 
         /**
          * Save element and dependent models
          */
         save: function(attrs, opts) {
-            opts = _.defaults({success: _.bind(this.saveChildren, this)}, opts);
+            if (!opts || opts.children !== false) {
+                opts = _.defaults({success: _.bind(this.saveChildren, this)}, opts);
+            }
             return Backbone.Model.prototype.save.call(this, attrs, opts);
         },
 

@@ -17,16 +17,12 @@ require.config({
         'crossfilter': {
             exports: 'crossfilter'
         },
+        'gridster': {
+            deps: ['jquery'],
+            exports: '$.fn.gridster'
+        },
         'topojson': {
             exports: 'topojson'
-        },
-        'highcharts': {
-            deps: ['jquery'],
-            exports: 'Highcharts'
-        },
-        'highcharts_more': {
-            deps: ['highcharts'],
-            exports: 'Highcharts'
         },
         'tipsy': {
             deps: ['jquery'],
@@ -54,9 +50,6 @@ require.config({
         },
         'spin': {
             exports: 'Spinner'
-        },
-        'markdown': {
-            exports: 'markdown'
         }
     },
     paths: {
@@ -79,12 +72,11 @@ require.config({
         dc: 'components/dc.js/dc',
         crossfilter: 'components/crossfilter/crossfilter',
 
+        // Gridster.js
+        gridster: 'components/gridster/dist/jquery.gridster.min',
+
         // TopoJSON
         topojson: 'components/topojson/topojson',
-
-        // Highcharts
-        highcharts: 'components/highcharts/highcharts.src',
-        highcharts_more: 'components/highcharts/highcharts-more.src',
 
         // Tipsy tooltips
         tipsy: 'components/tipsy/src/javascripts/jquery.tipsy',
@@ -97,9 +89,6 @@ require.config({
         bootstrap_alert: 'components/bootstrap/js/alert',
 
         // Spinner
-        spin: 'components/spin/spin',
-
-        // Markdown.js
-        markdown: 'components/markdown/lib/markdown'
+        spin: 'components/spin/spin'
     }
 });

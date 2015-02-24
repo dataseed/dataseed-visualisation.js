@@ -1,11 +1,7 @@
 // VISUALISATION
 // --------------------------------------------------
 .visualisation {
-    padding-bottom: 20px;
-
-    > .container {
-        padding-top: 20px;
-    }
+    padding: 10px 0 20px 0;
 }
 
 /*Embedded Message*/
@@ -22,18 +18,9 @@
     }
 }
 
-// ELEMENTS
-// --------------------------------------------------
-article.highlight {
-    z-index: 1050; /* Just on top of modal backdrop */
-}
-
 // SUMMARY ELEMENT
 // --------------------------------------------------
 .summaryElement {
-    margin: 10px 0;
-    height: 50px;
-
     h1 {
         padding: 0 10px;
         text-align: center;
@@ -64,26 +51,8 @@ article.highlight {
 // --------------------------------------------------
 .inner-element {
     position: relative;
-
-    .edit-actions {
-        display: none;
-        height: 30px;
-        width: 100%;
-        background: rgba(0, 0, 0, 0.25);
-        position: absolute;
-        bottom: 0;
-        .border-bottom-radius(3px);
-
-        .show-modal {
-            margin-left: 15px;
-        }
-
-        i {
-            margin-top: 7px;
-            color: white;
-        }
-    }
-
+    overflow: hidden;
+    height: 100%;
     .border-radius(3px);
 
     .actions {
@@ -130,13 +99,6 @@ article.highlight {
     text-decoration: none;
 }
 
-// DC CHART ELEMENTS
-// --------------------------------------------------
-.lineElement .inner-element,
-.barElement .inner-element {
-    margin-bottom: 10px;
-}
-
 // TABLE CHART
 // --------------------------------------------------
 .chart-container table{
@@ -168,6 +130,7 @@ article.highlight {
         padding-left: 30px;
         padding-right: 30px;
         margin-bottom: 15px;
+        border-color: @dsInputBorder;
 
         .border-radius(0px);
         .box-sizing("border-box");
@@ -339,3 +302,11 @@ i.icon-sort {
     border-right-color: @dsTooltip;
 }
 
+// Mobile Styles <768px
+// -----------------------------------------
+
+@media (max-width: 767px) {
+    .element {
+        margin: 0 15px 15px 15px;
+    }
+}

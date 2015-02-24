@@ -1,4 +1,4 @@
-define(['backbone', 'underscore', 'jquery', 'd3', '../../../lib/format', 'text!../../../templates/element/chart.html', 'tipsy'],
+define(['backbone', 'underscore', 'jquery', 'd3', '../../lib/format', 'text!../../templates/element/chart.html', 'tipsy'],
     function(Backbone, _, $, d3, format, chartTemplate) {
     'use strict';
 
@@ -13,12 +13,7 @@ define(['backbone', 'underscore', 'jquery', 'd3', '../../../lib/format', 'text!.
         },
 
         initialize: function(options) {
-            // Get options
-            this.$parent = options.parent;
-
-            // Re-render the chart on resize (at most, every 300 milliseconds)
-            $(window).resize(_.throttle(_.bind(this.render, this), 300));
-
+            // Listen to changes in chart label
             this.listenTo(this.model, 'change:label', this.updateChartLabel);
         },
 
@@ -26,34 +21,32 @@ define(['backbone', 'underscore', 'jquery', 'd3', '../../../lib/format', 'text!.
          * Default render functionality
          */
         render: function() {
-            // Render template only if it's the first time this view is being
-            // rendered
-            if(!this.rendered){
+            // Only render template on first invocation
+            if (!this.container) {
                 this.$el.html(this.template(this.model.attributes));
-
+                this.$heading = this.$('h2');
                 this.$container = this.$('.chart-container');
-
-                // Keep reference to container DOM element for d3
                 this.container = this.$container.get(0);
-                this.rendered = true;
             }
 
             // Set custom colours
             var styles = this.model.visualisation.styles;
             this.$el.css('background-color', styles.getStyle('background'));
-            this.$('h2').css({
+            this.$heading.css({
                 'color': styles.getStyle('heading'),
                 'border-color': styles.getStyle('visualisationBackground')
             });
 
-            // Get parent element width
-            this.width = this.$parent.width();
+            // Set chart size
+            this.width = this.$container.width();
+            this.height = this.$el.height() - this.$heading.outerHeight(true);
+            this.$container.height(this.height);
 
             return this;
         },
 
         updateChartLabel: function(){
-            this.$parent.find('h2').text(this.model.get('label'));
+            this.$heading.text(this.model.get('label'));
         },
 
         /**

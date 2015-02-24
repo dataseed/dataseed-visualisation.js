@@ -1,39 +1,36 @@
-define(['./chart', 'underscore', 'd3', '../../../lib/format'],
-    function(ChartView, _, d3, format) {
+define(['underscore', 'd3', '../chart', '../../../lib/format'],
+    function(_, d3, ChartView, format) {
     'use strict';
 
     var BubbleChartView = ChartView.extend({
 
+        scaleHeight: 80,
         scaleMarginX: 10,
         scaleMarginY: 20,
-        scaleMarginBottom: 20,
         scaleLineHeight: 10,
         scaleTextHeight: 10,
 
         render: function() {
-
-            // Setup chart
             ChartView.prototype.render.apply(this, arguments);
             this.$container.empty();
 
-            // Get observations
-            var values = this.model.getObservations();
-            // Remove all dimemnsions with negative values
-            values = _.filter(values, function(d) { return d.total >= 0; });
+            // Get observations, removing all dimemnsions with negative values
+            var values = _.filter(this.model.getObservations(), function(d) {
+                return d.total >= 0;
+            });
+
             if (values.length < 1) {
                 return this;
             }
 
-            // Use a square bubble chart
-            this.height = this.width;
-
             // Add chart
             var chart = d3.select(this.container).append('svg')
                 .attr('width', this.width)
+                .attr('height', this.height)
                 .attr('class', 'bubbleChart')
                 .classed('inactive', _.bind(this.model.isCut, this.model)),
 
-            // Layout observations as bubbles
+                // Layout observations as bubbles
                 nodes = d3.layout.pack()
                     .children(function(d) {
                         return d;
@@ -42,13 +39,13 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
                         return d.total;
                     })
                     .sort(null)
-                    .size([this.width, this.height])
+                    .size([this.width, this.height - this.scaleHeight])
                     .nodes(values)
                     .filter(function (d) {
                         return (!_.isUndefined(d.id));
                     }),
 
-            // Add bubbles
+                // Add bubbles
                 bubbles = chart.append('g')
                     .selectAll('g.node')
                         .data(nodes)
@@ -100,9 +97,9 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
             this.scalePosX = ((this.width - scaleWidth) / 2) + this.scaleMarginX;
 
             // Add scale
-            var scaleItems = chart.append('g')
-                    .attr('transform', 'translate(0,' + this.height + ')')
-                    .selectAll('.scaleItem')
+            var scale = chart.append('g')
+                    .attr('transform', 'translate(0,' + (this.height - this.scaleHeight) + ')'),
+                scaleItems = scale.selectAll('.scaleItem')
                         .data(scaleLines)
                     .enter().append('g')
                         .attr('transform', _.bind(this.getScalePosition, this));
@@ -124,17 +121,12 @@ define(['./chart', 'underscore', 'd3', '../../../lib/format'],
                     .text(format.numScale);
 
             // Add measure label
-            this.height += (this.scaleMarginY * 2) + this.scaleLineHeight + this.scaleTextHeight;
-            chart.append('text')
+            scale.append('text')
                     .attr('text-anchor', 'middle')
                     .attr('x', this.width / 2)
-                    .attr('y', this.height)
+                    .attr('y', (this.scaleMarginY * 2) + this.scaleLineHeight + this.scaleTextHeight)
                     .style('fill', this.getStyle('measureLabel'))
                     .text(this.model.getMeasureLabel());
-
-            // Set chart height
-            this.height += this.scaleMarginBottom;
-            chart.attr('height', this.height);
 
             return this;
 

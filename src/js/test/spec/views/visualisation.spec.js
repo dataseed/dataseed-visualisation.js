@@ -1,6 +1,6 @@
 define(['jquery', 'models/dataset', 'views/visualisation'],
     function($, Dataset, VisualisationEmbedView) {
-    /* global describe, beforeEach, expect, it */
+    /* global describe, beforeEach, expect, xit */
 
     describe('A visualisation view', function() {
 
@@ -13,7 +13,7 @@ define(['jquery', 'models/dataset', 'views/visualisation'],
                 });
         });
 
-        it('should render correctly', function() {
+        xit('should render correctly', function() {
             var vis = new VisualisationEmbedView({
                     el: this.el,
                     model: this.dataset.visualisation

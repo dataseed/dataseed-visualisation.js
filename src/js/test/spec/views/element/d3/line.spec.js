@@ -1,8 +1,8 @@
-define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element/dimensionalElement', 'views/element/d3/dc/line'],
+define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element/dimensionalElement', 'views/element/dc/line'],
     function($, Dataset, Connection, DimensionalElement, LineChartView) {
-    /* global describe, beforeEach, expect, it */
+    /* global xdescribe, beforeEach, expect, it */
 
-    describe('A line chart view', function() {
+    xdescribe('A line chart view', function() {
 
         beforeEach(function() {
             Connection.prototype.fetch = function() {};

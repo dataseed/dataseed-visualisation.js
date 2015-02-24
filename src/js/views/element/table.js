@@ -2,9 +2,9 @@ define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../temp
     function(Backbone, _, $, format, tableTemplate, tableSearchSuccessTemplate, tableSearchFailTemplate) {
     'use strict';
 
-    var TableChartView = Backbone.View.extend({
+    var TableElementView = Backbone.View.extend({
 
-        className: "inner-element",
+        className: 'inner-element',
 
         events: {
             'click td a': 'featureClick',
@@ -24,12 +24,7 @@ define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../temp
         sortProperty: 'total',
         sortDirection: -1,
 
-        //Scroll position
-        scrollLocation: 0,
-
-        // Chart constants
-        margin: 30,
-        maxHeight: 400,
+        scrollPosition: 0,
 
         render: function() {
             var attrs = _.extend({
@@ -70,22 +65,10 @@ define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../temp
             // Fix table columns' width
             this.$('.data-table tr > td:first-child').width(this.$('.table-chevron-left').width());
 
-            // Calculate the table height
-            if (!this.height) {
-                var header = this.$('.table-search-wrap').outerHeight() +
-                             this.$('.table-sort-wrap').outerHeight(),
-                    content = this.$('.scroll').outerHeight();
-
-                this.height = Math.min(header + content, this.maxHeight);
-                this.tableHeight = this.height - header;
-            }
-
             // Set table height and scroll position
             this.$('.scroll')
-                .css('max-height', this.tableHeight)
-                .scrollTop(this.scrollLocation);
-
-            this.$el.css('min-height', this.$el.height());
+                .css('height', this.$el.height() - this.$('.scroll').position().top)
+                .scrollTop(this.scrollPosition);
 
             return this;
         },
@@ -118,8 +101,11 @@ define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../temp
          */
         featureClick: function(e) {
             e.preventDefault();
-            // Retrieve the current scroll position of the table
-            this.scrollLocation = this.$('.scroll').scrollTop();
+
+            // Save the current scroll position of the table
+            this.scrollPosition = this.$('.scroll').scrollTop();
+
+            // Get dimension ID and use to set cut on model
             var id = $(e.currentTarget).parents('tr').data('value').value;
             if (this.model.featureClick({id: id})) {
                 this.setFeatures();
@@ -259,6 +245,6 @@ define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../temp
 
     });
 
-    return TableChartView;
+    return TableElementView;
 
 });

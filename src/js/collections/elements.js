@@ -1,5 +1,5 @@
 define(['backbone', 'underscore', '../models/visualisation/element/measureElement', '../models/visualisation/element/dimensionalElement'],
-function (Backbone, _, MeasureElement, DimensionalElement) {
+    function (Backbone, _, MeasureElement, DimensionalElement) {
     'use strict';
 
     var elementTypes = {

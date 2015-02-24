@@ -20,7 +20,6 @@ define(['backbone', 'underscore', '../collections/elements', '../collections/sty
             // Create collection for element models
             this.elements = new ElementsCollection();
             this.elements.bind('add', this.addElement, this);
-            this.elements.bind('reset', this.updateElementOrder, this);
 
             // Create collection for style models
             this.styles = new StylesCollection(null, {visualisation: this});
@@ -56,32 +55,12 @@ define(['backbone', 'underscore', '../collections/elements', '../collections/sty
         },
 
         /**
-         * Update "weight" values for this visualisation's elements to ensure that
-         * they're sequential and don't exceed the largest allowed "weight" value
-         */
-        updateElementOrder: function () {
-            // Start from current largest weight
-            var offsetElement = this.elements.max(function (element) {
-                    return element.get('weight');
-                }),
-                offset = offsetElement.get('weight');
-
-            // Reset to 0 if we're going to exceed the size of the weight field
-            if ((offset + this.elements.size()) >= this.MAX_ELEMENTS) {
-                offset = 0;
-            }
-
-            // Update element weights
-            this.elements.forEach(function (element, index) {
-                element.set('weight', offset + index + 1, {silent: true});
-            });
-        },
-
-        /**
          * Save visualisation and dependent models
          */
         save: function(attrs, opts) {
-            opts = _.defaults({success: _.bind(this.saveChildren, this)}, opts);
+            if (!opts || opts.children !== false) {
+                opts = _.defaults({success: _.bind(this.saveChildren, this)}, opts);
+            }
             return Backbone.Model.prototype.save.call(this, attrs, opts);
         },
 

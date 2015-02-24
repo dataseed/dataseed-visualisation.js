@@ -1,8 +1,8 @@
 define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element/dimensionalElement', 'views/element/table'],
     function($, Dataset, Connection, DimensionalElement, TableChartView) {
-    /* global describe, beforeEach, expect, it */
+    /* global xdescribe, beforeEach, expect, it */
 
-    describe('A table element view', function() {
+    xdescribe('A table element view', function() {
 
         beforeEach(function() {
             Connection.prototype.fetch = function() {};

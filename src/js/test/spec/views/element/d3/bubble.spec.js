@@ -1,8 +1,8 @@
 define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element/dimensionalElement', 'views/element/d3/bubble'],
     function($, Dataset, Connection, DimensionalElement, BubbleChartView) {
-    /* global describe, beforeEach, expect, it */
+    /* global xdescribe, beforeEach, expect, it */
 
-    describe('A bubble chart view', function() {
+    xdescribe('A bubble chart view', function() {
 
         beforeEach(function() {
             Connection.prototype.fetch = function() {};

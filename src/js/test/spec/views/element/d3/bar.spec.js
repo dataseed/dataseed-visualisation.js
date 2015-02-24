@@ -1,8 +1,8 @@
-define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element/dimensionalElement', 'views/element/d3/dc/bar'],
+define(['jquery', 'models/dataset', 'models/dataset/connection', 'models/visualisation/element/dimensionalElement', 'views/element/dc/bar'],
     function($, Dataset, Connection, DimensionalElement, BarChartView) {
-    /* global describe, beforeEach, expect, it */
+    /* global xdescribe, beforeEach, expect, it */
 
-    describe('A bar chart view', function() {
+    xdescribe('A bar chart view', function() {
 
         beforeEach(function() {
             Connection.prototype.fetch = function() {};

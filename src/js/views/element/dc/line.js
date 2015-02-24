@@ -1,18 +1,18 @@
-define(['underscore', 'jquery', 'dc', 'd3', './dcChart', '../../../../lib/format'],
+define(['underscore', 'jquery', 'dc', 'd3', './chart', '../../../lib/format'],
     function(_, $, dc, d3, DcChartView, format) {
     'use strict';
 
     var LineChartView = DcChartView.extend({
 
         dcChartConstructor : dc.lineChart,
-        // Temporary: this setting will be defined/set by the layout system
-        chartHeight: 400,
         tooltipSelector: 'g circle.dot',
         dataFeatureSelector: 'circle',
 
-        // Override data translation helpers: dc.lineChart uses a different format
-
-        getDCDatumFromObservation: function (o) {
+        /**
+         * Override DcChartView.getDCDatumFromObservation
+         * Data translation helpers: dc.lineChart uses a different format
+         */
+        getDCDatumFromObservation: function(o) {
             var obsLabel = this.model.getLabel(o),
                 xLabel = o.id;
 
@@ -35,9 +35,12 @@ define(['underscore', 'jquery', 'dc', 'd3', './dcChart', '../../../../lib/format
             };
         },
 
-        getObservationFromDCDatum: function (d) {
+        /**
+         * Override DcChartView.getObservationFromDCDatum
+         */
+        getObservationFromDCDatum: function(d) {
             return {id: d.data.key, total: d.data.value};
-       },
+        },
 
         /**
          * Build the chart's data.
@@ -45,7 +48,7 @@ define(['underscore', 'jquery', 'dc', 'd3', './dcChart', '../../../../lib/format
          * in turn, are defined through crossfilter groups) and assumes that
          * there is at least one layer.
          */
-        getChartData: function () {
+        getChartData: function() {
             var layers = [],
                 layerValues = _.map(this.model.getObservations(), function (d) {
                     return this.getDCDatumFromObservation(d);
@@ -64,7 +67,7 @@ define(['underscore', 'jquery', 'dc', 'd3', './dcChart', '../../../../lib/format
         /**
          * Set the proper scale for the X axis
          */
-        prepareXaxis: function () {
+        prepareXaxis: function() {
             // Note we don't have to set the scale domain: it will be handled
             // by prepareXAxis() in dc.coordinateGridMixin
             if (this.model.getFieldType() === 'date') {
@@ -76,29 +79,37 @@ define(['underscore', 'jquery', 'dc', 'd3', './dcChart', '../../../../lib/format
             }
         },
 
-        prepareChart: function (data) {
+        /**
+         * Override DcChartView.prepareChart
+         */
+        prepareChart: function(data) {
             DcChartView.prototype.prepareChart.apply(this, arguments);
+            this.chart.on('renderlet.attachOnClick', this.attachOnClick);
+            this.chartHeight = this.height;
             this.prepareXaxis();
-
-            /**
-             * Add a renderlet to attach the DC onClick event handler
-             *
-             * Dc line charts, by default, handle the double click on the data
-             * points instead of the 'click' event that we want. Moreover it
-             * seems that the double click doesn't even trigger the call to
-             * this.chart.filter() (which is called by _chart.onClick() in
-             * MixinBase): we need this.chart.filter() to be called because
-             * otherwise we can't trigger our feature click flow (see
-             * DcChartView.initChart()).
-             */
-            this.chart.renderlet(function (chart) {
-                chart.svg().selectAll('circle')
-                    .on('click', chart.onClick);
-            });
         },
 
-        initChart: function () {
-            this.maxHeight = this.chartHeight;
+        /**
+         * Attach the DC onClick event handler
+         *
+         * Dc line charts, by default, handle the double click on the data
+         * points instead of the 'click' event that we want. Moreover it
+         * seems that the double click doesn't even trigger the call to
+         * this.chart.filter() (which is called by _chart.onClick() in
+         * MixinBase): we need this.chart.filter() to be called because
+         * otherwise we can't trigger our feature click flow (see
+         * DcChartView.initChart()).
+         */
+        attachOnClick: function(chart) {
+            chart.svg().selectAll('circle').on('click', chart.onClick);
+        },
+
+        /**
+         * Override DcChartView.initChart
+         */
+        initChart: function() {
+            // Set margins on initialisation as yAxixLabel() alters them and
+            // the object is shared across instances
             this.margins = {top: 5, left: 50, right: 10, bottom: 70};
 
             DcChartView.prototype.initChart.apply(this, arguments);
@@ -130,12 +141,15 @@ define(['underscore', 'jquery', 'dc', 'd3', './dcChart', '../../../../lib/format
             this.chart.yAxis().tickFormat(format.numScale);
         },
 
-        applyStyles: function () {
+        /**
+         * Set chart styles
+         */
+        applyStyles: function() {
             // See also the call to this.chart.ordinalColors() in this.initChart()
             this.chart.svg().selectAll('g.axis.x text')
-                .attr("transform", "rotate(-45)")
-                .attr("dy", "0.8em")
-                .attr("dx", "-2em");
+                .attr('transform', 'rotate(-45)')
+                .attr('dy', '0.8em')
+                .attr('dx', '-2em');
 
             // Ref lines
             this.chart.svg()
@@ -160,13 +174,15 @@ define(['underscore', 'jquery', 'dc', 'd3', './dcChart', '../../../../lib/format
                 }, this));
         },
 
+        /**
+         * Set chart measure label
+         */
         updateMeasureLabel: function() {
             this.chart.yAxisLabel(this.model.getMeasureLabel(), 25);
         }
-
 
     });
 
    return LineChartView;
 
-   });
+});

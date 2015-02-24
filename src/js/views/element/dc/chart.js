@@ -69,6 +69,9 @@ define(['backbone', 'underscore', 'jquery', 'd3', './../chart'],
          */
         setFeatures: $.noop,
 
+        /**
+         * Initialise chart
+         */
         initialize: function(options) {
             ChartView.prototype.initialize.apply(this, [options]);
             this.listenTo(this.model, 'change:measure_label', this.updateMeasureLabel);
@@ -77,7 +80,7 @@ define(['backbone', 'underscore', 'jquery', 'd3', './../chart'],
         /**
          * Override ChartView.ignoreLabel()
          */
-        ignoreLabel: function (d, i, label) {
+        ignoreLabel: function(d, i, label) {
             var stringDim = this.getStringSize(label);
 
             // Ignore labels that are longer than the chart's width or higher
@@ -85,6 +88,9 @@ define(['backbone', 'underscore', 'jquery', 'd3', './../chart'],
             return (stringDim.width > this.chart.effectiveWidth() || stringDim.height > this.getFeatureHeight());
         },
 
+        /**
+         * Render chart
+         */
         render: function() {
             if (!this.dcChartConstructor) {
                 throw new Error('this.dcChartConstructor needs to be defined');
@@ -128,21 +134,21 @@ define(['backbone', 'underscore', 'jquery', 'd3', './../chart'],
         /**
          * Helper to translate a DC datum in the Dataseed observation format
          */
-        getDCDatumFromObservation: function(o){
+        getDCDatumFromObservation: function(o) {
             return {key: o.id, value: o.total};
         },
 
         /**
          * Helper to translate a Dataseed Observation in the DC data format
          */
-        getObservationFromDCDatum: function(d){
+        getObservationFromDCDatum: function(d) {
             return {id: d.key, total: d.value};
         },
 
         /**
          * Build the chart's data.
          */
-        getChartData: function () {
+        getChartData: function() {
             return _.map(this.model.getObservations(), function (o) {
                 return this.getDCDatumFromObservation(o);
             }, this);
@@ -151,30 +157,31 @@ define(['backbone', 'underscore', 'jquery', 'd3', './../chart'],
         /**
          * Apply the settings required to draw the chart
          */
-        prepareChart: function (data){
+        prepareChart: function(data) {
             this.chart = this.chart || this.dcChartConstructor(this.container);
 
             this.chart
                 // Set the chart's data
                 .data(_.bind(_.identity, this, data))
                 .width(this.width)
-                .height(this.chartHeight);
+                .height(this.height);
         },
 
-        initChart: function () {
+        /**
+         * Apply initial chart settings
+         */
+        initChart: function() {
+            // Set initial chart height
+            this.chartHeight = this.height;
+
             // Set chart ID
             this.$container.attr('id', this.model.get('id') || this.model.cid);
 
-            // Override hasFilter()
-            this.chart.hasFilter = _.bind(function (filter) {
-                return _.isUndefined(filter) ? this.model.isCut() : this.model.hasCutId(filter);
-            }, this);
+            // Override hasFilter() and filter()
+            this.chart.hasFilter = _.bind(this.hasFilter, this);
+            this.chart.filter = _.bind(this.filter, this);
 
-            // Override filter()
-            this.chart.filter = _.bind(function (filterValue) {
-                this.featureClick({id: filterValue});
-            }, this);
-
+            // Set chart margins
             this.chart
                 .margins(this.margins)
 
@@ -184,19 +191,35 @@ define(['backbone', 'underscore', 'jquery', 'd3', './../chart'],
         },
 
         /**
+         * Override DC method to check if a chart is filtered
+         */
+        hasFilter: function(filter) {
+            return _.isUndefined(filter) ? this.model.isCut() : this.model.hasCutId(filter);
+        },
+
+        /**
+         * Override DC method to apply a filter to a chart
+         */
+        filter: function(value) {
+            this.featureClick({id: value});
+        },
+
+        /**
          * Render the DC chart from scratch
          */
-        renderChart: function (){
+        renderChart: function() {
             this.chart.render();
         },
 
         /**
          * Redraw the DC chart
          */
-        redrawChart: function () {
-            this.chart.svg()
-                .attr("width", this.width)
-                .attr("height", this.chartHeight);
+        redrawChart: function() {
+            // Set chart width and height
+            var svg = this.chart.svg();
+            if (svg) {
+                svg.attr({width: this.width, height: this.chartHeight});
+            }
 
             // We use redraw instead of render: when re-drawing dc tries to
             // update the graphic incrementally (using transitions)
@@ -207,7 +230,7 @@ define(['backbone', 'underscore', 'jquery', 'd3', './../chart'],
         /**
          * Set features titles and attach tooltips
          */
-        setupTooltips: function (){
+        setupTooltips: function() {
             if(!this.tooltipSelector){
                 throw new Error('this.tooltipSelector needs to be defined');
             }
@@ -220,16 +243,17 @@ define(['backbone', 'underscore', 'jquery', 'd3', './../chart'],
             // this.chart.title() doesn't work
             this.chart.svg()
                 .selectAll(this.tooltipSelector)
-                .attr('title', _.bind(function (d) {
-                    return this.getTooltip(this.getObservationFromDCDatum(d));
-                }, this));
+                .attr('title', _.compose(
+                    _.bind(this.getTooltip, this),
+                    _.bind(this.getObservationFromDCDatum, this)
+                ));
             this.attachTooltips(this.tooltipSelector);
         },
 
         /**
          * Helper method to reset the axis and ticks styles
          */
-        resetAxis: function () {
+        resetAxis: function() {
             // Axis (Scale)
             this.chart.svg()
                 .selectAll('g.axis path')
@@ -293,7 +317,7 @@ define(['backbone', 'underscore', 'jquery', 'd3', './../chart'],
         /**
          * Get style function for the specified type
          */
-        getStyle: function (type) {
+        getStyle: function(type) {
             /* With almost all the DC charts we don't need to use the getStyle
              * method of the styles collection because we don't need to check
              * whether a feature is "active" or not: chart's features get a
