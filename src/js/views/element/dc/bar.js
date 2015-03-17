@@ -1,5 +1,5 @@
-define(['underscore', 'jquery', 'dc', './chart', '../../../lib/format'],
-    function(_, $, dc, DcChartView, format) {
+define(['underscore', 'jquery', 'dc', 'crossfilter', './chart', '../../../lib/format'],
+    function(_, $, dc, crossfilter, DcChartView, format) {
     'use strict';
 
     var BarChartView = DcChartView.extend({
@@ -17,6 +17,37 @@ define(['underscore', 'jquery', 'dc', './chart', '../../../lib/format'],
         scaleTicks: 4,
 
         /**
+         * Override DcChartView.prepareChart
+         *
+         * We need this override to sort bars on their labels.
+         * In general we could order a DC Row chart by using the ordering() and
+         * the cap() helpers but in our case are they are not suitable: Row
+         * charts data are sorted by the data callback defined by Cap Mixin,
+         * which we override in DcChartView.prepareChart as we have to
+         * de-couple Dc data from crossfilter.
+         *
+         * Here we just define a data callback able to return ordered data.
+         */
+        prepareChart: function (data) {
+            DcChartView.prototype.prepareChart.apply(this, arguments);
+
+            this.labelAccessor = _.compose(
+                _.bind(this.getFeatureLabel, this),
+                _.bind(this.getObservationFromDCDatum, this)
+            );
+
+            // We sort data by exploiting the crossfilter helpers (as CapMixin
+            // does).
+            var ordered_data = crossfilter
+                .quicksort
+                .by(this.labelAccessor)(data, 0, data.length);
+
+            this.chart
+                // Set the chart's data
+                .data(_.bind(_.identity, this, ordered_data));
+        },
+
+        /**
          * Override DcChartView.initChart
          */
         initChart: function() {
@@ -29,10 +60,7 @@ define(['underscore', 'jquery', 'dc', './chart', '../../../lib/format'],
                 .elasticX(true)
 
                 // Add feature labels
-                .label(_.compose(
-                    _.bind(this.getFeatureLabel, this),
-                    _.bind(this.getObservationFromDCDatum, this)
-                ))
+                .label(this.labelAccessor)
 
                 // Setup x-axis scale
                 .xAxis()
