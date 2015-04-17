@@ -1,135 +1,293 @@
-<section class="documentation">
-    <div class="container">
-    <h1>For Developers</h1>
-    <!-- Mobile table of content button -->
-    <a class="dsBtn sidebar-btn visible-xs" href="#doc-sidebar" data-toggle="collapse"><span>Table of contents</span></a>
+<section class="documentation container">
+<h1>Documentation for Developers</h1>
+<a class="dsBtn sidebar-btn visible-xs" href="#doc-sidebar" data-toggle="collapse"><span>Table of contents</span></a>
 
-        <div class="row">
-            <!--TOC BEGIN-->
-            <article id="doc-sidebar" class="col-md-3 col-md-push-9 col-sm-3 col-sm-push-9 col-xs-12 collapse">
-                <ul class="nav nav-stacked" id="sidebar">
-                    <li><a href="#introduction">Introduction</a></li>
-                    <li>
-                        <a href="#getting-started-zoom">Getting Started</a>
-                        <ul class="nav nav-stacked">
-                            <li class="level2"><a href="#getting-started-glossary">Glossary</a></li>
-                            <li class="level2"><a href="#getting-started-embed">Embedding</a></li>
-                            <li class="level2"><a href="#getting-started-importing">Importing</a></li>
-                            <li class="level2"><a href="#getting-started-drupal">Drupal</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="#js">Javascript Library</a>
-                        <ul class="nav nav-stacked">
-                            <li class="level2"><a href="#js-dependencies">Dependencies</a></li>
-                            <li class="level2"><a href="#js-setup-build">Setup &amp; Build</a></li>
-                            <li class="level2"><a href="#js-modify">Modifying</a></li>
-                            <li class="level2"><a href="#js-example">Example</a></li>
-                            <li class="level2"><a href="#js-architecture">Architecture</a></li>
-                            <li class="level2"><a href="#js-auth">Authentication</a></li>
-                            <li class="level2"><a href="#js-styles">Styles</a></li>
-                            <li class="level2"><a href="#js-new-chart">Add New Chart</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="#api">REST API</a>
-                        <ul class="nav nav-stacked">
-                            <li class="level2"><a href="#api-intro">Introduction</a></li>
-                            <li class="level2"><a href="#api-intro-requests">Requests</a></li>
-                            <li class="level2"><a href="#api-intro-responses">Responses</a></li>
-                            <li class="level2"><a href="#api-intro-auth">Authentication</a></li>
-                            <li class="level2"><a href="#api-import">Import</a></li>
-                            <li class="level2"><a href="#api-dataset">Dataset</a></li>
-                            <li class="level2"><a href="#api-vis">Visualisation</a></li>
-                            <li class="level2"><a href="#api-dimensions">Dimensions</a></li>
-                            <li class="level2"><a href="#api-observations">Observations</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </article>
-            <!--TOC END-->
+<div class="row">
+<div id="doc-sidebar" class="col-md-3 col-md-push-9 col-sm-3 col-sm-push-9 col-xs-12 collapse">
+    <ul class="nav nav-stacked" id="sidebar">
+        <li><a href="#introduction">Introduction</a></li>
+        <li>
+            <a href="#getting-started-zoom">Getting Started</a>
+            <ul class="nav nav-stacked">
+                <li class="level2"><a href="#getting-started-glossary">Glossary</a></li>
+                <li class="level2"><a href="#getting-started-embed">Embedding</a></li>
+                <li class="level2"><a href="#getting-started-importing">Importing</a></li>
+                <li class="level2"><a href="#getting-started-drupal">Drupal</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#js">dataseed-visualisation.js</a>
+            <ul class="nav nav-stacked">
+                <li class="level2"><a href="#js-dependencies">Dependencies</a></li>
+                <li class="level2"><a href="#js-setup-build">Setup &amp; Build</a></li>
+                <li class="level2"><a href="#js-modify">Modifying</a></li>
+                <li class="level2"><a href="#js-example">Example</a></li>
+                <li class="level2"><a href="#js-architecture">Architecture</a></li>
+                <li class="level2"><a href="#js-auth">Authentication</a></li>
+                <li class="level2"><a href="#js-styles">Styles</a></li>
+                <li class="level2"><a href="#js-new-chart">Add New Chart</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#api">API</a>
+            <ul class="nav nav-stacked">
+                <li class="level2"><a href="#api-intro">Introduction</a></li>
+                <li class="level2"><a href="#api-requests">Requests</a></li>
+                <li class="level2"><a href="#api-responses">Responses</a></li>
+                <li class="level2"><a href="#api-auth">Authentication</a></li>
+                <li class="level2"><a href="#api-import">Import</a></li>
+                <li class="level2"><a href="#api-dataset">Dataset</a></li>
+                <li class="level2"><a href="#api-vis">Visualisation</a></li>
+                <li class="level2"><a href="#api-styles">Styles</a></li>
+                <li class="level2"><a href="#api-dimensions">Dimensions</a></li>
+                <li class="level2"><a href="#api-observations">Observations</a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
 
+<div class="col-md-9 col-md-pull-3 col-sm-9 col-sm-pull-3 col-xs-12">
+    <h2 id="introduction">Introduction</h2>
+    <p>It's easy to build real-time data-driven visualisations, or add analytics to your existing applications.  We provide a hosted back-end with analytics capabilities, into which you can load your data via a RESTful API.</p>
+    <p>If you want to modify your visualisation's appearance beyond what our UI allows, you can clone the <a href="https://github.com/dataseed/dataseed-visualisation.js">dataseed-visualisation.js repo on Github</a> - it's written entirely in js and provided as open source under the GPL2 license.</p>
 
-            <article class="col-md-9 col-md-pull-3 col-sm-9 col-sm-pull-3 col-xs-12">
-                <h2 id="introduction">Introduction</h2>
-                <p>It's easy to build real-time data-driven visualisations, or add analytics to your existing applications.  We provide a hosted back-end with analytics capabilities, into which you can load your data via a RESTful API.</p>
-                <p>If you want to modify your visualisation's appearance beyond what our UI allows, you can clone the <a href="https://github.com/dataseed/dataseed-visualisation">dataseed-visualisation repo on Github</a> - it's written entirely in js and provided as open source under the GPL2 license.</p>
+    <h3>Benefits</h3>
+    <ul>
+        <li><p>Powerful cloud-hosted OLAP analytics engine</p></li>
+        <li><p>Support for real-time data streams</p></li>
+        <li><p>RESTful JSON API for importing and querying data</p></li>
+        <li><p>Open-source javascript front-end, built with <a href="http://backbonejs.org/">backbone.js</a>, <a href="http://gulpjs.com/">gulp</a>, <a href="http://twitter.github.com/bootstrap/">bootstrap</a> - all the good stuff</p></li>
+        <li><p>SVG charts build with <a href="http://d3js.org/">d3.js</a> and <a href="http://dc-js.github.io/dc.js/">dc.js</a></p></li>
+        <li><p>Versatile multi-dimensional data model</p></li>
+        <li><p>Statistical operations including mean, min, max, variance, sum of squares and standard deviation</p></li>
+        <li><p>Responsive and ready for desktop / tablet / mobile</p></li>
+        <li><p>Paid support plans, custom development, training, and consultancy are available - <a href="mailto:enterprise@getdataseed.com">just ask</a></p></li>
+    </ul>
 
-                <h3>Benefits</h3>
-                <ul>
-                    <li><p>Powerful cloud-hosted OLAP analytics engine</p></li>
-                    <li><p>Support for real-time data streams</p></li>
-                    <li><p>RESTful JSON API for importing and querying data</p></li>
-                    <li><p>Open-source javascript front-end, built with <a href="http://backbonejs.org/">backbone.js</a>, <a href="http://gulpjs.com/">gulp</a>, <a href="http://twitter.github.com/bootstrap/">bootstrap</a> - all the good stuff</p></li>
-                    <li><p>SVG charts build with <a href="http://d3js.org/">d3.js</a> and <a href="http://dc-js.github.io/dc.js/">dc.js</a></p></li>
-                    <li><p>Versatile multi-dimensional data model</p></li>
-                    <li><p>Statistical operations including mean, min, max, variance, sum of squares and standard deviation</p></li>
-                    <li><p>Responsive and ready for desktop / tablet / mobile</p></li>
-                    <li><p>Paid support plans, custom development, training, and consultancy are available - <a href="mailto:enterprise@getdataseed.com">just ask</a></p></li>
-                </ul>
+    <article>
+        <h2 id="getting-started-zoom">Getting Started</h2>
+        <h3 id="getting-started-glossary">Glossary</h3>
 
-                <div class="part">
-                    <h2 id="getting-started-zoom">Getting Started</h2>
-                    <h3 id="getting-started-glossary">Glossary</h3>
+        <table class="table table-hover table-responsive">
+            <tr>
+                <th>Dataset</th>
+                <td>Like a table. Each column in the table is a field and each row an observation</td>
+            </tr>
+            <tr>
+                <th>Field</th>
+                <td>A "column" in the Dataset</td>
+            </tr>
+            <tr>
+                <th>Observation</th>
+                <td>A "row" in the Dataset</td>
+            </tr>
+            <tr>
+                <th>Measure</th>
+                <td>A type of Field used in a chart as a numeric value, optionally aggregated (e.g. distance driven by a vehicle)</td>
+            </tr>
+            <tr>
+                <th>Dimension</th>
+                <td>A type of Field used in a chart as a non-numeric dimension (e.g. a vehicle's model or make)</td>
+            </tr>
+            <tr>
+                <th>Visualisation</th>
+                <td>A set of Elements using the Measures and Dimensions from the Visualisation's Dataset</td>
+            </tr>
+            <tr>
+                <th>Element</th>
+                <td>A component of a Visualisation such as a chart or aggregate summary</td>
+            </tr>
+            <tr>
+                <th>Chart</th>
+                <td>A graphical representation of a Measure and a Dimension (e.g. Number of miles driven by vehicle model)</td>
+            </tr>
+        </table>
 
-                    <ul>
-                        <li>Dataset - like a table. Each column in the table is a field and each row an observation</li>
-                        <li>Field - A "column" in the Dataset</li>
-                        <li>Observation - A "row" in the Dataset</li>
-                        <li>Measure - A type of Field used in a chart as a numeric value, optionally aggregated (e.g. distance driven by a vehicle)</li>
-                        <li>Dimension - A type of Field used in a chart as a non-numeric dimension (e.g. a vehicle's model or make)</li>
-                        <li>Visualisation - A set of Elements using the Measures and Dimensions from the Visualisation's Dataset</li>
-                        <li>Element - A component of a Visualisation such as a chart or aggregate summary</li>
-                        <li>Chart - A graphical representation of a Measure and a Dimension (e.g. Number of miles driven by vehicle model)</li>
-                    </ul>
+        <h3 id="getting-started-embed">Embedding</h3>
 
-                    <h3 id="getting-started-embed">Embedding visualisations</h3>
+        <p>The simplest way to embed a visualisation is to use the "Export" button on your visualisation's toolbar. You will be provided with a snippet of HTML that you can copy-and-paste into your site.</p>
 
-                    <p>The simplest way to embed a visualisation is to use the "Export" button on your visualisation's toolbar. You will be provided with a snippet of HTML that you can copy-and-paste into your site.</p>
+        <p>For help on more advanced embedding, providing full control of the visualisation's appearance, have a look at <a href="#js">dataseed-visualisation.js</a>.</p>
 
-                    <p>For help on more advanced embedding, providing full control of the visualisation's appearance, have a look at the <a href="#js">Javascript Library</a>.</p>
+        <h3 id="getting-started-importing">Importing</h3>
 
-                    <h3 id="getting-started-importing">Importing data through the API</h3>
+        <p>There are two ways to add data through the API, either by providing the URL of spreadsheet using the <a href="#api-import">import API</a> or by manually <a href="#api-dataset">creating a dataset</a> and <a href="#api-observations">adding observations</a>.</p>
 
-                    <p>The easiest way to add data through the API is by providing the URL of a dataset file to the <a href="#api-import">Dataseed Import API</a></p>
+        <h4>Import API</h4>
 
-                    <p>Another option is to create a dataset then add observations (rows). To create a dataset, you can either use the UI to import a spreadsheet, or use the <a href="#api-dataset">POST /dataset</a> API call.  To add observations, use the <a href="#api-observations">POST or PUT /observations</a> API call.</p>
+        <p>First, start an import by POSTing a new import model. The URL should point to a publicly accessible CSV or XLS file that you want to import:</p>
 
-                    <p>For full details please see the <a href="#api">Dataseed API documentation</a></p>
+        <div class="collapsed code-wrap">
+            <code class="shell prettyprint">curl -XPOST -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://dataseedapp.com/api/imports/ -d'</code><pre><code class="json prettyprint">{
+    "files": [{
+        "type": "external",
+        "key": "https://dataseed.s3.amazonaws.com/samples/Dataseed_healthcare_mortality_case_study.csv"
+    }],
+    "data": {
+        "label": "Mortality Case Study",
+        "public": "true"
+    }
+}'</code></pre>
+        </div>
 
-                    <h3 id="getting-started-drupal">Drupal</h3>
+        <p>If the file was fetched successfully the import will start and Dataseed will respond with:</p>
 
-                    <p>For easy Drupal integration check out the <a href="https://drupal.org/project/dataseed">Dataseed module</a> on drupal.org</p>
-                </div>
+        <pre><code class="json prettyprint">{
+    "href": "/api/imports/95e2e1761e80fe5542cc95ff1c3e7ca5",
+    "status": 303
+}</code></pre>
 
-                <div class="part">
-                    <h2 id="js">Javascript Library</h2>
+        <p>The <em>href</em> in this response can be used to query the status of the import:</p>
 
-                    <p>The <a href="https://github.com/dataseed/dataseed-visualisation">Dataseed-visualisation Javascript Library</a> allows visualisations to be integrated with existing Javascript applications. A working knowledge of Javascript is necessary to use the library, for a simpler method of including visualisations on your site see <a href="#getting-started-embed">Basic Embedding</a>.</p>
+        <code class="shell prettyprint">curl -XGET -u'dataseed@example.com:password' -H'Accept: application/json' https://dataseedapp.com/api/imports/95e2e1761e80fe5542cc95ff1c3e7ca5</code>
 
-                    <p>The library consists of models and views for fetching and rendering visualisations built on the <a href="http://backbonejs.org/">Backbone.js</a> framework with <a href="http://requirejs.org/">RequireJS</a> used for module and dependency handling.</p>
+        <p>When the import has finished the <em>status</em> attribute of the import will be set to <em>completed</em>:</p>
 
-                    <h3 id="js-dependencies">Dependencies</h3>
+        <pre class="collapsed"><code class="json prettyprint">{
+    "created": "2015-04-08T14:56:32.479716",
+    "data": {
+        "columns": {
+            "0": "DateYearType",
+            "1": "StringType",
+            "2": "StringType",
+            "3": "StringType",
+            "4": "IntegerType"
+        },
+        "data_row": 2,
+        "description": "",
+        "header_labels": {
+            "0": "Year",
+            "1": "Geo Eng Ons",
+            "2": "Icd 10 Cause Of Death",
+            "3": "Sex",
+            "4": "Number Of Deaths"
+        },
+        "header_row": 1,
+        "headers": [
+            "Year",
+            "geo_eng_ons",
+            "ICD-10 Cause of Death",
+            "Sex",
+            "Number of Deaths"
+        ],
+        "label": "Mortality Case Study",
+        "measure": "rows",
+        "numeric_columns": {
+            "4": "Number Of Deaths"
+        },
+        "public": "true",
+        "table_set_type": "CSV"
+    },
+    "files": [{
+        "key": "https://dataseed.s3.amazonaws.com/samples/Dataseed_healthcare_mortality_case_study.csv",
+        "type": "external"
+    }],
+    "id": "95e2e1761e80fe5542cc95ff1c3e7ca5",
+    "status": "completed"
+}</code></pre>
 
-                    <p>The library uses the <a href="http://nodejs.org/">Node.js</a> platform for building the JS and related tasks. You can install Node.js using the packages on the <a href="http://nodejs.org/download/">download page</a> or through your OS's package manager.</p>
+        <p>You can view the imported data by selecting the visualisation on your <a href="https://dataseedapp.com">datasets page</a> or by querying the <a href="#api-dataset">dataset</a> and its <a href="#api-observations">observations</a>.</p>
 
-                    <h3 id="js-setup-build">Setup &amp; Build</h3>
+        <h4>Manual Dataset creation</h4>
 
-                    <p>The <a href="https://github.com/dataseed/dataseed-visualisation">README on Github</a> contains the latest instructions for setting up and building the project. The build process is managed by <a href="http://gulpjs.com/">Gulp</a> and includes Javascript aggregation and minification, <a href="http://lesscss.org/">LESS</a> compilation, and <a href="http://jasmine.github.io/">jasmine</a> tests. To run the build use:</p>
+        <p>Alternatively, you can import data directly through the API without the need to upload a spreadsheet. This approach is more complicated but allows greater control over the dataset's fields and data types.</p>
 
-                    <code class="shell prettyprint">gulp</code>
+        <p>Firstly, a new empty dataset and visualisation must be created. You'll need to create a field for each "column" of your data:</p>
 
-                    <h3 id="js-modify">Modifying code</h3>
-                    <p>Only modify js or css code in the "src" directory.  In order to view your changes in a browser immediately without having to build, you will need to run a web server.  We have provided one using the gulp-connect plugin, just run the below command and load <a href="http://localhost:8080/index-src.html">http://localhost:8080/index-src.html</a> in your browser.</p>
+        <div class="collapsed code-wrap">
+            <code class="shell prettyprint">curl -XPOST -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://dataseedapp.com/api/datasets/ -d'</code>
+            <pre><code class="json prettyprint">{
+    "label": "My Dataset",
+    "public": true,
+    "fields": [{
+        "id": "fruit",
+        "label": "Fruit",
+        "type": "string"
+    }, {
+        "id": "price",
+        "label": "Price",
+        "type": "integer"
+    }],
+    "visualisations": [{
+        "id": "1",
+        "label": "My Visualisation"
+    }]
+}'</code></pre>
+        </div>
 
-                    <code class="shell prettyprint">gulp serve</code>
+        <p>If the dataset was created successfully Dataseed will respond with:</p>
 
-                    <h3 id="js-example">Example</h3>
+        <pre><code class="json prettyprint">{
+    "href": "/api/datasets/my-dataset",
+    "status": 303
+}</code></pre>
 
-                    <p>The following example demonstrates a simple web application that renders a visualisation when a user clicks a button:</p>
+        <p>Once you have an empty dataset you can start adding observations for each "row" of your data:</p>
 
+        <div class="collapsed code-wrap">
+            <code class="shell prettyprint">curl -XPOST -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://dataseedapp.com/api/datasets/my-dataset/observations/ -d'</code>
+            <pre><code class="json prettyprint">{
+    "observations": [{
+        "id": 1,
+        "fruit": "Orange",
+        "price": 2
+    }, {
+        "id": 2,
+        "fruit": "Banana",
+        "price": 1
+    }, {
+        "id": 3,
+        "fruit": "Lemon",
+        "price": 3
+    }, {
+        "id": 4,
+        "fruit": "Durian",
+        "price": 9
+    }]
+}'</code></pre>
+        </div>
 
-                    <pre><code class="html prettyprint">&lt;!doctype html&gt;
+        <p>When the observations have been created successfully Dataseed will respond with:</p>
+
+        <pre><code class="json prettyprint">{
+    "message": "Created",
+    "status": 200
+}</code></pre>
+
+        <p>To visualise and explore your data select the newly created dataset on your <a href="https://dataseedapp.com">datasets page</a>.</p>
+
+        <h3 id="getting-started-drupal">Drupal</h3>
+
+        <p>For easy Drupal integration check out the <a href="https://drupal.org/project/dataseed">Dataseed module</a> on drupal.org</p>
+    </article>
+
+    <article>
+        <h2 id="js">dataseed-visualisation.js</h2>
+
+        <p><a href="https://github.com/dataseed/dataseed-visualisation.js">dataseed-visualisation.js</a> allows visualisations to be integrated with existing Javascript applications. Please note that a working knowledge of Javascript is necessary to integrate, for a simpler method of including visualisations on your site see <a href="#getting-started-embed">Basic Embedding</a>.</p>
+
+        <p>The code consists of models and views for fetching and rendering visualisations built on the <a href="http://backbonejs.org/">Backbone.js</a> framework with <a href="http://requirejs.org/">RequireJS</a> used for module and dependency handling.</p>
+
+        <h3 id="js-dependencies">Dependencies</h3>
+
+        <p>The <a href="http://nodejs.org/">Node.js</a> platform is used for building the Javascript and related tasks. You can install Node.js using the packages on the <a href="http://nodejs.org/download/">download page</a> or through your OS's package manager.</p>
+
+        <h3 id="js-setup-build">Setup &amp; Build</h3>
+
+        <p>The <a href="https://github.com/dataseed/dataseed-visualisation.js">README on Github</a> contains the latest instructions for setting up and building the project. The build process is managed by <a href="http://gulpjs.com/">Gulp</a> and includes Javascript aggregation and minification, <a href="http://lesscss.org/">LESS</a> compilation, and <a href="http://jasmine.github.io/">jasmine</a> tests. To run the build use:</p>
+
+        <code class="shell prettyprint">gulp</code>
+
+        <h3 id="js-modify">Modifying code</h3>
+        <p>Only modify js or css code in the "src" directory.  In order to view your changes in a browser immediately without having to build, you will need to run a web server.  We have provided one using the gulp-connect plugin, just run the below command and load <a href="http://localhost:8080/index-src.html">http://localhost:8080/index-src.html</a> in your browser.</p>
+
+        <code class="shell prettyprint">gulp serve</code>
+
+        <h3 id="js-example">Example</h3>
+
+        <p>The following example demonstrates a simple web application that renders a visualisation when a user clicks a button:</p>
+
+        <pre class="collapsed"><code class="html prettyprint">&lt;!doctype html&gt;
 &lt;html dir="ltr" lang="en"&gt;
   &lt;head&gt;
     &lt;meta charset="utf-8" /&gt;
@@ -148,9 +306,9 @@
             require(['jquery', './views/dataset', 'app'], function($, DatasetEmbedView) {
                 $('#start').click(function() {
                     new DatasetEmbedView({
-                        'el': $('#vis'),
-                        'id': 'mortality',
-                        'visualisation_id': '1'
+                        el: '#vis',
+                        id: 'mortality',
+                        visualisation_id: '1'
                     });
                 });
             });
@@ -159,94 +317,175 @@
   &lt;/body&gt;
 &lt;/html&gt;</code></pre>
 
-                    <h3 id="js-architecture">Architecture</h3>
+        <p>This example shows how to define a visualisation directly in the context of the consumer application instead of fetching it from Dataseed. For a full list of all the available attributes and their meanings see the <a href="#api-vis">Visualisation API</a> section.</p>
 
-                    <p>Dataseed uses a standard Model/Collection/View <a href="http://backbonejs.org/">backbone</a> architecture where each model has an associated view for rendering and groups of models are stored together in collections. The most important components of Dataseed are listed below along with brief explanations. For more information please see <a href="https://github.com/dataseed/dataseed-visualisation">the full code on Github</a> or <a href="mailto:team@getdataseed.com">get in touch</a>.</p>
+        <pre class="collapsed"><code class="html prettyprint">&lt;!doctype html&gt;
+&lt;html dir="ltr" lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8" /&gt;
+    &lt;meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /&gt;
+    &lt;title&gt;Dataseed Interactive Data Visualization&lt;/title&gt;
+    &lt;meta name="viewport" content="width=device-width" /&gt;
+    &lt;link href="src/less/dataseed.less" rel="stylesheet/less" type="text/css" /&gt;
+    &lt;script src="src/js/components/less/dist/less-1.7.5.js"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;button id="start"&gt;Show me the visualisation!&lt;/button&gt;
+    &lt;div id="vis"&gt;&lt;/div&gt;
+    &lt;script src="src/js/components/requirejs/require.js"&gt;&lt;/script&gt;
+    &lt;script&gt;
+      require.config({
+       "config": {
+           "models/datasetSingleton": {
+               "DATASET": {
+                   "id": "mortality",
+                   "label": "Mortality",
+                   "public": true,
+                   "imports": [],
+                   "fields": [
+                        {"id": "year", "label": "Year", "type": "string"},
+                        {"id": "gender", "label": "Gender", "type": "string"},
+                        {"id": "value", "label": "Value", "type": "integer"}
+                    ],
+                    "visualisations": [
+                        {
+                            "id": "1",
+                            "label": "Mortality in England and Wales",
+                            "description": "Explore the number of deaths by disease, sex, area and year",
+                            "elements": [
+                                {
+                                    "id": "year",
+                                    "label": "Year",
+                                    "measure_label": "Number of deaths",
+                                    "type": "bar",
+                                    "aggregation": "sum",
+                                    "measure": {"id": "value"},
+                                    "dimensions": [{"field": {"id": "year", "type": "string"}}],
+                                    "width": 1,
+                                    "height": 6,
+                                    "y": 1,
+                                    "x": 1
+                                },
+                                {
+                                    "id": "gender",
+                                    "label": "Gender",
+                                    "measure_label": "Number of deaths",
+                                    "type": "bar",
+                                    "aggregation": "sum",
+                                    "measure": {"id": "value"},
+                                    "dimensions": [{"field": {"id": "gender", "type": "string"}}],
+                                    "width": 1,
+                                    "height": 6,
+                                    "y": 1,
+                                    "x": 2
+                                }
+                            ],
+                            "styles": []
+                        }
+                    ],
+                    "modified": "2013-09-06T10:33:39.789859",
+                    "created": "2013-09-06T10:33:39.789859"
+                } // end "DATASET"
+            }
+        } // end "config"
+    });
 
-                    <div class="table-responsive">
-                    <table class="table table-hover">
-                        <tr>
-                            <th rowspan="2">Dataset</th>
-                            <td>Model</td>
-                            <td><a href="https://github.com/dataseed/dataseed-visualisation/blob/master/src/js/models/dataset.js">src/js/models/dataset.js</a></td>
-                            <td>The dataset model owns the visualisation model and handles filtering of data.</td>
-                        </tr>
-                        <tr>
-                            <td>View</td>
-                            <td><a href="https://github.com/dataseed/dataseed-visualisation/blob/master/src/js/views/dataset.js">src/js/views/dataset.js</a></td>
-                            <td>The dataset view owns the visualisation view and initiates rendering.</td>
-                        </tr>
-                        <tr>
-                            <th rowspan="2">Visualisation</th>
-                            <td>Model</td>
-                            <td><a href="https://github.com/dataseed/dataseed-visualisation/blob/master/src/js/models/visualisation.js">src/js/models/visualisation.js</a></td>
-                            <td>The visualisation model owns the collection of elements (i.e. charts) and handles filtering events (<em>addCut</em> and <em>removeCut</em>) by passing them on to the dataset model.</td>
-                        </tr>
-                        <tr>
-                            <td>View</td>
-                            <td><a href="https://github.com/dataseed/dataseed-visualisation/blob/master/src/js/views/visualisation.js">src/js/views/visualisation.js</a></td>
-                            <td>The visualisation view handles add, removing, re-ordering and rendering of the visualisation elements. For each element model in the elements collection a corresponding element view is created.</td>
-                        </tr>
-                        <tr>
-                            <th>Elements</th>
-                            <td>Collection</td>
-                            <td><a href="https://github.com/dataseed/dataseed-visualisation/blob/master/src/js/collections/elements.js">src/js/collections/elements.js</a></td>
-                            <td>The elements collection owns all the element models in a visualisation. It uses the <a href="http://backbonejs.org/#Collection-model">polymorphic models pattern</a> to keep both <a href="https://github.com/dataseed/dataseed-visualisation/blob/master/src/js/models/visualisation/element/dimensionalElement.js">DimensionalElements</a> (charts with a dimension and measure) and <a href="https://github.com/dataseed/dataseed-visualisation/blob/master/src/js/models/visualisation/element/measureElement.js">MeasureElements</a> (charts with only a measure).</td>
-                        </tr>
-                        <tr>
-                            <th rowspan="2">Element</th>
-                            <td>Model</td>
-                            <td><a href="https://github.com/dataseed/dataseed-visualisation/blob/master/src/js/models/visualisation/element.js">src/js/models/visualisation/element.js</a></td>
-                            <td>The element model fetches visualisation data through the <a href="https://github.com/dataseed/dataseed-visualisation/blob/master/src/js/collections/pool.js">ConnectionPool</a> collection. It is also responsible for building chart labels/tooltips, sending filter events and providing methods to help charts interrogate the data, for example, but checking if a particular dimension is currently being filtered.</td>
-                        </tr>
-                        <tr>
-                            <td>View</td>
-                            <td><a href="https://github.com/dataseed/dataseed-visualisation/blob/master/src/js/views/element.js">src/js/views/element.js</a></td>
-                            <td>The element view is used to create the actual chart views and delegates all rendering to them.</td>
-                        </tr>
-                        <tr>
-                            <th>Chart</th>
-                            <td>View</td>
-                            <td><a href="https://github.com/dataseed/dataseed-visualisation/blob/master/src/js/views/element/d3/chart.js">src/js/views/element/d3/chart.js</a></td>
-                            <td>The base chart view is inherited by the various chart types (e.g. <a href="https://github.com/dataseed/dataseed-visualisation/blob/master/src/js/views/element/d3/bubble.js">the bubble chart</a>). It provides basic rendering of the chart container (title, margins, etc) as well as methods to help with filtering and styling individual charts.</td>
-                        </tr>
-                    </table>
-                    </div>
+    require(['src/js/config'], function() {
+        require(['jquery', './views/dataset', 'app'], function($, DatasetEmbedView) {
+            $('#start').click(function() {
+                new DatasetEmbedView({el: '#vis'});
+            });
+        });
+    });
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
 
+        <h3 id="js-architecture">Architecture</h3>
 
-                    <h3 id="js-auth">Authentication</h3>
+        <p>Dataseed uses a standard Model/Collection/View <a href="http://backbonejs.org/">backbone</a> architecture where each model has an associated view for rendering and groups of models are stored together in collections. The most important components of Dataseed are listed below along with brief explanations. For more information please see <a href="https://github.com/dataseed/dataseed-visualisation.js">the full code on Github</a> or <a href="mailto:team@getdataseed.com">get in touch</a>.</p>
 
-                    <p>To allow embedding of private visualisations without revealing your username and password a separate <a href="http://en.wikipedia.org/wiki/Hash-based_message_authentication_code">HMAC</a>-based authentication method is available. To use this authentication method you will need a way to sign messages for your users, i.e. the ability to run code server-side.</p>
+        <table class="table table-hover table-responsive">
+            <tr>
+                <th rowspan="2">Dataset</th>
+                <td>Model</td>
+                <td><a href="https://github.com/dataseed/dataseed-visualisation.js/blob/master/src/js/models/dataset.js">src/js/models/dataset.js</a></td>
+                <td>The dataset model owns the visualisation model and handles filtering of data.</td>
+            </tr>
+            <tr>
+                <td>View</td>
+                <td><a href="https://github.com/dataseed/dataseed-visualisation.js/blob/master/src/js/views/dataset.js">src/js/views/dataset.js</a></td>
+                <td>The dataset view owns the visualisation view and initiates rendering.</td>
+            </tr>
+            <tr>
+                <th rowspan="2">Visualisation</th>
+                <td>Model</td>
+                <td><a href="https://github.com/dataseed/dataseed-visualisation.js/blob/master/src/js/models/visualisation.js">src/js/models/visualisation.js</a></td>
+                <td>The visualisation model owns the collection of elements (i.e. charts) and handles filtering events (<em>addCut</em> and <em>removeCut</em>) by passing them on to the dataset model.</td>
+            </tr>
+            <tr>
+                <td>View</td>
+                <td><a href="https://github.com/dataseed/dataseed-visualisation.js/blob/master/src/js/views/visualisation.js">src/js/views/visualisation.js</a></td>
+                <td>The visualisation view handles add, removing, re-ordering and rendering of the visualisation elements. For each element model in the elements collection a corresponding element view is created.</td>
+            </tr>
+            <tr>
+                <th>Elements</th>
+                <td>Collection</td>
+                <td><a href="https://github.com/dataseed/dataseed-visualisation.js/blob/master/src/js/collections/elements.js">src/js/collections/elements.js</a></td>
+                <td>The elements collection owns all the element models in a visualisation. It uses the <a href="http://backbonejs.org/#Collection-model">polymorphic models pattern</a> to keep both <a href="https://github.com/dataseed/dataseed-visualisation.js/blob/master/src/js/models/visualisation/element/dimensionalElement.js">DimensionalElements</a> (charts with a dimension and measure) and <a href="https://github.com/dataseed/dataseed-visualisation.js/blob/master/src/js/models/visualisation/element/measureElement.js">MeasureElements</a> (charts with only a measure).</td>
+            </tr>
+            <tr>
+                <th rowspan="2">Element</th>
+                <td>Model</td>
+                <td><a href="https://github.com/dataseed/dataseed-visualisation.js/blob/master/src/js/models/visualisation/element.js">src/js/models/visualisation/element.js</a></td>
+                <td>The element model fetches visualisation data through the <a href="https://github.com/dataseed/dataseed-visualisation.js/blob/master/src/js/collections/pool.js">ConnectionPool</a> collection. It is also responsible for building chart labels/tooltips, sending filter events and providing methods to help charts interrogate the data, for example, but checking if a particular dimension is currently being filtered.</td>
+            </tr>
+            <tr>
+                <td>View</td>
+                <td><a href="https://github.com/dataseed/dataseed-visualisation.js/blob/master/src/js/views/element.js">src/js/views/element.js</a></td>
+                <td>The element view is used to create the actual chart views and delegates all rendering to them.</td>
+            </tr>
+            <tr>
+                <th>Chart</th>
+                <td>View</td>
+                <td><a href="https://github.com/dataseed/dataseed-visualisation.js/blob/master/src/js/views/element/d3/chart.js">src/js/views/element/d3/chart.js</a></td>
+                <td>The base chart view is inherited by the various chart types (e.g. <a href="https://github.com/dataseed/dataseed-visualisation.js/blob/master/src/js/views/element/d3/bubble.js">the bubble chart</a>). It provides basic rendering of the chart container (title, margins, etc) as well as methods to help with filtering and styling individual charts.</td>
+            </tr>
+        </table>
 
-                    <p>Before you start you'll need your <em>user_token</em> and <em>user_key</em> values, which can be found on your <a href="https://dataseedapp.com/user/profile">profile page</a>. <strong>WARNING: Your <em>user_key</em> should never be revealed (e.g. by including it in your HTML or javascript). Anyone with access to your <em>user_key</em> can use it to see your private data!</strong></p>
+        <h3 id="js-auth">Authentication</h3>
 
-                    <p>The process for authenticating a user's request to an embedded visualisation is as follows:</p>
+        <p>To allow embedding of private visualisations without revealing your username and password a separate <a href="http://en.wikipedia.org/wiki/Hash-based_message_authentication_code">HMAC</a>-based authentication method is available. To use this authentication method you will need a way to sign messages for your users, i.e. the ability to run code server-side.</p>
 
-                    <ol>
-                        <li>The user's browser makes a request to your site</li>
-                        <li>Your site calculates an auth message and HMAC and returns these to the user, along with the embedded visualisation</li>
-                        <li>When the dataseed javascript executes in the user's browser it will request data from dataseed using the credentials provided</li>
-                        <li>Dataseed will return the requested data to the user, as long as the following conditions are met:
-                            <ul>
-                                <li>The auth message is in the correct format</li>
-                                <li>The requested <em>dataset_id</em> is owned by your dataseed account</li>
-                                <li>The auth message hasn't expired</li>
-                                <li>The HMAC is valid</li>
-                            </ul>
-                        </li>
-                    </ol>
+        <p>Before you start you'll need your <em>user_token</em> and <em>user_key</em> values, which can be found on your <a href="https://dataseedapp.com/user/profile">profile page</a>. <strong>WARNING: Your <em>user_key</em> should never be revealed (e.g. by including it in your HTML or javascript). Anyone with access to your <em>user_key</em> can use it to see your private data!</strong></p>
 
-                    <p>The authentication message is a <a href="http://en.wikipedia.org/wiki/Base64">base64</a> encoded JSON object with the following keys:</p>
-                    <ul>
-                        <li>user - Your <em>user_token</em></li>
-                        <li>dataset - Your dataset's ID</li>
-                        <li>filters - An object containing mandatory filters on your data</li>
-                        <li>timestamp - A unix timestamp (in UTC) indicating when the message was created</li>
-                    </ul>
+        <p>The process for authenticating a user's request to an embedded visualisation is as follows:</p>
 
-                    <p>An example authentication message, before base64ing:</p>
+        <ol>
+            <li>The user's browser makes a request to your site</li>
+            <li>Your site calculates an auth message and HMAC and returns these to the user, along with the embedded visualisation</li>
+            <li>When the dataseed javascript executes in the user's browser it will request data from dataseed using the credentials provided</li>
+            <li>Dataseed will return the requested data to the user, as long as the following conditions are met:
+                <ul>
+                    <li>The auth message is in the correct format</li>
+                    <li>The requested <em>dataset_id</em> is owned by your dataseed account</li>
+                    <li>The auth message hasn't expired</li>
+                    <li>The HMAC is valid</li>
+                </ul>
+            </li>
+        </ol>
 
-                    <pre><code class="json prettyprint">{
+        <p>The authentication message is a <a href="http://en.wikipedia.org/wiki/Base64">base64</a> encoded JSON object with the following keys:</p>
+        <ul>
+            <li>user - Your <em>user_token</em></li>
+            <li>dataset - Your dataset's ID</li>
+            <li>filters - An object containing mandatory filters on your data</li>
+            <li>timestamp - A unix timestamp (in UTC) indicating when the message was created</li>
+        </ul>
+
+        <p>An example authentication message, before base64ing:</p>
+
+        <pre><code class="json prettyprint">{
     "user": "xxx",
     "dataset": "xxx",
     "filters": {},
@@ -266,8 +505,8 @@
     }
 });</code></pre>
 
-                    <h4 id="js-auth-php">PHP</h4>
-                    <pre><code class="php prettyprint">&lt;?php
+        <h4 id="js-auth-php">PHP</h4>
+        <pre class="collapsed"><code class="php prettyprint">&lt;?php
 
 // Set your own values here
 $user_token = 'xxx';
@@ -310,8 +549,8 @@ $config = json_encode(array(
 ));
 print "&lt;script&gt;require.config($config);&lt;/script&gt;";</code></pre>
 
-                    <h4 id="js-auth-python">Python</h4>
-                    <pre><code class="python prettyprint">import json
+        <h4 id="js-auth-python">Python</h4>
+        <pre class="collapsed"><code class="python prettyprint">import json
 import hashlib
 import hmac
 from time import time
@@ -351,13 +590,13 @@ config = json.dumps({
 })
 print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
 
-                    <h3 id="js-styles">Styles</h3>
+        <h3 id="js-styles">Styles</h3>
 
-                    <p>To change text and background colours in the <a href="#api-vis">visualisation model</a> an array of styles is used. Each style is represented in the array as an object with a style ID and value.</p>
+        <p>To change text and background colours in the <a href="#api-vis">visualisation model</a> an array of styles is used. Each style is represented in the array as an object with a style ID and value.</p>
 
-                    <p>For example, to set the colour for the heading text of every chart in a visualisation the model should contain:</p>
+        <p>For example, to set the colour for the heading text of every chart in a visualisation the model should contain:</p>
 
-                    <pre><code class="json prettyprint">{
+        <pre class="collapsed"><code class="json prettyprint">{
     "id": "1",
     "label": "My Visualisation",
     "elements": [
@@ -370,113 +609,31 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
         }
     ]
 }</code></pre>
-                    <p>The full list of styles is shown in the table below. To style the visualisation in other ways (e.g. changing the font) the required elements can be targeted by your own CSS in the usual way.</p>
+        <p>For the full list of styles see the <a href="#api-styles">Styles API</a>. To style the visualisation in other ways (e.g. changing the font) the required elements can be targeted by your own CSS in the usual way.</p>
 
-                    <table class="table table-responsive table-hover">
-                        <tr>
-                            <th>ID</th>
-                            <th>Default</th>
-                            <th>Description</th>
-                        <tr>
-                            <td>visualisationBackground</td>
-                            <td>#fff</td>
-                            <td>Background colour for the visualisation</td>
-                        </tr>
-                        <tr>
-                            <td>background</td>
-                            <td>#f5f6f9</td>
-                            <td>Background colour for the charts</td>
-                        </tr>
-                        <tr>
-                            <td>heading</td>
-                            <td>#566573</td>
-                            <td>Chart heading text colour</td>
-                        </tr>
-                        <tr>
-                            <td>featureFill</td>
-                            <td>#72bd49</td>
-                            <td>Chart feature (e.g. bars or lines) colour</td>
-                        </tr>
-                        <tr>
-                            <td>featureFillActive</td>
-                            <td>#88939d</td>
-                            <td>Colour for inactive features when a chart is cut (i.e. features without a cut)</td>
-                        </tr>
-                        <tr>
-                            <td>featureStroke</td>
-                            <td>#fff</td>
-                            <td>Chart feature outline colour</td>
-                        </tr>
-                        <tr>
-                            <td>featureStrokeActive</td>
-                            <td>#fff</td>
-                            <td>Chart inactive feature outline colour</td>
-                        </tr>
-                        <tr>
-                            <td>label</td>
-                            <td>#2c3e50</td>
-                            <td>Chart label text colour</td>
-                        </tr>
-                        <tr>
-                            <td>scaleFeature</td>
-                            <td>#2c3e50</td>
-                            <td>Scale/axis line colour</td>
-                        </tr>
-                        <tr>
-                            <td>scaleLabel</td>
-                            <td>#2c3e50</td>
-                            <td>Scale label text colour</td>
-                        </tr>
-                        <tr>
-                            <td>measureLabel</td>
-                            <td>#2c3e50</td>
-                            <td>Measure label text colour</td>
-                        </tr>
-                        <tr>
-                            <td>choroplethMin</td>
-                            <td>#fff</td>
-                            <td>Map feature (e.g. a country or a state) start colour</td>
-                        </tr>
-                        <tr>
-                            <td>choroplethMax</td>
-                            <td>#000</td>
-                            <td>Map feature end colour</td>
-                        </tr>
-                        <tr>
-                            <td>choroplethStroke</td>
-                            <td>#000</td>
-                            <td>Map feature outline colour</td>
-                        </tr>
-                        <tr>
-                            <td>choroplethStrokeWidth</td>
-                            <td>1</td>
-                            <td>Map feature outline width</td>
-                        </tr>
-                    </table>
+        <h3 id="js-new-chart">Add New Chart</h3>
 
-                    <h3 id="js-new-chart">Add New Chart</h3>
+        <p>When using the embedded JS you can create new chart types as well as using the <a href="#api-vis-elements">standard chart types</a>. The process to create a new chart type is:</p>
 
-                    <p>When using the embedded JS you can create new chart types as well as using the <a href="#api-vis-elements">standard chart types</a>. The process to create a new chart type is:</p>
+        <ol>
+            <li>Create a <a href="http://backbonejs.org/#View">Backbone view</a> that implements a <a href="http://backbonejs.org/#View-render">render</a> method. Whenever data is received (during the initial page load or when a cut is applied) the render method will be called to output the HTML/SVG for the chart.</li>
+            <li>Add your new view class to the ElementView chart types object in ElementView.prototype.chartTypes</li>
+            <li>Set the chart type in your element's model</li>
+        </ol>
 
-                    <ol>
-                        <li>Create a <a href="http://backbonejs.org/#View">Backbone view</a> that implements a <a href="http://backbonejs.org/#View-render">render</a> method. Whenever data is received (during the initial page load or when a cut is applied) the render method will be called to output the HTML/SVG for the chart.</li>
-                        <li>Add your new view class to the ElementView chart types object in ElementView.prototype.chartTypes</li>
-                        <li>Set the chart type in your element's model</li>
-                    </ol>
+        <p>In your chart view's render method you have access to its associated <a href="https://github.com/dataseed/dataseed-visualisation.js/blob/master/src/js/models/visualisation/element.js">model</a> which has a number of useful methods:</p>
 
-                    <p>In your chart view's render method you have access to its associated <a href="https://github.com/dataseed/dataseed-visualisation/blob/master/src/js/models/visualisation/element.js">model</a> which has a number of useful methods:</p>
+        <ul>
+            <li>getObservations - Returns an array of all observations</li>
+            <li>hasCutId - Check if the visualisation is cut on the supplied dimension member ID</li>
+            <li>featureClick - Cut the visualisation on the supplied value</li>
+        </ul>
 
-                    <ul>
-                        <li>getObservations - Returns an array of all observations</li>
-                        <li>hasCutId - Check if the visualisation is cut on the supplied dimension member ID</li>
-                        <li>featureClick - Cut the visualisation on the supplied value</li>
-                    </ul>
+        <p>When creating new chart types it can be useful to extend the <a href="https://github.com/dataseed/dataseed-visualisation.js/blob/master/src/js/views/element/chart.js">ChartView class</a> as it contains a number of useful methods for dealing with cuts and styles.</p>
 
-                    <p>When creating new chart types it can be useful to extend the <a href="https://github.com/dataseed/dataseed-visualisation/blob/master/src/js/views/element/chart.js">ChartView class</a> as it contains a number of useful methods for dealing with cuts and styles.</p>
+        <p>The example below shows how to create a basic "list" type chart. Each observation is rendered as a link that can be clicked to cut on it.</p>
 
-                    <p>The example below shows how to create a basic "list" type chart. Each observation is rendered as a link that can be clicked to cut on it.</p>
-
-                    <pre><code class="html prettyprint">&lt;!doctype html&gt;
+        <pre class="collapsed"><code class="html prettyprint">&lt;!doctype html&gt;
 &lt;html dir="ltr" lang="en"&gt;
   &lt;head&gt;
     &lt;meta charset="utf-8" /&gt;
@@ -514,7 +671,7 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
                         {
                             "id": "1",
                             "label": "Mortality in England and Wales",
-                            "description": "Explore and compare the number of deaths by disease, sex, area and year",
+                            "description": "Explore the number of deaths by disease, sex, area and year",
                             "elements": [
                                 {
                                     "id": "sum0",
@@ -609,54 +766,63 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
             /**
              * Render the visualisation
              */
-            new DatasetEmbedView({el: $('#vis')});
+            new DatasetEmbedView({el: '#vis'});
         });
     });
     &lt;/script&gt;
   &lt;/body&gt;
 &lt;/html&gt;</code></pre>
 
-                </div>
+    </article>
 
-                <div class="part">
-                    <h2 id="api">REST API</h2>
+    <article>
+        <h2 id="api">API</h2>
 
-                    <h3 id="api-intro">Introduction</h3>
+        <h3 id="api-intro">Introduction</h3>
 
-                    <p>The API for Dataseed is implemented as a set of <a href="http://www.json.org/">JSON</a> resources (e.g. a <a href="#api-vis">Visualisation</a>), each with their own URL. The resources may be read or altered using the standard <a href="http://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#Request_methods">HTTP verbs</a>. We have tried to follow <a href="http://en.wikipedia.org/wiki/Representational_state_transfer">RESTful</a> principles in the design of the API wherever possible.</p>
+        <p>The API for Dataseed is implemented as a set of <a href="http://www.json.org/">JSON</a> resources (e.g. a <a href="#api-vis">Visualisation</a>), each with their own URL. The resources may be read or altered using the standard <a href="http://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#Request_methods">HTTP verbs</a>. We have tried to follow <a href="http://en.wikipedia.org/wiki/Representational_state_transfer">RESTful</a> principles in the design of the API wherever possible.</p>
 
-                    <p>The examples in this documentation use the <a href="http://en.wikipedia.org/wiki/CURL">cURL</a> command line tool to interact with the API. If you have cURL installed (Linux and OS X users should have it by default) you can copy and paste the commands into a terminal to see them in action! For authenticated commands you'll need to replace the example account details with your own (see <a href="#api-intro-auth">Authentication</a>).</p>
+        <p>The examples in this documentation use the <a href="http://en.wikipedia.org/wiki/CURL">cURL</a> command line tool to interact with the API. If you have cURL installed (Linux and OS X users should have it by default) you can copy and paste the commands into a terminal to see them in action! For authenticated commands you'll need to replace the example account details with your own (see <a href="#api-auth">Authentication</a>).</p>
 
-                    <h4 id="api-intro-requests">Requests</h4>
+        <h3 id="api-requests">Requests</h3>
 
-                    <p>Requests to the API must always specify an <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1">Accept header</a> with the <a href="http://tools.ietf.org/html/rfc4627#section-6">JSON MIME type</a> (i.e. "application/json"). So you could fetch a public dataset using:</p>
+        <p>Requests to the API must always specify an <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1">Accept header</a> with the <a href="http://tools.ietf.org/html/rfc4627#section-6">JSON MIME type</a> (i.e. "application/json"). So you could fetch a public dataset using:</p>
 
-                    <code class="shell prettyprint">curl -H'Accept: application/json' https://dataseedapp.com/api/datasets/mortality</code>
+        <code class="shell prettyprint">curl -H'Accept: application/json' https://dataseedapp.com/api/datasets/mortality</code>
 
-                    <p>When sending data to the API you must also specify the MIME type of your request using the <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17">Content-Type header</a> header. The following example shows how to add an observation to an existing dataset:</p>
+        <p>When sending data to the API you must also specify the MIME type of your request using the <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17">Content-Type header</a> header. The following example shows how to add an observation to an existing dataset:</p>
 
-                    <code class="shell prettyprint">curl -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://dataseedapp.com/api/datasets/my-dataset/observations -d'{ "observations": [ { "id": "o1234", "age": "26", "gender": "M" } ] }'</code>
+        <div class="collapsed code-wrap">
+            <code class="shell prettyprint">curl -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://dataseedapp.com/api/datasets/my-dataset/observations -d'</code>
+            <pre><code class="json prettyprint">{
+    "observations": [{
+        "id": 1234,
+        "age": "26",
+        "gender": "M"
+    }]
+}'</code></pre>
+        </div>
 
-                    <p>You can also get HTML responses to GET requests made in a browser, e.g. <a href="https://dataseedapp.com/api/datasets/mortality">https://dataseedapp.com/api/datasets/mortality</a></p>
+        <p>You can also get HTML responses to GET requests made in a browser, e.g. <a href="https://dataseedapp.com/api/datasets/mortality">https://dataseedapp.com/api/datasets/mortality</a></p>
 
-                    <h4 id="api-intro-responses">Responses</h4>
+        <h3 id="api-responses">Responses</h3>
 
-                    <p>The are two classes of response returned by the API, indicated by the <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html">HTTP status code</a>:</p>
+        <p>The are two classes of response returned by the API, indicated by the <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html">HTTP status code</a>:</p>
 
-                    <h5>200/300: Success</h5>
+        <h5>200/300: Success</h5>
 
-                    <p  class="indent">The request succeeded. When creating or updating resources a 303 code will be returned. The URL the resource should be fetched from is specified in the <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.30">Location header</a>.</p>
+        <p  class="indent">The request succeeded. When creating or updating resources a 303 code will be returned. The URL the resource should be fetched from is specified in the <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.30">Location header</a>.</p>
 
-                    <pre class="indent"><code class="json prettyprint">{
+        <pre class="indent"><code class="json prettyprint">{
     "status": 200,
     "message": "Created"
 }</code></pre>
 
-                    <h5>400: Bad Request</h5>
+        <h5>400: Bad Request</h5>
 
-                    <p class="indent">The request failed because it was invalid. A general error message will be provided in the returned JSON as well as more specific errors when applicable.</p>
+        <p class="indent">The request failed because it was invalid. A general error message will be provided in the returned JSON as well as more specific errors when applicable.</p>
 
-                    <pre class="indent"><code class="json prettyprint">{
+        <pre class="indent"><code class="json prettyprint">{
     "status": 400,
     "message": "Invalid",
     "errors": {
@@ -665,44 +831,137 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
     }
 }</code></pre>
 
-                    <h4 id="api-intro-auth">Authentication</h4>
+        <h3 id="api-auth">Authentication</h3>
 
-                    <p>All requests must be authenticated except when reading Datasets or Visualisations that are public. Currently, the only supported authentication method is <a href="http://en.wikipedia.org/wiki/Basic_access_authentication">HTTP Basic Authentication</a>. The username and password should be the same ones you use to login with (if you haven't already got an account <a href="/">sign-up for one now</a>).</p>
+        <p>All requests must be authenticated except when reading Datasets or Visualisations that are public. Currently, the only supported authentication method is <a href="http://en.wikipedia.org/wiki/Basic_access_authentication">HTTP Basic Authentication</a>. The username and password should be the same ones you use to login with (if you haven't already got an account <a href="https://dataseedapp.com">sign-up for one now</a>).</p>
 
-                    <p>So, for example, to fetch a private dataset you would do the following:</p>
+        <p>So, for example, to fetch a private dataset you would do the following:</p>
 
-                    <code class="shell prettyprint">curl -u'dataseed@example.com:password' -H'Accept: application/json' https://dataseedapp.com/api/datasets/my-dataset</code>
+        <code class="shell prettyprint">curl -u'dataseed@example.com:password' -H'Accept: application/json' https://dataseedapp.com/api/datasets/my-dataset</code>
 
-                    <h3 id="api-import">Import</h3>
+        <h3 id="api-import">Import</h3>
 
-                    <h4>Create</h4>
+        <p>To import a dataset from a file (as opposed to directly inserting <a href="#api-observations">observations</a>) the import API can be used. An import with this method consists of two steps:</p>
 
-                    <h5>Request</h5>
+        <ol>
+            <li>Setup, Validation &amp; Type Detection</li>
+            <li>Background Import Process</li>
+        </ol>
 
-                    <code class="shell prettyprint indent">curl -XPOST -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://dataseedapp.com/api/imports/ -d' {"files": [{"key": "http://example.com/example.csv"}], "data": {"label": "remote file example", "public": "true"}}'</code>
+        <p>The first step is accomplished by POSTing an import model with a publicly accessible URL for a spreadsheet file and the <em>label</em> and <em>public</em> values for the new dataset (see <a href="#api-import-create">the examples below</a>).</p>
 
-                    <p class="indent">The dataset field types can also be set (must be one of "StringType, IntegerType, DecimalType, DateType, DateYearType"). Otherwise they will be guessed.</p>
+        <p>Once the import has been successfully POSTed a background process will be started that transforms the rows in the spreadsheet into observations in Dataseed. Each observation will have an ID as well as a value for every column/field. For example:</p>
 
-                    <code class="shell prettyprint indent">curl -XPOST -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://dataseedapp.com/api/imports/ -d' {"files": [{"type": "external", "key": "http://example.com/example.csv"}], "data": {"label": "remote file example", "public": "true", "columns": {"0": "StringType", "1": "StringType", "2": "StringType", "3": "IntegerType"}}}'</code>
+        <pre><code class="json prettyprint">{
+    "id": 1,
+    "d1": "2014-12-01T00:00:00",
+    "d2": 3,
+    "d3": 0.18
+}</code></pre>
 
-                    <h5>Response</h5>
+        <p>In the example above the ID is "1", meaning that this observation was created from the first row of data in the spreadsheet. There are also three fields:</p>
+        <ul>
+            <li><em>d1</em> - A date/time value</li>
+            <li><em>d2</em> - A string value represented by a dimension ID. To find the actual string value this ID corresponds to you need to GET the <a href="#api-dimensions">dimension's values</a> (so for this example you would <em>GET /api/datasets/my-dataset-name/dimensions/d2</em>).</li>
+            <li><em>d3</em> - A numeric value. This would typically be used as a measure.</li>
+        </ul>
 
-                    <pre class="indent"><code class="json prettyprint">{
+        <p>It is often helpful to GET the <a href="#api-dataset">dataset</a> that an import has created, to understand the different fields and the types of data they are being used for.</p>
+
+        <h4 id="api-import-object">The Import Object</h4>
+
+        <table class="table table-hover table-responsive">
+            <tr>
+                <th rowspan="2">files (array)</th>
+                <th>type (string)</th>
+                <td>The type of import file, must be <em>external</em> when importing through the API.</td>
+            </tr>
+            <tr>
+                <th>key (string)</th>
+                <td>A publicly accessible URL for a CSV, XLS or XLSX file.</td>
+            </tr>
+            <tr>
+                <th rowspan="3">data (object)</th>
+                <th>label (string)</th>
+                <td>The label for the dataset that will be created by the import.</td>
+            </tr>
+            <tr>
+                <th>public (boolean)</th>
+                <td>The public/private status of the dataset created by the import.</td>
+            </tr>
+            <tr>
+                <th>columns (object)</th>
+                <td>By default the data type of each column will be auto-detected during the import. To explicitly set the type of each column use a key of the column's index (0 based) as a string and a value of <em>StringType</em>, <em>IntegerType</em>, <em>DecimalType</em>, <em>DateType</em> or <em>DateYearType</em>.</td>
+            </tr>
+            <tr>
+                <th colspan="2">status (string)</th>
+                <td>The status of the import, one of <em>pending</em>, <em>ready</em>, <em>running</em>, <em>failed</em> or <em>completed</em>.</td>
+            </tr>
+        </table>
+
+        <h4 id="api-import-create">Create an Import</h4>
+
+        <h5>Request</h5>
+
+        <div class="indent">
+            <div class="collapsed code-wrap">
+                <code class="shell prettyprint">curl -XPOST -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://dataseedapp.com/api/imports/ -d'</code>
+                <pre><code class="json prettyprint">{
+        "files": [{
+            "type": "external",
+            "key": "http://example.com/example.csv"
+        }],
+        "data": {
+            "label": "remote file example",
+            "public": "true"
+        }
+    }'</code></pre>
+            </div>
+        </div>
+
+        <p class="indent">The dataset field types can also be set (otherwise they will be guessed):</p>
+
+        <div class="indent">
+            <div class="collapsed code-wrap">
+                <code class="shell prettyprint">curl -XPOST -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://dataseedapp.com/api/imports/ -d'</code>
+                <pre><code class="json prettyprint">{
+    "files": [{
+        "type": "external",
+        "key": "http://example.com/example.csv"
+    }],
+    "data": {
+        "label": "remote file example",
+        "public": "true",
+        "columns": {
+            "0": "StringType",
+            "1": "StringType",
+            "2": "StringType",
+            "3": "IntegerType"
+        }
+    }
+}'</code></pre>
+            </div>
+        </div>
+
+        <h5>Response</h5>
+
+        <pre class="indent"><code class="json prettyprint">{
    "status": 303,
    "href": "/api/imports/252b529188c2bdee4c16570a133a329d"
 }</code></pre>
 
-                    <h4>Read</h4>
+        <h4>Get an Import</h4>
 
-                    <p>By making a GET request to the URL returned in the previous call we can get the status and all the other info related to our import.</p>
+        <p>By making a GET request to the URL returned in the previous call we can get the status and all the other info related to our import.</p>
 
-                    <h5>Request</h5>
+        <h5>Request</h5>
 
-                    <code class="shell prettyprint indent">curl -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://dataseedapp.com/api/imports/252b529188c2bdee4c16570a133a329d'</code>
+        <code class="shell prettyprint indent">curl -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://dataseedapp.com/api/imports/252b529188c2bdee4c16570a133a329d'</code>
 
-                    <h5>Response</h5>
+        <h5>Response</h5>
 
-                    <pre class="indent"><code class="json prettyprint">{
+        <div class="indent">
+            <pre class="collapsed"><code class="json prettyprint">{
     "created": "2015-02-04T18:23:05.532800",
       "data": {
         "columns": {
@@ -738,340 +997,431 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
       "status": "completed"
 
 }</code></pre>
+        </div>
 
-                    <h3 id="api-dataset">Dataset</h3>
+        <h3 id="api-dataset">Dataset</h3>
 
-                    <h4>Read</h4>
+        <h4 id="api-dataset-object">The Dataset Object</h4>
 
-                    <h5>Request</h5>
+        <table class="table table-hover table-responsive">
+            <tr>
+                <th colspan="2">id (string)</th>
+                <td>The ID of the dataset, used in the dataset's URL.</td>
+            </tr>
+            <tr>
+                <th colspan="2">label (string)</th>
+                <td>The label of the dataset, displayed on the <a href="https://dataseedapp.com">datasets page</a>.</td>
+            </tr>
+            <tr>
+                <th colspan="2">public (boolean)</th>
+                <td>The public/private status of the dataset.</td>
+            </tr>
+            <tr>
+                <th rowspan="3">fields (array)</th>
+                <th>id (string)</th>
+                <td>The ID of the field, used to create/update <a href="#api-dimensions">dimensions</a> and <a href="#api-observations">observations</a>.</td>
+            </tr>
+            <tr>
+                <th>label (string)</th>
+                <td>The label of the field, used as an axis label on charts and in the visualisation/element customisation interface.</td>
+            </tr>
+            <tr>
+                <th>type (string)</th>
+                <td>The data type of the field, must be one of <em>string</em>, <em>date</em>, <em>integer</em>, <em>float</em> or <em>geo</em>.</td>
+            </tr>
+            <tr>
+                <th colspan="2">imports (array)</th>
+                <td>Any imports associated with the dataset, see <a href="#api-import-object">the import object</a>.</td>
+            </tr>
+            <tr>
+                <th colspan="2">visualisations (array)</th>
+                <td>See <a href="#api-vis-object">the visualisation object</a>.</td>
+            </tr>
+            <tr>
+                <th colspan="2">cut (object)</th>
+                <td>Used to set a default cut (filter) on this dataset's visualisations. The key is a field ID and the value is the value to cut on.</td>
+            </tr>
+            <tr>
+                <th colspan="2">created (string)</th>
+                <td>The date and time the dataset was created</td>
+            </tr>
+            <tr>
+                <th colspan="2">modified (string)</th>
+                <td>The date and time the dataset was last updated</td>
+            </tr>
+        </table>
 
-                    <code class="shell prettyprint indent">curl -H'Accept: application/json' https://dataseedapp.com/api/datasets/mortality</code>
+        <h4>Get a Dataset</h4>
 
-                    <h5>Response</h5>
+        <h5>Request</h5>
 
-                    <pre class="indent"><code class="json prettyprint">{
+        <code class="shell prettyprint indent">curl -H'Accept: application/json' https://dataseedapp.com/api/datasets/mortality</code>
+
+        <h5>Response</h5>
+
+        <div class="indent">
+            <pre class="collapsed"><code class="json prettyprint">{
     "id": "mortality",
     "label": "Mortality",
     "public": true,
-    "imports": [],
     "fields": [
         {"id": "year", "label": "Year", "type": "string"},
         {"id": "gender", "label": "Gender", "type": "string"},
         {"id": "value", "label": "Value", "type": "integer"}
     ],
-    "visualisations": [
-        {
-            "id": "1",
-            "label": "Mortality in England and Wales",
-            "description": "Explore and compare the number of deaths by disease, sex, area and year",
-            "public": true,
-            "elements": [
-                {
-                    "id": "year",
-                    "label": "Year",
-                    "measure_label": "Number of deaths",
-                    "type": "bar",
-                    "aggregation": "sum",
-                    "measure": {"id": "value"},
-                    "dimensions": [{"field": {"id": "year", "type": "string"}}],
-                    "width": 1,
-                    "height": 6,
-                    "y": 1,
-                    "x": 1
-                },
-                {
-                    "id": "gender",
-                    "label": "Gender",
-                    "measure_label": "Number of deaths",
-                    "type": "bar",
-                    "aggregation": "sum",
-                    "measure": {"id": "value"},
-                    "dimensions": [{"field": {"id": "gender", "type": "string"}}],
-                    "width": 1,
-                    "height": 6,
-                    "y": 1,
-                    "x": 2
-                }
-            ],
-            "styles": []
-        }
-    ],
+    "imports": [],
+    "visualisations": [{
+        "id": "1",
+        "label": "Mortality in England and Wales",
+        "description": "Explore the number of deaths by disease, sex, area and year",
+        "elements": [{
+            "id": "year",
+            "label": "Year",
+            "measure_label": "Number of deaths",
+            "type": "bar",
+            "aggregation": "sum",
+            "measure": {"id": "value"},
+            "dimensions": [{"field": {"id": "year", "type": "string"}}],
+            "width": 1,
+            "height": 6,
+            "y": 1,
+            "x": 1
+        }, {
+            "id": "gender",
+            "label": "Gender",
+            "measure_label": "Number of deaths",
+            "type": "bar",
+            "aggregation": "sum",
+            "measure": {"id": "value"},
+            "dimensions": [{"field": {"id": "gender", "type": "string"}}],
+            "width": 1,
+            "height": 6,
+            "y": 1,
+            "x": 2
+        }],
+        "styles": []
+    }],
     "modified": "2013-09-06T10:33:39.789859",
     "created": "2013-09-06T10:33:39.789859"
 }</code></pre>
+        </div>
 
-                    <h4>Create</h4>
+        <h4>Create a Dataset</h4>
 
-                    <h5>Request</h5>
+        <h5>Request</h5>
 
-                    <div class="indent code-wrap">
-                        <code class="shell prettyprint">curl -XPOST -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://dataseedapp.com/api/datasets/ -d'</code>
-                        <pre><code class="json prettyprint">{
+        <div class="indent">
+            <div class="collapsed code-wrap">
+                <code class="shell prettyprint">curl -XPOST -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://dataseedapp.com/api/datasets/ -d'</code>
+                <pre><code class="json prettyprint">{
     "label": "My Vehicle Dataset",
     "public": false,
-    "fields": [
-        {
-            "id": "vehicle",
-            "label": "Vehicle",
-            "type": "string"
-        },
-        {
-            "id": "miles",
-            "label": "Miles",
-            "type": "float"
-        }
-    ]
+    "fields": [{
+        "id": "vehicle",
+        "label": "Vehicle",
+        "type": "string"
+    }, {
+        "id": "miles",
+        "label": "Miles",
+        "type": "float"
+    }],
+    "visualisations": [{
+        "id": "1",
+        "label": "My Vehicle Visualisation"
+    }]
 }'</code></pre>
-                    </div>
+            </div>
+        </div>
 
-                    <h5>Response</h5>
+        <h5>Response</h5>
 
-                    <pre class="indent"><code class="json prettyprint">{
+        <pre class="indent"><code class="json prettyprint">{
     "status": 303,
-    "href": "/api/datasets/252b529188c2bdee4c16570a133a329d"
+    "href": "/api/datasets/my-vehicle-dataset"
 }</code></pre>
 
-                    <h4>Update</h4>
+        <h4>Update a Dataset</h4>
 
-                    <p>By making a PUT request to the URL returned in the previous call we can make changes to our new dataset.</p>
+        <p>By making a PUT request to the URL returned in the previous call we can make changes to our new dataset.</p>
 
-                    <h5>Request</h5>
+        <h5>Request</h5>
 
-                    <div class="indent code-wrap">
-                        <code class="shell prettyprint">curl -XPUT -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://dataseedapp.com/api/datasets/252b529188c2bdee4c16570a133a329d -d'</code>
-                        <pre><code class="json prettyprint">{
+        <div class="indent code-wrap">
+            <code class="shell prettyprint">curl -XPUT -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://dataseedapp.com/api/datasets/my-vehicle-dataset -d'</code>
+            <pre><code class="json prettyprint">{
     "label": "My Awesome Vehicle Dataset",
     "public": false
 }'</code></pre>
-                    </div>
+        </div>
 
-                    <h5>Response</h5>
+        <h5>Response</h5>
 
-                    <pre class="indent"><code class="json prettyprint">{
+        <pre class="indent"><code class="json prettyprint">{
     "status": 303,
-    "href": "/api/datasets/252b529188c2bdee4c16570a133a329d"
+    "href": "/api/datasets/my-vehicle-dataset"
 }</code></pre>
 
-                    <h4>Delete</h4>
+        <h4>Delete a Dataset</h4>
 
-                    <h5>Request</h5>
+        <h5>Request</h5>
 
-                    <code class="shell prettyprint indent">curl -XDELETE -u'dataseed@example.com:password' -H'Accept: application/json' https://dataseedapp.com/api/datasets/252b529188c2bdee4c16570a133a329d</code>
+        <code class="shell prettyprint indent">curl -XDELETE -u'dataseed@example.com:password' -H'Accept: application/json' https://dataseedapp.com/api/datasets/my-vehicle-dataset</code>
 
-                    <h5>Response</h5>
+        <h5>Response</h5>
 
-                    <pre class="indent"><code class="json prettyprint">{
+        <pre class="indent"><code class="json prettyprint">{
     "status": 200,
     "message": "Deleted"
 }</code></pre>
 
-                    <h3 id="api-vis">Visualisation</h3>
+        <h4>List all Datasets</h4>
 
-                    <p>
-                        In the <a href="#js-example">example above</a> we have shown how to use the
-                        <a href="https://github.com/dataseed/dataseed-visualisation">Dataseed
-                            Javascript Library</a>
-                        to embed a visualisation within an existing Javascript application.
-                        Starting from that example, the following shows how to define a
-                        visualisation directly in the context of the consumer application instead of
-                        fetching it from Dataseed.
-                    </p>
+        <p>The datasets list is <a href="http://en.wikipedia.org/wiki/Pagination">paginated</a> and allows filtering to specify the number and type of datasets to return. The parameters should be sent in the <a href="http://en.wikipedia.org/wiki/Query_string">query string</a> of the GET request.</p>
 
-                    <pre id="visualisation-model-example"><code class="html prettyprint">&lt;!doctype html&gt;
-&lt;html dir="ltr" lang="en"&gt;
-  &lt;head&gt;
-    &lt;meta charset="utf-8" /&gt;
-    &lt;meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /&gt;
-    &lt;title&gt;Dataseed Interactive Data Visualization&lt;/title&gt;
-    &lt;meta name="viewport" content="width=device-width" /&gt;
-    &lt;link href="src/less/dataseed.less" rel="stylesheet/less" type="text/css" /&gt;
-    &lt;script src="src/js/components/less/dist/less-1.7.5.js"&gt;&lt;/script&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;button id="start"&gt;Show me the visualisation!&lt;/button&gt;
-    &lt;div id="vis"&gt;&lt;/div&gt;
-    &lt;script src="src/js/components/requirejs/require.js"&gt;&lt;/script&gt;
-    &lt;script&gt;
-      require.config({
-       "config": {
-           "models/datasetSingleton": {
-               "DATASET": {
-                   "id": "mortality",
-                   "label": "Mortality",
-                   "public": true,
-                   "imports": [],
-                   "fields": [
-                        {"id": "year", "label": "Year", "type": "string"},
-                        {"id": "gender", "label": "Gender", "type": "string"},
-                        {"id": "value", "label": "Value", "type": "integer"}
-                    ],
-                    "visualisations": [
-                        {
-                            "id": "1",
-                            "label": "Mortality in England and Wales",
-                            "description": "Explore and compare the number of deaths by disease, sex, area and year",
-                            "elements": [
-                                {
-                                    "id": "year",
-                                    "label": "Year",
-                                    "measure_label": "Number of deaths",
-                                    "type": "bar",
-                                    "aggregation": "sum",
-                                    "measure": {"id": "value"},
-                                    "dimensions": [{"field": {"id": "year", "type": "string"}}],
-                                    "width": 1,
-                                    "height": 6,
-                                    "y": 1,
-                                    "x": 1
-                                },
-                                {
-                                    "id": "gender",
-                                    "label": "Gender",
-                                    "measure_label": "Number of deaths",
-                                    "type": "bar",
-                                    "aggregation": "sum",
-                                    "measure": {"id": "value"},
-                                    "dimensions": [{"field": {"id": "gender", "type": "string"}}],
-                                    "width": 1,
-                                    "height": 6,
-                                    "y": 1,
-                                    "x": 2
-                                }
-                            ],
-                            "styles": []
-                        }
-                    ],
-                    "modified": "2013-09-06T10:33:39.789859",
-                    "created": "2013-09-06T10:33:39.789859"
-                } // end "DATASET"
-            }
-        } // end "config"
-    });
+        <table class="table table-hover table-responsive">
+            <tr>
+                <th>limit</th>
+                <td>The number of datasets to return, by default this is <em>10</em>.</td>
+            </tr>
+            <tr>
+                <th>offset</th>
+                <td>The position from which to return datasets, used for pagination. For example, to return datasets 15-25 use an offset of <em>15</em>.</td>
+            </tr>
+            <tr>
+                <th>public</th>
+                <td>Set to <em>true</em> to retrieve only public datasets.</td>
+            </tr>
+            <tr>
+                <th>private</th>
+                <td>Set to <em>true</em> to retrieve only private datasets.</td>
+            </tr>
+            <tr>
+                <th>shared</th>
+                <td>Set to <em>true</em> to retrieve only datasets that have been shared with you.</td>
+            </tr>
+        </table>
 
-    require(['src/js/config'], function() {
-        require(['jquery', './views/dataset', 'app'], function($, DatasetEmbedView) {
-            $('#start').click(function() {
-                new DatasetEmbedView({
-                    'el': $('#vis'),
-                    'id': 'mortality',
-                    'visualisation_id': '1'
-                });
-            });
-        });
-    });
-    &lt;/script&gt;
-  &lt;/body&gt;
-&lt;/html&gt;</code></pre>
+        <h5>Request</h5>
 
-                    <h4 id="api-vis-elements">Elements</h4>
+        <code class="shell prettyprint indent">curl -u'dataseed@example.com:password' -H'Accept: application/json' https://dataseedapp.com/api/datasets/</code>
 
-                    <p> This section shows the available visualisation elements and how to use them in a visualisation defined in the context of a consumer application.</p>
+        <h5>Response</h5>
 
-                    <p>
-                        To be concise, we won't show the whole dataset model in the following examples: we will just provide snippets that can be added to the elements attribute list of the <a href="#visualisation-model-example">Dataseed visualisation model example</a> above.
-                    </p>
+        <div class="indent">
+            <pre class="collapsed"><code class="json prettyprint">{
+    "count": 2,
+    "limit": 10,
+    "offset": 0,
+    "items": [{
+        "id": "my-vehicle-dataset",
+        "label": "My Vehicle Dataset",
+        "public": false,
+        "fields": [
+            {"id": "vehicle", "label": "Vehicle", "type": "string"},
+            {"id": "miles", "label": "Miles", "type": "float"}
+        ],
+        "imports": [],
+        "visualisations": [{
+            "id": "1",
+            "label": "My Vehicle Visualisation",
+            "elements": [],
+            "styles": []
+        }],
+        "modified": "2013-09-06T10:33:39.789859",
+        "created": "2013-09-06T10:33:39.789859"
+    }, {
+        "id": "another-dataset",
+        "label": "Another Dataset",
+        "public": true,
+        "fields": [
+            {"id": "fruit", "label": "Fruit", "type": "string"},
+            {"id": "price", "label": "Price", "type": "integer"}
+        ],
+        "imports": [],
+        "visualisations": [],
+        "modified": "2013-09-06T17:21:56.698761",
+        "created": "2013-09-06T17:21:56.698761"
+    }]
+}</code></pre>
+        </div>
 
+        <h3 id="api-vis">Visualisation</h3>
 
-                    <h5>Summary</h5>
-                    <p class="indent">Displays a summary text of the current dataset cut.</p>
-                    <pre class="indent"><code class="html prettyprint">{
-    "aggregation":"sum",
+        <h4 id="api-vis-object">The Visualisation Object</h4>
+
+        <table class="table table-hover table-responsive">
+            <tr>
+                <th>id (string)</th>
+                <td>The ID of the visualisation, used in the visualisation's URL after the dataset ID (e.g. <a href="https://dataseedapp.com/visualise/mortality/1">/visualise/mortality/1</a>).</td>
+            </tr>
+            <tr>
+                <th>label (string)</th>
+                <td>The title of the visualisation, displayed at the top of the visualisation page.</td>
+            </tr>
+            <tr>
+                <th>description (string)</th>
+                <td>The sub-title of the visualisation, displayed below the title on the visualisation page.</td>
+            </tr>
+            <tr>
+                <th>elements (array)</th>
+                <td>See <a href="#api-vis-element-object">the element object</a>.</td>
+            <tr>
+                <th>styles (array)</th>
+                <td>See <a href="#api-style-object">the style object</a>.</td>
+            </tr>
+        </table>
+
+        <h4 id="api-vis-element-object">The Element Object</h4>
+
+        <table class="table table-hover table-responsive">
+            <tr>
+                <th colspan="2">id (string)</th>
+                <td>The ID of the element</td>
+            </tr>
+            <tr>
+                <th colspan="2">type (string)</th>
+                <td>The type of element, one of <em>summary</em>, <em>navigation</em>, <em>bar</em>, <em>bubble</em>, <em>geo</em>, <em>table</em> or <em>line</em>.</td>
+            </tr>
+            <tr>
+                <th colspan="2">label (string)</th>
+                <td>The title of the element, usually displayed at the top of a chart (dependent on the element's type).</td>
+            </tr>
+            <tr>
+                <th colspan="2">measure_label (string)</th>
+                <td>The label for the element's measure. For example, on line charts this will be the y-axis label.</td>
+            </tr>
+            <tr>
+                <th colspan="2">aggregation (string)</th>
+                <td>The aggregation to perform on the element's measure, one of <em>sum</em>, <em>mean</em>, <em>min</em>, <em>max</em> or <em>rows</em>. The special <em>rows</em> aggregation is used when the element's measure is <em>null</em>.</td>
+            </tr>
+            <tr>
+                <th>measure (object)</th>
+                <th>id (string)</th>
+                <td>The ID of the dataset field to use as the element's measure</td>
+            </tr>
+            <tr>
+                <th rowspan="4">dimensions (array)</th>
+                <th>field (object)</th>
+                <td>An object containing the ID of the dataset field to use as a dimension</td>
+            </tr>
+            <tr>
+                <th>bucket_interval (string)</th>
+                <td>Used to bucket (also known as <a href="http://en.wikipedia.org/wiki/Data_binning">binning</a>) the dimension. Allowed values are <em>date_year</em>, <em>date_quarter</em>, <em>date_month</em>, <em>date_week</em>, <em>date_day</em>, <em>date_hour</em>, <em>date_minute</em>, <em>date_second</em> or <em>custom</em>.</td>
+            </tr>
+            <tr>
+                <th>bucket (integer)</th>
+                <td>If <em>bucket_interval</em> is <em>custom</em> and the dimension is an <em>integer</em> or <em>float</em>, the dimension will be bucketed by this value.</td>
+            </tr>
+            <tr>
+                <th>weight (integer)</th>
+                <td>The weight/order of this dimension in the element. This is only relevant in multi-dimensional elements such as filters.</td>
+            </tr>
+            <tr>
+                <th colspan="2">interactive (boolean)</th>
+                <td>By default clicking on a chart feature (such as a bar or a point on a line) will filter the visualisation. If interactive is set to false clicking on the chart will have no effect.</td>
+            </tr>
+            <tr>
+                <th colspan="2">required (boolean)</th>
+                <td>Only used by the <em>navigation</em> element type. When set to true this will stop users from unselecting a default dataset cut, effectively making the default cut required.</td>
+            </tr>
+            <tr>
+                <th colspan="2">sort (object)</th>
+                <td>Only used by the <em>navigation</em> element type. Specifies the order in which the filter options are displayed in the format <em>{"[attribute]": "[direction]"}</em>. The attribute can be <em>total</em> or <em>label</em> and the direction can be <em>asc</em> or <em>desc</em>.</td>
+            </tr>
+            <tr>
+                <th colspan="2">width (integer)</th>
+                <td>An integer from 1 to 4 representing the width of the rendered element. Dataseed is responsive so a value of "1" will used 25% of the current screen width. On mobile, this value is ignored as elements are always full width.</td>
+            </tr>
+            <tr>
+                <th colspan="2">height (integer)</th>
+                <td>An integer from 1 to 255 representing the height of the rendered element. A value of "1" is equivalent to 50 pixels and the same height will be used across all devices.</td>
+            </tr>
+            <tr>
+                <th colspan="2">x (integer)</th>
+                <td>An integer specifying the element's X position within the visualisation.</td>
+            </tr>
+            <tr>
+                <th colspan="2">y (integer)</th>
+                <td>An integer specifying the element's Y position within the visualisation.</td>
+            </tr>
+        </table>
+
+        <h4 id="api-vis-elements">Elements</h4>
+
+        <h5>Summary</h5>
+
+        <p class="indent">Displays a summary text of the current dataset cut.</p>
+
+        <div class="indent">
+            <pre class="collapsed"><code class="html prettyprint">{
+    "aggregation": "sum",
     // Each dimension will be related to a component of the summary text.
     // The first component is always the aggregated totals.
-    "dimensions":[
+    "dimensions": [
         {
-            "bucket":null,
-            "field":{
-                "id":"gender",
-                "type":"string"
-            },
+            "field": {"id":"gender", "type":"string"},
 
             // Component value. $ is a placeholder for the current dimension cut value
             // (in this case we have suffixed it with 's' in order to make plurals)
-            "text_format":"&lt;strong&gt;$s died&lt;/strong&gt;",
+            "text_format": "&lt;strong&gt;$s died&lt;/strong&gt;",
 
             // Default summary text component value (displayed when a cut is not
             // set on this dimension)
-            "text_default":"people died",
+            "text_default": "people died",
 
-            "weight":1
+            "weight": 1
         },
         {
-            "bucket":null,
-            "field":{
-                "id":"year",
-                "type":"string"
-            },
-            "text_default":"between 2002 and 2011",
-            "text_format":"in &lt;strong&gt;$&lt;/strong&gt;",
-            "weight":4
+            "field": {"id":"year", "type":"string"},
+            "text_default": "between 2002 and 2011",
+            "text_format": "in &lt;strong&gt;$&lt;/strong&gt;",
+            "weight": 4
         }
     ],
-    "id":"summary",
-    "label":"Number of deaths",
-    "measure":{
-        "id":"value"
-    },
-    "measure_label":"Number of deaths",
-    "type":"summary",
-    "width":4,
-    "height":1
-}
-</code></pre>
+    "id": "summary",
+    "label": "Number of deaths",
+    "measure": {"id": "value"},
+    "measure_label": "Number of deaths",
+    "type": "summary",
+    "width": 4,
+    "height": 1
+}</code></pre>
+        </div>
 
-                    <h5>Filter</h5>
+        <h5>Navigation</h5>
 
-                    <p class="indent">Filters let the user add a dimension cut on the visualised dataset through links or drop down selects.</p>
+        <p class="indent">The navigation element displays all the dimensions' values as links.</p>
 
-                    <h6>Navigation</h6>
-
-                    <p  class="indent2">The navigation element displays all the dimensions' values as links.</p>
-
-                    <pre  class="indent2"><code class="html prettyprint">{
-    "aggregation":"sum",
+        <div class="indent">
+            <pre class="collapsed"><code class="html prettyprint">{
+    "aggregation": "sum",
     // The links will be displayed within an accordion. Each dimension will be a header.
-    "dimensions":[
+    "dimensions": [
         {
-            "bucket":null,
-            "field":{
-                "id":"gender",
-                "type":"string"
-            },
+            "field": {"id": "gender", "type": "string"},
             "weight":1
         },
         {
-            "bucket":null,
-            "field":{
-                "id":"year",
-                "type":"string"
-            },
-            "weight":4
+            "field": {"id": "year", "type": "string"},
+            "weight": 4
         }
     ],
-    "id":"filter",
-    "label":"Filter",
-    "measure":{
-        "id":"value"
-    },
-    "measure_label":"Number of deaths",
-    "type":"navigation",
-    "width":4,
-    "height":6
-}
-</code></pre>
+    "id": "nav01",
+    "label": "Navigation",
+    "measure": {"id": "value"},
+    "measure_label": "Number of deaths",
+    "type": "navigation",
+    "width": 4,
+    "height": 6
+}</code></pre>
+        </div>
 
-                    <h5>Chart</h5>
+        <h5>Bar / Bubble / Line</h5>
 
-                    <p class="indent">Dataseed supports the following chart types:</p>
-                    <ul  class="indent">
-                        <li><em>Bar</em></li>
-                        <li><em>Bubble</em> (Available only on D3)</li>
-                        <li><em>Line</em></li>
-                    </ul>
+        <p class="indent">A generic chart visualisation element can be defined by:</p>
 
-                    <p class="indent">A generic chart visualisation element can be defined by:</p>
-
-                    <pre class="indent"><code class="html prettyprint">{
+        <div class="indent">
+            <pre class="collapsed"><code class="html prettyprint">{
     "id": "year",
     "label": "Year",
     "measure_label": "Number of deaths",
@@ -1083,23 +1433,15 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
     "dimensions": [{"field": {"id": "year", "type": "string"}}],
     "width": 1,
     "height": 6
-}
-</code></pre>
+}</code></pre>
+        </div>
 
-                    <p class="indent">where the <em>type</em> attribute can assume one of the following values:</p>
+        <h5>Table</h5>
 
-                    <ul class="indent">
-                        <li><em>bar</em></li>
-                        <li><em>bubble</em></li>
-                        <li><em>line</em></li>
-                    </ul>
+        <p class="indent">A simple table of dimension and measure values:</p>
 
-
-                    <h5>Table</h5>
-
-                    <p class="indent">Rather than charting a dimension we might just want to show all its related observations in a sortable table. This is what the Table element is meant to be used for.</p>
-
-                    <pre class="indent"><code class="html prettyprint">{
+        <div class="indent">
+            <pre class="collapsed"><code class="html prettyprint">{
     "id": "year",
     "label": "Year",
     "measure_label": "Number of deaths",
@@ -1109,227 +1451,277 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
     "dimensions": [{"field": {"id": "year", "type": "string"}}],
     "width": 1,
     "height": 6
-}
-</code></pre>
+}</code></pre>
+        </div>
 
-                    <h4>Optional attributes</h4>
+        <h5>Geo</h5>
 
-                    <p>This section shows all the optional Dataset model attributes that can be defined in a visualisation model.</p>
+        <p class="indent">A <a href="http://en.wikipedia.org/wiki/Choropleth_map">choropleth map</a>:</p>
 
-                    <h5>Dataset</h5>
-                    <h6 id="default-cut">cut</h6>
-                    <p class="indent2">The <em>cut</em> dataset attribute allows to define a cut on the dataset dimensions that has to be applied by default when the visualisation is rendered.</p>
+        <div class="indent">
+            <pre class="collapsed"><code class="html prettyprint">{
+    "id": "area",
+    "label": "Area",
+    "measure_label": "Number of deaths",
+    "type": "geo",
+    "aggregation": "sum",
+    "measure": {"id": "value"},
+    "dimensions": [{"field": {"id": "area", "type": "geo"}}],
+    "width": 1,
+    "height": 6
+}</code></pre>
+        </div>
 
-                    <pre  class="indent2"><code class="html prettyprint">&lt;script&gt;
-require.config({
-    "config": {
-        "models/datasetSingleton": {
-            "DATASET": {
-                "id": "mortality",
-                "label": "Mortality",
-                "fields": [
-                    {
-                        "id": "gender",
-                        "label": "Gender",
-                        "type": "string"
-                    },
-                    // Other Dataset fields here ...
+        <h4 id="api-vis-example">Example</h4>
 
-                ],
-                "cut": {
-                    "gender": "F",
-                },
-                // Other Dataset attributes here ...
-            }
-        }
-    }
-});
-&lt;/script&gt;
-</code></pre>
+        <pre class="collapsed"><code class="html prettyprint">{
+    "id": "1",
+    "label": "Mortality in England and Wales",
+    "description": "Explore and compare the number of deaths by disease, sex, area and year",
+    "elements": [{
+        "id": "summary",
+        "type": "summary",
+        "label": "Number of deaths",
+        "aggregation": "sum",
+        "measure": {"id": "value"},
+        "measure_label": "Number of deaths",
+        "dimensions": [{
+            "id": "d4",
+            "field": {"id": "gender", "type": "string"},
+            "text_default": "people",
+            "text_format": "&lt;strong&gt;$s&lt;/strong&gt;",
+            "weight": 1
+        }, {
+            "id": "d5",
+            "field": {"id": "area", "type": "geo"},
+            "text_default": "in England and Wales",
+            "text_format": "in &lt;strong&gt;$&lt;/strong&gt;",
+            "weight": 2
+        },
+        {
+            "id": "d6",
+            "field": {"id": "chapter", "type": "string"},
+            "text_default": "died",
+            "text_format": "died from &lt;strong&gt;$&lt;/strong&gt;",
+            "weight": 3
+        },
+        {
+            "id": "d7",
+            "field": {"id": "year", "type": "string"},
+            "text_default": "between 2002 and 2011",
+            "text_format": "in &lt;strong&gt;$&lt;/strong&gt;",
+            "weight": 4
+        }],
+        "height": 1,
+        "width": 4,
+        "x": 1,
+        "y": 1
+    }, {
+        "id": "year",
+        "type": "bar",
+        "label": "Year",
+        "aggregation": "sum",
+        "measure": {"id": "value"},
+        "measure_label": "Number of deaths",
+        "dimensions": [{
+            "id": "d0",
+            "field": {"id": "year", "type": "string"}
+        }],
+        "height": 6,
+        "width": 1,
+        "x": 1,
+        "y": 2
+    }, {
+        "id": "area",
+        "type": "geo",
+        "label": "Area",
+        "aggregation": "sum",
+        "measure": {"id": "value"},
+        "measure_label": "Number of deaths",
+        "dimensions": [{
+            "id": "d1",
+            "field": {"id": "area", "type": "geo"}
+        }],
+        "height": 6,
+        "width": 1,
+        "x": 2,
+        "y": 2
+    }, {
+        "id": "chapter",
+        "type": "bubble",
+        "label": "Chapter",
+        "aggregation": "sum",
+        "measure": {"id": "value"},
+        "measure_label": "Number of deaths",
+        "dimensions": [{
+            "id": "d2",
+            "field": {"id": "chapter", "type": "string"}
+        }],
+        "height": 6,
+        "width": 1,
+        "x": 3,
+        "y": 2
+    }, {
+        "id": "gender",
+        "type": "bar",
+        "label": "Gender",
+        "aggregation": "sum",
+        "measure": {"id": "value"},
+        "measure_label": "Number of deaths",
+        "dimensions": [{
+            "id": "d3",
+            "field": {"id": "gender", "type": "string"}
+        }],
+        "height": 6,
+        "width": 1,
+        "x": 4,
+        "y": 2
+    }],
+    "styles": [
+        {"id": "background", "value": "#fff"},
+        {"id": "choroplethMax", "value": "#000"},
+        {"id": "choroplethMin", "value": "#fff"},
+        {"id": "choroplethStroke", "value": "#fff"},
+        {"id": "choroplethStrokeWidth", "value": "0"},
+        {"id": "featureFill", "value": "#4972bd"},
+        {"id": "featureFillActive", "value": "#88939d"},
+        {"id": "featureStroke", "value": "#fff"},
+        {"id": "featureStrokeActive", "value": "#fff"},
+        {"id": "heading", "value": "#555"},
+        {"id": "label", "value": "#fff"},
+        {"id": "measureLabel", "value": "#555"},
+        {"id": "scaleFeature", "value": "#555"},
+        {"id": "scaleLabel", "value": "#555"},
+        {"id": "visualisationBackground", "value": "#f5f6f9"}
+    ]
+}</code></pre>
 
+        <h3 id="api-styles">Styles</h3>
 
-                    <h5>Dataset Fields</h5>
+        <h4 id="api-style-object">The Style Object</h4>
 
-                    <h6>update_dimension</h6>
+        <table class="table table-hover table-responsive">
+            <tr>
+                <th>id (string)</th>
+                <td>The ID of the style, see <a href="#api-style-types">style types</a> for a full list.</td>
+            </tr>
+            <tr>
+                <th>value (string)</th>
+                <td>The value of the style, e.g. <em>#f00</em>.</td>
+            </tr>
+        </table>
 
-                    <p class="indent2">Related to a dataset's field, this attribute is set to <em>true</em> if the values for the dimensions related to the field need to be fetched every time a cut is applied to the dataset. Otherwise dimension's values are fetched only once, i.e. when DatasetEmbedView() is instantiated.</p>
+        <h4 id="api-style-types">Style types</h4>
 
-                    <p class="indent2"><em>Default value</em>: False</p>
+        <table class="table table-hover table-responsive">
+            <tr>
+                <th>ID</th>
+                <th>Default</th>
+                <th>Description</th>
+            <tr>
+                <td>visualisationBackground</td>
+                <td>#fff</td>
+                <td>Background colour for the visualisation</td>
+            </tr>
+            <tr>
+                <td>background</td>
+                <td>#f5f6f9</td>
+                <td>Background colour for the charts</td>
+            </tr>
+            <tr>
+                <td>heading</td>
+                <td>#566573</td>
+                <td>Chart heading text colour</td>
+            </tr>
+            <tr>
+                <td>featureFill</td>
+                <td>#72bd49</td>
+                <td>Chart feature (e.g. bars or lines) colour</td>
+            </tr>
+            <tr>
+                <td>featureFillActive</td>
+                <td>#88939d</td>
+                <td>Colour for inactive features when a chart is cut (i.e. features without a cut)</td>
+            </tr>
+            <tr>
+                <td>featureStroke</td>
+                <td>#fff</td>
+                <td>Chart feature outline colour</td>
+            </tr>
+            <tr>
+                <td>featureStrokeActive</td>
+                <td>#fff</td>
+                <td>Chart inactive feature outline colour</td>
+            </tr>
+            <tr>
+                <td>label</td>
+                <td>#2c3e50</td>
+                <td>Chart label text colour</td>
+            </tr>
+            <tr>
+                <td>scaleFeature</td>
+                <td>#2c3e50</td>
+                <td>Scale/axis line colour</td>
+            </tr>
+            <tr>
+                <td>scaleLabel</td>
+                <td>#2c3e50</td>
+                <td>Scale label text colour</td>
+            </tr>
+            <tr>
+                <td>measureLabel</td>
+                <td>#2c3e50</td>
+                <td>Measure label text colour</td>
+            </tr>
+            <tr>
+                <td>choroplethMin</td>
+                <td>#fff</td>
+                <td>Map feature (e.g. a country or a state) start colour</td>
+            </tr>
+            <tr>
+                <td>choroplethMax</td>
+                <td>#000</td>
+                <td>Map feature end colour</td>
+            </tr>
+            <tr>
+                <td>choroplethStroke</td>
+                <td>#000</td>
+                <td>Map feature outline colour</td>
+            </tr>
+            <tr>
+                <td>choroplethStrokeWidth</td>
+                <td>1</td>
+                <td>Map feature outline width</td>
+            </tr>
+        </table>
 
-                    <pre class="indent2"><code class="html prettyprint">&lt;script&gt;
-require.config({
-    "config": {
-        "models/datasetSingleton": {
-            "DATASET": {
-                "id": "mortality",
-                "label": "Mortality",
-                "fields": [
-                    {
-                        "id": "year",
-                        "label": "Year",
-                        "type": "string",
-                        "update_dimension": true
-                    },
-                    // Other Dataset fields here ...
+        <h3 id="api-dimensions">Dimensions</h3>
 
-                ],
-                // Other Dataset attributes here ...
-            }
-        }
-    }
-});
-&lt;/script&gt;
-</code></pre>
+        <p>Dimensions allow us to store additional meta-data for dimension field values (dimension members).  For example your dataset may contain a field "gender" that has values "M" and "F".  We can use the Dimension model to associate the labels "Male" and "Female" which will then used by charts in the visualisation automatically.</p>
 
+        <h4 id="api-dimension-object">The Dimension Object</h4>
 
-                    <h5>Visualisation Elements</h5>
-                    <h6>Charts</h6>
-                    <h7>interactive</h7>
+        <table class="table table-hover table-responsive">
+            <tr>
+                <th>id (string)</th>
+                <td>The ID of the dimension value.</td>
+            </tr>
+            <tr>
+                <th>label (string)</th>
+                <td>The label of the dimension value.</td>
+            </tr>
+        </table>
 
-                    <p class="indent3">By default a click on a chart element feature (bar/point/etc.) makes a new cut to be added to the dataset. Set this attribute to <em>false</em> in order to make the chart not reacting on the feature click event.</p>
+        <h4>Get Dimension Values</h4>
 
-                    <p class="indent3"><em>Default value</em>: true</p>
+        <h5>Request</h5>
 
-                    <pre class="indent3"><code class="html prettyprint">&lt;script&gt;
-require.config({
-    "config": {
-        "models/datasetSingleton": {
-            "DATASET": {
-                // Dataset attributes here (e.g. fields) ...
-                "visualisations": [
-                    {
-                        "id": "1",
-                        "label": "Mortality in England and Wales",
-                        // Other visualisation attributes here ...
-                        "public": true,
-                        "elements": [
-                            {
-                                "id": "year",
-                                "label": "Year",
-                                "measure_label": "Number of deaths",
-                                "type": "bar",
-                                "interactive": false,
-                                //Other element attributess here ...
-                            },
-                            // Other elements here ...
-                        ],
+        <code class="shell prettyprint indent">curl -H'Accept: application/json' 'https://dataseedapp.com/api/datasets/mortality/dimensions/gender'</code>
 
-                    }
-                ]
-                // Other dataset attributes here ...
-            }
-        }
-    }
-});
-&lt;/script&gt;
-</code></pre>
+        <h5>Response</h5>
 
-                    <h5>Filters</h5>
-                    <h6>required</h6>
-
-                    <p class="indent2">At the moment this attribute is taken into account only by the Filter Form element. It is related to an element's dimension: if it is set to <strong>true</strong> the element won't let the user unset the cut on the dimension the attribute refers to. This also means that a <a href="#default-cut">default cut</a> needs to be defined for a required element dimensions.</p>
-
-                    <p class="indent2"><em>Default value</em>: false</p>
-
-                    <pre class="indent2"><code class="html prettyprint">&lt;script&gt;
-require.config({
-    "config": {
-        "models/datasetSingleton": {
-            "DATASET": {
-                // Dataset attributes here (e.g. fields) ...
-                "visualisations": [
-                    {
-                        "id": "1",
-                        "label": "Mortality in England and Wales",
-                        "public": true,
-                        // Other visualisation attributes here ...
-                        "elements": [
-                            {
-                                "id": "year",
-                                "label": "Year",
-                                "measure_label": "Number of deaths",
-                                "type": "navigation",
-                                "required": true,
-                                //Other element attributes here ...
-                            },
-                            // Other elements here ...
-                        ],
-
-                    }
-                ]
-                // Other dataset attributes here ...
-            }
-        }
-    }
-});
-&lt;/script&gt;
-</code></pre>
-
-                    <h6>sort</h6>
-
-                    <p class="indent2">Defines the order in which the filter options have to be displayed. The value for this attribute is an object in the format <em>{"[attribute]": "[direction]"}</em> where: </p>
-                    <ul class="indent2">
-                        <li>
-                            <em>[attribute]</em> is either "total" or
-                            "label"
-                        </li>
-                        <li>
-                            <em>[direction]</em> is either "asc" or "desc"
-                        </li>
-                    </ul>
-
-                    <p class="indent2"><em>Default value</em>: {"total": "desc"}</p>
-
-                    <pre class="indent2"><code class="html prettyprint">&lt;script&gt;
-require.config({
-    "config": {
-        "models/datasetSingleton": {
-            "DATASET": {
-                // Dataset attributes here (e.g. fields) ...
-                "visualisations": [
-                    {
-                        "id": "1",
-                        "label": "Mortality in England and Wales",
-                        "public": true,
-                        // Other visualisation attributes here ...
-                        "elements": [
-                            {
-                                "id": "year",
-                                "label": "Year",
-                                "measure_label": "Number of deaths",
-                                "type": "navigation",
-                                "sort": {
-                                    "label": "asc"
-                                },
-                                //Other element attributes here ...
-                            },
-                            // Other elements here ...
-                        ],
-
-                    }
-                ]
-                // Other dataset attributes here ...
-            }
-        }
-    }
-});
-&lt;/script&gt;
-</code></pre>
-
-
-                    <h3 id="api-dimensions">Dimensions</h3>
-
-                    <p>Dimensions allow us to store additional meta-data for dimension field values (dimension members).  For example your dataset may contain a field "gender" that has values "M" and "F".  We can use the Dimension model to associate the labels "Male" and "Female" which will then used by charts in the visualisation automatically.</p>
-
-                    <h4>Read</h4>
-
-                    <h5>Request</h5>
-
-                    <code class="shell prettyprint indent">curl -H'Accept: application/json' 'https://dataseedapp.com/api/datasets/mortality/dimensions/gender'</code>
-
-                     <h5>Response</h5>
-
-                    <pre class="indent"><code class="json prettyprint">{
+        <div class="indent">
+            <pre class="collapsed"><code class="json prettyprint">{
     "gender": {
         "F": {
             "id": "F",
@@ -1341,16 +1733,18 @@ require.config({
         }
     }
 }</code></pre>
+        </div>
 
-                    <h4>Create</h4>
+        <h4>Create Dimension Values</h4>
 
-                    <p>Creating (POSTing) dimension values will delete any existing dimension values. To append dimension values use PUT.</p>
+        <p>Creating (POSTing) dimension values will delete any existing dimension values. To append dimension values use PUT.</p>
 
-                    <h5>Request</h5>
+        <h5>Request</h5>
 
-                    <div class="indent code-wrap">
-                        <code class="shell prettyprint">curl -XPOST -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' 'https://dataseedapp.com/api/datasets/mortality/dimensions/gender' -d'</code>
-                        <pre><code class="json prettyprint">{
+        <div class="indent">
+            <div class="collapsed code-wrap">
+                <code class="shell prettyprint">curl -XPOST -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' 'https://dataseedapp.com/api/datasets/mortality/dimensions/gender' -d'</code>
+                <pre><code class="json prettyprint">{
     "values": [
         {
             "id": "F",
@@ -1362,22 +1756,24 @@ require.config({
         }
     ]
 }'</code></pre>
-                    </div>
+            </div>
+        </div>
 
-                    <h5>Response</h5>
+        <h5>Response</h5>
 
-                    <pre class="indent"><code class="json prettyprint">{
+        <pre class="indent"><code class="json prettyprint">{
     "status": 200,
     "message": "Created"
 }</code></pre>
 
-                    <h4>Update</h4>
+        <h4>Update Dimension Values</h4>
 
-                    <h5>Request</h5>
+        <h5>Request</h5>
 
-                    <div class="indent code-wrap">
-                        <code class="shell prettyprint">curl -XPUT -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' 'https://dataseedapp.com/api/datasets/mortality/dimensions/gender' -d'</code>
-                        <pre><code class="json prettyprint">{
+        <div class="indent">
+            <div class="collapsed code-wrap">
+                <code class="shell prettyprint">curl -XPUT -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' 'https://dataseedapp.com/api/datasets/mortality/dimensions/gender' -d'</code>
+                <pre><code class="json prettyprint">{
     "values": [
         {
             "id": "F",
@@ -1385,48 +1781,95 @@ require.config({
         }
     ]
 }'</code></pre>
-                    </div>
+            </div>
+        </div>
 
-                    <h5>Response</h5>
+        <h5>Response</h5>
 
-                    <pre class="indent"><code class="json prettyprint">{
+        <pre class="indent"><code class="json prettyprint">{
     "status": 200,
     "message": "Updated"
 }</code></pre>
 
-                    <h4>Delete</h4>
+        <h4>Delete Dimension Values</h4>
 
-                    <h5>Request</h5>
+        <h5>Request</h5>
 
-                    <code class="shell prettyprint indent">curl -XDELETE -u'dataseed@example.com:password' -H'Accept: application/json' 'https://dataseedapp.com/api/datasets/mortality/dimensions/gender'</code>
+        <code class="shell prettyprint indent">curl -XDELETE -u'dataseed@example.com:password' -H'Accept: application/json' 'https://dataseedapp.com/api/datasets/mortality/dimensions/gender'</code>
 
-                    <h5>Response</h5>
+        <h5>Response</h5>
 
-                    <pre class="indent"><code class="json prettyprint">{
+        <pre class="indent"><code class="json prettyprint">{
     "status": 200,
     "message": "Deleted"
 }</code></pre>
 
-                    <h3 id="api-observations">Observations</h3>
+        <h3 id="api-observations">Observations</h3>
 
-                    <h4>Read</h4>
+        <h4 id="api-observation-object">The Observation Object</h4>
 
-                    <p>When requesting observations they are returned aggregated on a particular measure for a particular dimension. The dimension is specified in the URL and the measure with the following GET parameters:</p>
+        <table class="table table-hover table-responsive">
+            <tr>
+                <th>id (integer)</th>
+                <td>The ID of the observation.</td>
+            </tr>
+            <tr>
+                <th>&lt;field-id&gt; (various)</th>
+                <td>The value of the specified <em>&lt;field-id&gt;</em> for this observation. The type is dependent on the type of the field.</td>
+            </tr>
+        </table>
 
-                    <ul>
-                        <li>measure - The field that contains the measure. This parameter is required unless the aggregation is specified as "rows".</li>
-                        <li>aggregation - The aggregation type ("sum", "mean", "min", "max" or "rows"). This parameter is always required.</li>
-                    </ul>
+        <h4>Get Observations</h4>
 
-                    <p>In the example below we are requesting a "sum" aggregation of the "value" measure for the "gender" dimension.</p>
+        <h5>Request</h5>
 
-                    <h5>Request</h5>
+        <code class="shell prettyprint indent">curl -H'Accept: application/json' 'https://dataseedapp.com/api/datasets/mortality/observations/'</code>
 
-                    <code class="shell prettyprint indent">curl -H'Accept: application/json' 'https://dataseedapp.com/api/datasets/mortality/observations/gender?aggregation=sum&amp;measure=value'</code>
+        <h5>Response</h5>
 
-                    <h5>Response</h5>
+        <div class="indent">
+            <pre class="collapsed"><code class="json prettyprint">{
+    "observations": [
+        {
+            "area": "37UE",
+            "chapter": "VIII",
+            "gender": "F",
+            "id": 31022,
+            "value": 0,
+            "year": "2004"
+        },
+        {
+            "area": "37UE",
+            "chapter": "IX",
+            "gender": "M",
+            "id": 31023,
+            "value": 174,
+            "year": "2004"
+        },
+        // ...
+    ]
+}</code></pre>
+        </div>
 
-                    <pre class="indent"><code class="json prettyprint">{
+        <h4>Get Aggregated Observations</h4>
+
+        <p>When requesting observations for the purposes of visualisation they are returned aggregated on a particular measure for a particular dimension. The dimension is specified in the URL and the measure with the following GET parameters:</p>
+
+        <ul>
+            <li>measure - The field that contains the measure. This parameter is required unless the aggregation is specified as "rows".</li>
+            <li>aggregation - The aggregation type ("sum", "mean", "min", "max" or "rows"). This parameter is always required.</li>
+        </ul>
+
+        <p>In the example below we are requesting a "sum" aggregation of the "value" measure for the "gender" dimension.</p>
+
+        <h5>Request</h5>
+
+        <code class="shell prettyprint indent">curl -H'Accept: application/json' 'https://dataseedapp.com/api/datasets/mortality/observations/gender?aggregation=sum&amp;measure=value'</code>
+
+        <h5>Response</h5>
+
+        <div class="indent">
+            <pre class="collapsed"><code class="json prettyprint">{
     "gender": [
         {
             "id": "F",
@@ -1438,26 +1881,30 @@ require.config({
         }
     ]
 }</code></pre>
+        </div>
 
-                    <p class="indent">To get <em>"unfaceted" aggregations</em>, that is, aggregations that are not related to a dimension's facets, we just have to omit the dimension name from the observations Read URL. For example, if we want to get a sum of the "value" measure across all the dataset's observations and dimensions:</p>
+        <h4>Get Aggregated (Unfaceted) Observations</h4>
 
-                    <h5>Request</h5>
+        <p>To get <em>"unfaceted" aggregations</em>, that is, aggregations that are not related to a dimension's facets, we just have to omit the dimension name from the observations Read URL. For example, if we want to get a sum of the "value" measure across all the dataset's observations and dimensions:</p>
 
-                    <code class="shell prettyprint indent">curl -H'Accept: application/json' 'https://dataseedapp.com/api/datasets/mortality/observations/?aggregation=sum&amp;measure=value'</code>
+        <h5>Request</h5>
 
-                    <h5>Response</h5>
+        <code class="shell prettyprint indent">curl -H'Accept: application/json' 'https://dataseedapp.com/api/datasets/mortality/observations/?aggregation=sum&amp;measure=value'</code>
 
-                    <pre class="indent"><code class="json prettyprint">{"total": 5057611.0}</code></pre>
+        <h5>Response</h5>
 
-                    <h4>Create</h4>
+        <pre class="indent"><code class="json prettyprint">{"total": 5057611.0}</code></pre>
 
-                    <p>Creating (POSTing) observations will delete all existing entries, to append observations <a href="#api-observations-update">use PUT</a>.</p>
+        <h4>Create Observations</h4>
 
-                    <h5>Request</h5>
+        <p>Creating (POSTing) observations will delete all existing entries, to append observations <a href="#api-observations-update">use PUT</a>.</p>
 
-                    <div class="indent code-wrap">
-                        <code class="shell prettyprint">curl -XPOST -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' 'https://dataseedapp.com/api/datasets/mortality/observations/' -d'</code>
-                        <pre><code class="json prettyprint">{
+        <h5>Request</h5>
+
+        <div class="indent">
+            <div class="collapsed code-wrap">
+                <code class="shell prettyprint">curl -XPOST -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' 'https://dataseedapp.com/api/datasets/mortality/observations/' -d'</code>
+                <pre><code class="json prettyprint">{
     "observations": [
         {
             "id": 0,
@@ -1475,24 +1922,26 @@ require.config({
         }
     ]
 }'</code></pre>
-                    </div>
+            </div>
+        </div>
 
-                    <h5>Response</h5>
+        <h5>Response</h5>
 
-                    <pre class="indent"><code class="json prettyprint">{
+        <pre class="indent"><code class="json prettyprint">{
     "status": 200,
     "message": "Created"
 }</code></pre>
 
-                    <h4 id="api-observations-update">Update</h4>
+        <h4 id="api-observations-update">Update Observations</h4>
 
-                    <p>To replace existing observations use the same <em>id</em> value. If no <em>id</em> is passed or if the <em>id</em> doesn't exist in the dataset the observation will be added instead.</p>
+        <p>To replace existing observations use the same <em>id</em> value. If no <em>id</em> is passed or if the <em>id</em> doesn't exist in the dataset the observation will be added instead.</p>
 
-                    <h5>Request</h5>
+        <h5>Request</h5>
 
-                    <div class="indent code-wrap">
-                        <code class="shell prettyprint">curl -XPUT -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' 'https://dataseedapp.com/api/datasets/mortality/observations' -d'</code>
-                        <pre><code class="json prettyprint">{
+        <div class="indent">
+            <div class="collapsed code-wrap">
+                <code class="shell prettyprint">curl -XPUT -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' 'https://dataseedapp.com/api/datasets/mortality/observations' -d'</code>
+                <pre><code class="json prettyprint">{
     "observations": [
         {
             "id": 0,
@@ -1510,32 +1959,32 @@ require.config({
         }
     ]
 }'</code></pre>
-                    </div>
+            </div>
+        </div>
 
-                    <h5>Response</h5>
+        <h5>Response</h5>
 
-                    <pre class="indent"><code class="json prettyprint">{
+        <pre class="indent"><code class="json prettyprint">{
     "status": 200,
     "message": "Updated"
 }</code></pre>
 
-                    <h4>Delete</h4>
+        <h4>Delete Observations</h4>
 
-                    <p>The request to delete all observations in a dataset is shown below. To delete an individual observation within a dataset make the same request but with the observations's <em>id</em> value appended to the URL (e.g. /api/datasets/mortality/observations/1234).</p>
+        <p>The request to delete all observations in a dataset is shown below. To delete an individual observation within a dataset make the same request but with the observations's <em>id</em> value appended to the URL (e.g. /api/datasets/mortality/observations/1234).</p>
 
-                    <h5>Request</h5>
+        <h5>Request</h5>
 
-                    <code class="shell prettyprint indent">curl -XDELETE -u'dataseed@example.com:password' -H'Accept: application/json' 'https://dataseedapp.com/api/datasets/mortality/observations'</code>
+        <code class="shell prettyprint indent">curl -XDELETE -u'dataseed@example.com:password' -H'Accept: application/json' 'https://dataseedapp.com/api/datasets/mortality/observations'</code>
 
-                    <h5>Response</h5>
+        <h5>Response</h5>
 
-                    <pre class="indent"><code class="json prettyprint">{
+        <pre class="indent"><code class="json prettyprint">{
     "status": 200,
     "message": "Deleted"
 }</code></pre>
-                </div>
+    </article>
 
-            </article>
-        </div>
-    </div>
+</div>
+</div>
 </section>
