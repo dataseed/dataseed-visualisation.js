@@ -1,4 +1,4 @@
-// Visualisation Variables
+// Dataseed Visualisation Variables
 // -----------------------------------------
 
 // Path
@@ -8,13 +8,14 @@
 
 // Colours
 // -------------------
-/*font colours*/
+
+// Font colours
 @dsFontGrey: #89939d;
 
-/*general colors*/
+// General colors
 @dsLighterBlue: #4972bd;
 
-/*input colours*/
+// Input colours
 @dsInputBorder: #e8eaef;
 
 @dsTooltip: #70727d;
@@ -22,11 +23,12 @@
 
 // Typography
 // -------------------
-@dsFontRegular:         "gibson regular", Helvetica, Arial, sans-serif;
-@dsFontSemibold:        "gibson semibold", Helvetica, Arial, sans-serif;
-@dsFontLight:           "gibson light", Helvetica, Arial, sans-serif;
+@dsFont:            Helvetica, Arial, sans-serif;
+@dsFontRegular:     "gibson regular", @dsFont;
+@dsFontSemibold:    "gibson semibold", @dsFont;
+@dsFontLight:       "gibson light", @dsFont;
 
-//gibson light
+// Gibson Light
 @font-face{
   font-family: 'gibson light';
   src: url('@{dsBaseUrl}font/gibson_light_macroman/Gibson-Light-webfont.eot');
@@ -36,7 +38,7 @@
        url('@{dsBaseUrl}font/gibson_light_macroman/Gibson-Light-webfont.svg#webfont') format('svg');
 }
 
-//gibson regular
+// Gibson Regular
 @font-face{
     font-family: 'gibson regular';
     src: url('@{dsBaseUrl}font/gibson_regular_macroman/Gibson-Regular-webfont.eot');
@@ -46,7 +48,7 @@
         url('@{dsBaseUrl}font/gibson_regular_macroman/Gibson-Regular-webfont.svg#webfont') format('svg');
 }
 
-//gibson semibold
+// Gibson Semibold
 @font-face{
     font-family: 'gibson semibold';
     src: url('@{dsBaseUrl}font/gibson_semibold_macroman/Gibson-SemiBold-webfont.eot');
@@ -56,5 +58,9 @@
         url('@{dsBaseUrl}font/gibson_semibold_macroman/Gibson-SemiBold-webfont.svg#webfont') format('svg');
 }
 
+
+// Other
+// -------------------
+
 // Iconography
-@icon-font-path:          "../../font/glyphicons-halflings/";
+@icon-font-path: "../../font/glyphicons-halflings/";
