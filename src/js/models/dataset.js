@@ -1,5 +1,5 @@
-define(['backbone', 'underscore', './visualisation', '../collections/fields', '../collections/pool'],
-    function(Backbone, _, Visualisation, FieldsCollection, ConnectionPool) {
+define(['backbone', 'underscore', './visualisation', '../collections/fields', '../collections/shared', '../collections/pool'],
+    function(Backbone, _, Visualisation, FieldsCollection, SharedCollection, ConnectionPool) {
     'use strict';
 
     var Dataset = Backbone.Model.extend({
@@ -9,7 +9,7 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
         },
 
         // Types of the fields that can be used as measures
-        measureFieldTypes:['integer', 'float'],
+        measureFieldTypes: ['integer', 'float'],
 
         /**
          * Initialise dataset's visualisation model
@@ -39,6 +39,9 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
             // Create collection for field models
             this.fields = new FieldsCollection();
 
+            // Create collection for shared user models
+            this.shared = new SharedCollection(null, {dataset: this});
+
             // Create connection pool collection
             this.pool = new ConnectionPool(null, {dataset: this, defaultCut: options.cut});
         },
@@ -50,10 +53,13 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
                 defaultCut: this.get('cut')
             };
 
-            // Set element models in collection from visualisation "elements" attribute
+            // Set field models in collection from dataset "fields" attribute
             this.fields.set(_.map(this.get('fields'), function (field) {
                 return _.extend({}, defaults, field);
             }, this));
+
+            // Set shared user models in collection from dataset "shared" attribute
+            this.shared.set(this.get('shared'));
         },
 
         /**

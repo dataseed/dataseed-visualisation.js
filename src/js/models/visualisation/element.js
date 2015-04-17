@@ -368,8 +368,8 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
                             return dimensionLabel;
                         }
                     }
-                    // Unknown field or ID
-                    return _.extend({label: ''}, value);
+                    // Unknown field or ID, use ID as label
+                    return _.extend({label: value.id}, value);
             }
         },
 
