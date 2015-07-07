@@ -47,16 +47,8 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
         },
 
         reset: function () {
-            // Set model defaults
-            var defaults = {
-                dataset: this.dataset,
-                defaultCut: this.get('cut')
-            };
-
             // Set field models in collection from dataset "fields" attribute
-            this.fields.set(_.map(this.get('fields'), function (field) {
-                return _.extend({}, defaults, field);
-            }, this));
+            this.fields.set(this.get('fields'));
 
             // Set shared user models in collection from dataset "shared" attribute
             this.shared.set(this.get('shared'));
@@ -147,14 +139,13 @@ define(['backbone', 'underscore', './visualisation', '../collections/fields', '.
                 // Re-fetch the connection or just let the observers know that
                 // this connection is already synched, so that a re-render could
                 // be initiated
-                if(fetchConn){
+                if (fetchConn) {
                     conn.fetch();
-                }else{
+                } else {
                     conn.trigger('connection:sync', conn);
                 }
 
             }, this);
-
         },
 
         /**

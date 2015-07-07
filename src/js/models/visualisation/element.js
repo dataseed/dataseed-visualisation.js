@@ -61,7 +61,7 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
         /**
          * Get element model URL
          */
-        url: function () {
+        url: function() {
             var path = [
                 'api/datasets',
                 this.dataset.get('id'),
@@ -78,7 +78,7 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
         /**
          * Initialise element, get connections
          */
-        initialize: function (opts) {
+        initialize: function(opts) {
             // Set dataset and visualisation models
             this.dataset = opts.dataset;
             this.visualisation = opts.visualisation;
@@ -99,19 +99,17 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
             this.resetConnections();
         },
 
-        stopConnectionsListeners: function(){
-            _.each(this.getConnections(), function (conn) {
-                this.stopListening(conn);
-            }, this);
-        },
-
         /**
          * Re-initialise element connections.
          */
-        resetConnections: function () {
-            this.stopConnectionsListeners();
+        resetConnections: function() {
+            // Stop listening to connections
+            _.each(this.getConnections(), _.bind(this.stopListening, this));
+
+            // Remove connections
             this.removeConnections();
 
+            // Re-initialise connections
             this.initConnections();
 
             // the call to ready() will trigger the element rendering if
@@ -140,7 +138,7 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
         /**
          * Handle element feature (bar/point/etc) click
          */
-        featureClick: function (d, i) {
+        featureClick: function(d, i) {
             if (this.get('interactive') === false) {
                 return false;
             }
@@ -180,19 +178,15 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
          * Update the element's dimension(s)
          */
         updateDimension: function(id, index, bucketing) {
-            // Remove any cut defined on the current element's dimension.
-            // We need this to make sure it's not possible to change a
-            // visualisation so that there is no element for a dimension
-            // which is included in the current dataset's cut
-            if (this.isCut()) {
-                this.removeCut(index || 0);
-            }
-
             // Set the element's dimension's field
-            this.dimensions.at(index || 0).set(_.extend(
+            var attrs = _.extend(
                 {field: this.dataset.fields.get(id).pick('id', 'type')},
                 {bucket: null, bucket_interval: null},
-                bucketing));
+                bucketing
+            );
+            this.dimensions.at(index || 0).set(attrs);
+
+            // Reset connections
             this.resetConnections();
         },
 
@@ -202,7 +196,7 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
          * @param dimensions (optional) if not provided, element.dimensions is
          * set to the most appropriate value for this element's type
          */
-        updateDimensions: function (dimensions) {
+        updateDimensions: function(dimensions) {
             if (!_.isUndefined(dimensions)) {
                 this.dimensions.set(dimensions);
             } else{
