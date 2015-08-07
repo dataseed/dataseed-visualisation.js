@@ -49,19 +49,20 @@ define(['underscore', 'jquery', 'dc', 'd3', './chart', '../../../lib/format'],
          * there is at least one layer.
          */
         getChartData: function() {
-            var layers = [],
-                layerValues = _.map(this.model.getObservations(), function (d) {
-                    return this.getDCDatumFromObservation(d);
-                }, this);
-
-            if (layerValues.length > 0) {
-                layers.push({
-                    name: this.model.getMeasureLabel(),
-                    values: layerValues
-                });
+            var values = _.map(
+                this.model.getObservations(),
+                this.getDCDatumFromObservation,
+                this
+            );
+            if (values.length < 1) {
+                return [];
             }
 
-            return layers;
+            // Return layer values and label
+            return [{
+                name: this.model.getMeasureLabel(),
+                values: values
+            }];
         },
 
         /**

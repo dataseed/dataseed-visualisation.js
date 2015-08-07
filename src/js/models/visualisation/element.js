@@ -242,6 +242,21 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
         },
 
         /**
+         * Update the element's sorting
+         */
+        updateSort: function(fieldId) {
+            if (this.has('sort') && this.get('sort').id === fieldId) {
+                this.set('sort_direction', (this.get('sort_direction') === 'asc') ? 'desc' : 'asc');
+            } else {
+                this.set({
+                    sort: {id: fieldId},
+                    sort_direction: 'asc'
+                });
+            }
+            this.ready();
+        },
+
+        /**
          * Update the element's (numeric) bucketing
          */
         updateBucketingNumeric: function(value, index) {
@@ -328,7 +343,23 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
          * Get all observations
          */
         getObservations: function(id) {
-            return this._getConnection('observations', id).getData();
+            var data = this._getConnection('observations', id).getData(),
+                sort = this.getSort();
+
+            // Apply sorting if element is sortable and a sort has been set
+            if (this.isSortable() && sort) {
+
+                // Sort
+                data = _.sortBy(data, sort);
+
+                // Sort direction
+                if (this.get('sort_direction') === 'desc') {
+                    data = data.reverse();
+                }
+
+            }
+
+            return data;
         },
 
         /**
@@ -337,6 +368,7 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
         getLabel: function(value, index) {
             var field = this._getField(index),
                 dimension = this.dimensions.at(index || 0);
+
             switch(field.get('type')) {
                 case 'date':
                     return _.extend(value, {
@@ -364,6 +396,17 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
                     }
                     // Unknown field or ID, use ID as label
                     return _.extend({label: value.id}, value);
+            }
+
+        },
+
+        /**
+         * Get label value
+         */
+        getLabelValue: function(value) {
+            var label = this.getLabel(value);
+            if (label) {
+                return label.label;
             }
         },
 
@@ -444,6 +487,39 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
             }
 
             return types;
+        },
+
+        /**
+         * Returns true if this element is sortable in its current configuration
+         */
+        isSortable: function(index) {
+            return (
+                _.contains(['bar', 'table', 'line'], this.get('type')) &&
+                !(this.get('type') === 'line' && this._getField(index).get('type') === 'date')
+            );
+        },
+
+        /**
+         * Get property/iteratee to sort observations with
+         */
+        getSort: function(index) {
+            if (this.has('sort_direction')) {
+
+                // Sort by measure
+                if (!this.has('sort') || this.get('sort').id !== this._getField(index).get('id')) {
+                    return 'total';
+
+                // Sort by dimension value
+                } else if (_.contains(this.bucketFields, this.getFieldType())) {
+                    return 'id';
+
+                // Otherwise, sort by dimension label
+                } else {
+                    return _.bind(this.getLabelValue, this);
+
+                }
+
+            }
         },
 
         /**

@@ -1325,8 +1325,13 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
                 <td>Only used by the <em>navigation</em> element type. When set to true this will stop users from unselecting a default dataset cut, effectively making the default cut required.</td>
             </tr>
             <tr>
-                <th colspan="2">sort (object)</th>
-                <td>Only used by the <em>navigation</em> element type. Specifies the order in which the filter options are displayed in the format <em>{"[attribute]": "[direction]"}</em>. The attribute can be <em>total</em> or <em>label</em> and the direction can be <em>asc</em> or <em>desc</em>.</td>
+                <th>sort (object)</th>
+                <th>id (string)</th>
+                <td>The ID of the dataset field to sort the element's features by. Only used by the <em>bar</em>, <em>line</em> and <em>table</em> element types.</td>
+            </tr>
+            <tr>
+                <th colspan="2">sort_direction (string)</th>
+                <td>The direction the element's features should be sorted in, either <em>asc</em> or <em>desc</em>.</td>
             </tr>
             <tr>
                 <th colspan="2">width (integer)</th>

@@ -1,5 +1,5 @@
-define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../templates/element/table.html', 'text!../../templates/element/tableSearchSuccess.html', 'text!../../templates/element/tableSearchFail.html'],
-    function(Backbone, _, $, format, tableTemplate, tableSearchSuccessTemplate, tableSearchFailTemplate) {
+define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../templates/element/table.html'],
+    function(Backbone, _, $, format, tableTemplate) {
     'use strict';
 
     var TableElementView = Backbone.View.extend({
@@ -17,37 +17,40 @@ define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../temp
         template: _.template(tableTemplate),
 
         // Search success/failure templates
-        searchSuccessTemplate: _.template(tableSearchSuccessTemplate),
-        searchFailTemplate: tableSearchFailTemplate,
+        searchSuccessTemplate: _.template('<p class="found">Found <strong><%- num %></strong> item<% if (num !== 1) { %>s<% } %> containing "<strong><%- input %></strong>"</p>'),
+        searchFailTemplate: '<p class="no-result">Sorry no items matched your search, please try broadening your search terms.</p>',
 
         searchQuery: '',
-        sortProperty: 'total',
-        sortDirection: -1,
+
+        defaultSortProperty: 'total',
+        defaultSortDirection: -1,
 
         scrollPosition: 0,
 
         render: function() {
-            var attrs = _.extend({
-                format: format,
-                cut: this.model.isCut(),
-                values: _.chain(this.model.getObservations())
-                    .map(function(value, index) {
-                        return {
-                            id: value.id,
-                            total: value.total,
-                            label: this.model.getLabel(value).label,
-                            cut: this.model.hasCutId(value.id)
-                        };
-                    }, this)
-                    .sortBy(this.sortProperty)
-                    .value(),
-                searchQuery: this.searchQuery,
-                sortProperty: this.sortProperty,
-                sortDirection: this.sortDirection
-            }, this.model.attributes);
+            var sortProperty = this.getSortProperty(),
+                sortDirection = this.getSortDirection(),
+                attrs = _.extend({
+                    format: format,
+                    cut: this.model.isCut(),
+                    values: _.chain(this.model.getObservations())
+                        .map(function(value, index) {
+                            return {
+                                id: value.id,
+                                total: value.total,
+                                label: this.model.getLabel(value).label,
+                                cut: this.model.hasCutId(value.id)
+                            };
+                        }, this)
+                        .sortBy(sortProperty)
+                        .value(),
+                    searchQuery: this.searchQuery,
+                    sortProperty: sortProperty,
+                    sortDirection: sortDirection
+                }, this.model.attributes);
 
             // Handle sort direction
-            if (this.sortDirection === -1) {
+            if (sortDirection === -1) {
                 attrs.values.reverse();
             }
 
@@ -113,17 +116,54 @@ define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../temp
         },
 
         /**
-         * Table column sort
+         * Get sort property
+         */
+        getSortProperty: function() {
+            if (this.sortProperty) {
+                // User
+                return this.sortProperty;
+
+            } else if (this.model.getSort()) {
+                // Model
+                return this.model.getSort();
+
+            }
+            // Default
+            return this.defaultSortProperty;
+        },
+
+        /**
+         * Get sort direction
+         */
+        getSortDirection: function() {
+            if (this.sortDirection) {
+                // User
+                return this.sortDirection;
+            } else if (this.model.has('sort_direction')) {
+                // Model
+                return (this.model.get('sort_direction') === 'asc') ? 1 : -1;
+            }
+            // Default
+            return this.defaultSortDirection;
+        },
+
+        /**
+         * Set sort property and direction
          */
         sortSelect: function(e) {
             e.preventDefault();
-            var $sort = $(e.currentTarget);
+            var newSortProperty = $(e.currentTarget).data('sort-property');
 
-            //if the same th sort header is selected then change the direction, else switch the th
-            if ($sort.data('sort-property') === this.sortProperty) {
+            // Set default direction if this is the user's first sort
+            if (!this.sortDirection) {
+                this.sortDirection = this.defaultSortDirection;
+            }
+
+            // Set property or toggle direction
+            if (newSortProperty === this.sortProperty) {
                 this.sortDirection *= -1;
             } else {
-                this.sortProperty = $sort.data('sort-property');
+                this.sortProperty = newSortProperty;
             }
 
             this.render();
