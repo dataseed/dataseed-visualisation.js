@@ -3,14 +3,7 @@ define(['backbone', '../models/visualisation/elementDimension'],
         'use strict';
 
         var ElementDimensionCollection = Backbone.Collection.extend({
-            model: ElementDimension,
-
-            /**
-             * Save all ElementDimension models in collection
-             */
-            save: function (attrs, opts) {
-                this.invoke('save', attrs, opts);
-            }
+            model: ElementDimension
         });
 
         return ElementDimensionCollection;

@@ -139,9 +139,9 @@ define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../temp
             if (this.sortDirection) {
                 // User
                 return this.sortDirection;
-            } else if (this.model.has('sort_direction')) {
+            } else if (this.model.get('settings').has('sort_direction')) {
                 // Model
-                return (this.model.get('sort_direction') === 'asc') ? 1 : -1;
+                return (this.model.get('settings').get('sort_direction') === 'asc') ? 1 : -1;
             }
             // Default
             return this.defaultSortDirection;

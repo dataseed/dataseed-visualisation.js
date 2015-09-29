@@ -14,7 +14,7 @@ define(['backbone', 'underscore', 'jquery', 'd3', '../../lib/format', 'text!../.
 
         initialize: function(options) {
             // Listen to changes in chart label
-            this.listenTo(this.model, 'change:label', this.updateChartLabel);
+            this.listenTo(this.model.get('settings'), 'change:label', this.updateChartLabel);
         },
 
         /**
@@ -46,7 +46,7 @@ define(['backbone', 'underscore', 'jquery', 'd3', '../../lib/format', 'text!../.
         },
 
         updateChartLabel: function(){
-            this.$heading.text(this.model.get('label'));
+            this.$heading.text(this.model.get('settings').get('label'));
         },
 
         /**

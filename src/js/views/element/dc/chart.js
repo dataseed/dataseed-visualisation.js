@@ -73,8 +73,8 @@ define(['backbone', 'underscore', 'jquery', 'd3', './../chart'],
          * Initialise chart
          */
         initialize: function(options) {
-            ChartView.prototype.initialize.apply(this, [options]);
-            this.listenTo(this.model, 'change:measure_label', this.updateMeasureLabel);
+            ChartView.prototype.initialize.call(this, options);
+            this.listenTo(this.model.get('settings'), 'change:measure_label', this.updateMeasureLabel);
         },
 
         /**

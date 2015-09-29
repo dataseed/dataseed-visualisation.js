@@ -91,7 +91,7 @@ define(['backbone', 'underscore', '../collections/elements', '../collections/sty
                     (type === 'navigation' && field.get('type') === 'string')) {
                     return {
                         id: field.get('id'),
-                        field: field.pick('id', 'type'),
+                        field: field.get('id'),
                         weight: index
                     };
                 }

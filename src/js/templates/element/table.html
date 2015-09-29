@@ -3,7 +3,7 @@
 		<span class="container-icon"><i class="glyphicon glyphicon-repeat"></i></span>
 	</a>
 </div>
-<h2><%- label %></h2>
+<h2><%- settings.get('label') %></h2>
 <div class="table-search-wrap">
 	<i class="search-icon"></i>
 	<input type="text" class="table-search" value="<%- searchQuery %>" />
@@ -16,13 +16,13 @@
                 <th class="table-chevron-left">
                     <a href="#" class="table-sort <%= (sortDirection == 1) ? 'asc' : 'desc' %><% if (sortProperty == 'label') { %> active<% } %>" data-sort-property="label">
                         <i class="icon-sort"></i>
-                        <span><%- label %></span>
+                        <span><%- settings.get('label') %></span>
                     </a>
                 </th>
                 <th>
                     <a href="#" class="table-sort <%= (sortDirection == 1) ? 'asc' : 'desc' %><% if (sortProperty == 'total') { %> active<% } %>" data-sort-property="total">
                         <i class="icon-sort"></i>
-                        <span><%- measure_label %></span>
+                        <span><%- settings.get('measure_label') %></span>
                     </a>
                 </th>
             </tr>

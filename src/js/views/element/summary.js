@@ -12,7 +12,7 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
             // Bind to element models
             this.visualisation = options.visualisation;
 
-            this.listenTo(this.model, 'change:measure_label', this.changeMeasureLabel);
+            this.listenTo(this.model.get('settings'), 'change:measure_label', this.changeMeasureLabel);
         },
 
         render: function() {
@@ -26,12 +26,12 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
         },
 
         changeMeasureLabel: function() {
-            this.model.set('label', this.model.getMeasureLabel());
+            this.model.get('settings').set('label', this.model.getMeasureLabel());
         },
 
         getSummaryText: function() {
             var summaryText,
-                element_label = this.model.get('label'),
+                element_label = this.model.get('settings').get('label'),
                 total = format.num(this.model.getObservations());
 
             // Basic summary. It will be used if the element has no dimensions.

@@ -38,7 +38,7 @@ define(['backbone', 'underscore', '../models/visualisation/element/measureElemen
          */
         setState: function(states) {
             _.each(states, function(state) {
-                var model = this.get(state.element.id);
+                var model = this.get(state.id);
                 model.setState(state);
                 model.resetConnections();
             }, this);
