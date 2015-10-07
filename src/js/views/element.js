@@ -98,7 +98,6 @@ define(['backbone', 'underscore', 'jquery', './element/summary', './element/filt
             this.model.removeCut();
             $('.tipsy').remove();
         }
-
     });
 
     return ElementView;

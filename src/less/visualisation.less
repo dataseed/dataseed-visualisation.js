@@ -86,7 +86,37 @@
         svg {
             font-size: 12px;
         }
+        
     }
+}
+
+.inner-element:hover .bottom-actions {
+    opacity: 1;
+    bottom: 10px;
+}
+
+.bottom-actions {
+    position: absolute;
+    bottom: 0px;
+    right: 15px;
+    opacity: 0;
+    transition: all 0.2s ease-in-out;
+    .action {
+        text-decoration: none;
+        font-size: 1.4em;
+        color: #ddd;
+        &:active {
+            opacity: 1;
+            color: @dsLighterBlue;
+        }
+    }
+
+}
+
+.bottom-actions .action:active{ 
+    opacity: 1;
+    position: relative;
+    top: 2px;
 }
 
 .remove-filter {
@@ -98,6 +128,7 @@
 .remove-filter:hover {
     text-decoration: none;
 }
+
 
 // TABLE CHART
 // --------------------------------------------------
