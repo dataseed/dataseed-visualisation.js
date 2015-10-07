@@ -81,6 +81,9 @@ require.config({
         // Tipsy tooltips
         tipsy: 'components/tipsy/src/javascripts/jquery.tipsy',
 
+        // FileSaver
+        filesaver: 'components/file-saver.js/FileSaver',
+
         // Bootstrap JS
         bootstrap_transition: 'components/bootstrap/js/transition',
         bootstrap_collapse: 'components/bootstrap/js/collapse',

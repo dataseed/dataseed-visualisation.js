@@ -1,5 +1,5 @@
-define(['backbone', 'underscore', 'jquery', './element/summary', './element/filter/navigation', './element/table', './element/dc/bar', './element/dc/line', './element/d3/bubble', './element/d3/geo', './loadScreen', 'bootstrap_dropdown'],
-    function(Backbone, _, $, SummaryElementView, NavigationElementView, TableChartView, BarChartView, LineChartView, BubbleChartView, GeoChartView, LoadScreenView) {
+define(['backbone', 'underscore', 'jquery', './element/summary', './element/filter/navigation', './element/table', './element/dc/bar', './element/dc/line', './element/d3/bubble', './element/d3/geo', './loadScreen', 'filesaver', 'bootstrap_dropdown'],
+    function(Backbone, _, $, SummaryElementView, NavigationElementView, TableChartView, BarChartView, LineChartView, BubbleChartView, GeoChartView, LoadScreenView, saveAs) {
     'use strict';
 
     var ElementView = Backbone.View.extend({
@@ -7,7 +7,8 @@ define(['backbone', 'underscore', 'jquery', './element/summary', './element/filt
         tagName: 'article',
 
         events: {
-            'click .remove-filter': 'reset'
+            'click .remove-filter': 'reset',
+            'click .download-svg' : 'downloadSVG'
         },
 
         chartTypes: {
@@ -97,8 +98,28 @@ define(['backbone', 'underscore', 'jquery', './element/summary', './element/filt
             e.preventDefault();
             this.model.removeCut();
             $('.tipsy').remove();
-        }
+        },
 
+        /**
+         * Download Chart as SVG
+         */
+        downloadSVG: function(e){
+            e.preventDefault();
+
+            var svg = this.$('.chart-container > svg')[0];
+
+            // Cleanup svg
+            var prefix = "http://www.w3.org/2000/xmlns/";
+            if (!svg.hasAttributeNS(prefix, "xmlns"))
+                svg.setAttributeNS(prefix, "xmlns", "http://www.w3.org/2000/svg");
+
+            if (!svg.hasAttributeNS(prefix, "xmlns:xlink"))
+                svg.setAttributeNS(prefix, "xmlns:xlink", "http://www.w3.org/1999/xlink");
+            
+            var data = (new XMLSerializer()).serializeToString(svg);
+
+            saveAs(new Blob([data], {type: "image/svg+xml;charset=utf-8"}), 'chart.svg');
+        }
     });
 
     return ElementView;
