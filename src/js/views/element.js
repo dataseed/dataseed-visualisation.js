@@ -1,5 +1,5 @@
-define(['backbone', 'underscore', 'jquery', './element/summary', './element/filter/navigation', './element/table', './element/dc/bar', './element/dc/line', './element/d3/bubble', './element/d3/geo', './loadScreen', 'filesaver', 'bootstrap_dropdown'],
-    function(Backbone, _, $, SummaryElementView, NavigationElementView, TableChartView, BarChartView, LineChartView, BubbleChartView, GeoChartView, LoadScreenView, saveAs) {
+define(['backbone', 'underscore', 'jquery', './element/summary', './element/filter/navigation', './element/table', './element/dc/bar', './element/dc/line', './element/d3/bubble', './element/d3/geo', './loadScreen', 'bootstrap_dropdown'],
+    function(Backbone, _, $, SummaryElementView, NavigationElementView, TableChartView, BarChartView, LineChartView, BubbleChartView, GeoChartView, LoadScreenView) {
     'use strict';
 
     var ElementView = Backbone.View.extend({

@@ -1,5 +1,5 @@
-define(['backbone', 'underscore', 'jquery', 'd3', '../../lib/format', 'text!../../templates/element/chart.html', 'tipsy'],
-    function(Backbone, _, $, d3, format, chartTemplate) {
+define(['backbone', 'underscore', 'jquery', 'd3', '../../lib/format', 'text!../../templates/element/chart.html', 'filesaver', 'tipsy'],
+    function(Backbone, _, $, d3, format, chartTemplate, filesaver) {
     'use strict';
 
     var ChartView = Backbone.View.extend({
