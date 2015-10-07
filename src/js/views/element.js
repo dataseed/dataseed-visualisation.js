@@ -7,8 +7,7 @@ define(['backbone', 'underscore', 'jquery', './element/summary', './element/filt
         tagName: 'article',
 
         events: {
-            'click .remove-filter': 'reset',
-            'click .download-svg' : 'downloadSVG'
+            'click .remove-filter': 'reset'
         },
 
         chartTypes: {
@@ -98,27 +97,6 @@ define(['backbone', 'underscore', 'jquery', './element/summary', './element/filt
             e.preventDefault();
             this.model.removeCut();
             $('.tipsy').remove();
-        },
-
-        /**
-         * Download Chart as SVG
-         */
-        downloadSVG: function(e){
-            e.preventDefault();
-
-            var svg = this.$('.chart-container > svg')[0];
-
-            // Cleanup svg
-            var prefix = "http://www.w3.org/2000/xmlns/";
-            if (!svg.hasAttributeNS(prefix, "xmlns"))
-                svg.setAttributeNS(prefix, "xmlns", "http://www.w3.org/2000/svg");
-
-            if (!svg.hasAttributeNS(prefix, "xmlns:xlink"))
-                svg.setAttributeNS(prefix, "xmlns:xlink", "http://www.w3.org/1999/xlink");
-            
-            var data = (new XMLSerializer()).serializeToString(svg);
-
-            saveAs(new Blob([data], {type: "image/svg+xml;charset=utf-8"}), 'chart.svg');
         }
     });
 

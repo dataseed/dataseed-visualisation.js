@@ -9,7 +9,8 @@ define(['backbone', 'underscore', 'jquery', 'd3', '../../lib/format', 'text!../.
         template: _.template(chartTemplate),
 
         events: {
-            'mouseover g': 'removeTooltips'
+            'mouseover g': 'removeTooltips',
+            'click .download-svg' : 'downloadSVG'
         },
 
         initialize: function(options) {
@@ -164,6 +165,29 @@ define(['backbone', 'underscore', 'jquery', 'd3', '../../lib/format', 'text!../.
             if($('.tipsy').length > 0) {
                 $('.tipsy:gt(0)').remove();
             }
+        },
+
+        /**
+         * Download Chart as SVG
+         */
+        downloadSVG: function(e){
+            e.preventDefault();
+            if (!window.Blob)
+                return $.error('Cannot use blobs... Upgrade browser');
+
+            var svg = this.$('.chart-container > svg')[0],
+                ns = "http://www.w3.org/2000/xmlns/";
+            
+            if (!svg.hasAttributeNS(ns, "xmlns"))
+                svg.setAttributeNS(ns, "xmlns", "http://www.w3.org/2000/svg");
+            if (!svg.hasAttributeNS(ns, "xmlns:xlink"))
+                svg.setAttributeNS(ns, "xmlns:xlink", "http://www.w3.org/1999/xlink");
+            
+            var data = (new XMLSerializer()).serializeToString(svg),
+                type = "image/svg+xml;charset=utf-8",
+                filename = "chart.svg";
+            
+            saveAs(new Blob([data], {type: type}), filename);
         }
 
     });
