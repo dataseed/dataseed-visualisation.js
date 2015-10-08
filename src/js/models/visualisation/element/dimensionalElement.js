@@ -46,15 +46,15 @@ function (Backbone, _, Element) {
             };
 
             // Initiate connections
-            this.dimensions.each( function (dimension, index) {
+            this.dimensions.each(function (dimension, index) {
 
                 // Get common connection options
                 var opts = {
-                    dimension: dimension.get('field').id,
+                    dimension: dimension.get('field'),
                     bucket: dimension.get('bucket'),
                     bucket_interval: dimension.get('bucket_interval'),
-                    measure: _.isNull(this.get('measure')) ? null : this.get('measure').id,
-                    aggregation: this.get('aggregation')
+                    measure: this.get('settings').get('measure'),
+                    aggregation: this.get('settings').get('aggregation')
                 };
 
                 // Observations

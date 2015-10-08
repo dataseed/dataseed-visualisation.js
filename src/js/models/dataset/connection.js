@@ -9,22 +9,18 @@ define(['backbone', 'underscore'], function (Backbone, _) {
 
         url: function () {
             var url = this.apiEndpoint(),
-                params = _.extend({}, this.get('cut'), {aggregation: this.get('aggregation')}),
+                params = _.extend({}, this.get('cut'), {aggregation: this.get('aggregation')});
 
-            // Bucket dimensions
-                bucket = this.get('bucket'),
-                bucket_interval = this.get('bucket_interval');
-
-            if (!_.isNull(this.get('measure'))) {
+            if (this.get('measure')) {
                 params.measure = this.get('measure');
             }
 
-            if (!_.isUndefined(bucket_interval) && !_.isNull(bucket_interval)) {
-                params.bucket_interval = bucket_interval;
+            if (!_.isUndefined(this.get('bucket_interval')) && !_.isNull(this.get('bucket_interval'))) {
+                params.bucket_interval = this.get('bucket_interval');
             }
 
-            if (!_.isUndefined(bucket) && !_.isNull(bucket)) {
-                params.bucket = bucket;
+            if (!_.isUndefined(this.get('bucket')) && !_.isNull(this.get('bucket'))) {
+                params.bucket = this.get('bucket');
             }
 
             // Build up query parameters
@@ -55,9 +51,7 @@ define(['backbone', 'underscore'], function (Backbone, _) {
 
             // Trigger our own connection:sync event when the connection model
             // is synched.
-            this.listenTo(this, 'sync', function (conn) {
-                this.trigger('connection:sync', conn);
-            });
+            this.listenTo(this, 'sync', _.bind(this.trigger, this, 'connection:sync'));
 
             // Fetch
             this.fetch();

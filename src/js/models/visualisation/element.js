@@ -83,11 +83,14 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
             this.dataset = opts.dataset;
             this.visualisation = opts.visualisation;
 
+            // Create element settings model
+            this.set('settings', new Backbone.Model(this.get('settings')));
+
             // Create collection for elementDimension models
             this.dimensions = new ElementDimensionCollection();
 
             // Set elementDimension models in collection from "dimensions" attribute
-            this.dimensions.set(_.map(this.get('dimensions'), function (d) {
+            this.dimensions.set(_.map(this.get('settings').get('dimensions'), function (d) {
                 return _.extend({}, d, {
                     dataset: this.dataset,
                     visualisation: this.visualisation,
@@ -97,6 +100,29 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
 
             // Reset and init connections.
             this.resetConnections();
+        },
+
+        /**
+         * Parse model
+         */
+        parse: function(response) {
+            if (response.settings) {
+                response.settings = new Backbone.Model(response.settings);
+                if (response.settings.get('dimensions')) {
+                    this.updateDimensions(response.settings.get('dimensions'));
+                }
+            }
+            return response;
+        },
+
+        /**
+         * Serialize model
+         */
+        toJSON: function() {
+            var data = Backbone.Model.prototype.toJSON.apply(this, arguments);
+            data.settings = data.settings.toJSON();
+            data.settings.dimensions = this.dimensions.toJSON();
+            return data;
         },
 
         /**
@@ -123,7 +149,7 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
          * Get dimension field
          */
         _getField: function(index) {
-            return this.dataset.fields.get(this.dimensions.at(index || 0).get('field').id);
+            return this.dataset.fields.get(this.dimensions.at(index || 0).get('field'));
         },
 
         /**
@@ -139,7 +165,7 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
          * Handle element feature (bar/point/etc) click
          */
         featureClick: function(d, i) {
-            if (this.get('interactive') === false) {
+            if (this.get('settings').get('interactive') === false) {
                 return false;
             }
 
@@ -180,8 +206,11 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
         updateDimension: function(id, index, bucketing) {
             // Set the element's dimension's field
             var attrs = _.extend(
-                {field: this.dataset.fields.get(id).pick('id', 'type')},
-                {bucket: null, bucket_interval: null},
+                {
+                    field: this.dataset.fields.get(id).get('id'),
+                    bucket: null,
+                    bucket_interval: null
+                },
                 bucketing
             );
             this.dimensions.at(index || 0).set(attrs);
@@ -232,12 +261,12 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
 
             if (field) {
                 var aggregationType = _.findWhere(this.aggregationTypes, {name: attrs.aggregation});
-                attrs.measure = {id: field};
+                attrs.measure = field;
                 attrs.measure_label = aggregationType.label +
                     ' ' + this.dataset.fields.get(field).get('label');
             }
 
-            this.set(attrs);
+            this.get('settings').set(attrs);
             this.resetConnections();
         },
 
@@ -245,11 +274,11 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
          * Update the element's sorting
          */
         updateSort: function(fieldId) {
-            if (this.has('sort') && this.get('sort').id === fieldId) {
-                this.set('sort_direction', (this.get('sort_direction') === 'asc') ? 'desc' : 'asc');
+            if (this.get('settings').has('sort') && this.get('settings').get('sort') === fieldId) {
+                this.get('settings').set('sort_direction', (this.get('settings').get('sort_direction') === 'asc') ? 'desc' : 'asc');
             } else {
-                this.set({
-                    sort: {id: fieldId},
+                this.get('settings').set({
+                    sort: fieldId,
                     sort_direction: 'asc'
                 });
             }
@@ -353,7 +382,7 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
                 data = _.sortBy(data, sort);
 
                 // Sort direction
-                if (this.get('sort_direction') === 'desc') {
+                if (this.get('settings').get('sort_direction') === 'desc') {
                     data = data.reverse();
                 }
 
@@ -445,7 +474,7 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
          * Get label for this element's measure
          */
         getMeasureLabel: function () {
-            return this.get('measure_label');
+            return this.get('settings').get('measure_label');
         },
 
         /**
@@ -503,10 +532,10 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
          * Get property/iteratee to sort observations with
          */
         getSort: function(index) {
-            if (this.has('sort_direction')) {
+            if (this.get('settings').has('sort_direction')) {
 
                 // Sort by measure
-                if (!this.has('sort') || this.get('sort').id !== this._getField(index).get('id')) {
+                if (!this.get('settings').has('sort') || this.get('settings').get('sort') !== this._getField(index).get('id')) {
                     return 'total';
 
                 // Sort by dimension value
@@ -539,7 +568,7 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
                 this.trigger('removeCut', [this._getField(index).get('id')]);
             }
             else {
-                var ids = this.dimensions.map(function (d) { return d.get('field').id; });
+                var ids = this.dimensions.map(function (d) { return d.get('field'); });
                 this.trigger('removeCut', ids);
             }
         },
@@ -604,10 +633,7 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
          * Get a serialized representation of element state
          */
         getState: function() {
-            return {
-                element: this.toJSON(),
-                dimensions: this.dimensions.toJSON()
-            };
+            return this.toJSON();
         },
 
         /**
@@ -615,25 +641,7 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
          * by getState()
          */
         setState: function(state) {
-            this.set(state.element, {silent: false});
-            this.updateDimensions(state.dimensions);
-        },
-
-        /**
-         * Save element and dependent models
-         */
-        save: function(attrs, opts) {
-            if (!opts || opts.children !== false) {
-                opts = _.defaults({success: _.bind(this.saveChildren, this)}, opts);
-            }
-            return Backbone.Model.prototype.save.call(this, attrs, opts);
-        },
-
-        /**
-         * Save element's child models (dimensions)
-         */
-        saveChildren: function(model, response, opts) {
-            this.dimensions.save();
+            this.set(this.parse(state), {silent: false});
         }
 
     });

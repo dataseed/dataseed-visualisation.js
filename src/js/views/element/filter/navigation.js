@@ -20,7 +20,7 @@ define(['backbone', 'underscore', 'jquery', '../../../lib/format', 'text!../../.
          * Render a dimension as part of a navigation element
          */
         render: function() {
-            var id = this.dimension.get('field').id,
+            var id = this.dimension.get('field'),
                 field = this.dataset.fields.findWhere({id: id}),
                 index = this.index,
                 cut = this.model.getCut(this.index),
@@ -59,7 +59,7 @@ define(['backbone', 'underscore', 'jquery', '../../../lib/format', 'text!../../.
                 accordion_id: this.model.get('id') + '_' + id.replace(this.normaliseRegex, '_'),
                 state: (this.navigation.accordionState[id] === true),
                 cut: cut,
-                label: _.isUndefined(field) ? this.model.get('label') : field.get('label'),
+                label: _.isUndefined(field) ? this.model.get('settings').get('label') : field.get('label'),
                 values_count : ids.length,
                 selected_count : (cut.length < 1) ? ids.length : _.intersection(cut, ids).length,
                 values: values,
@@ -120,7 +120,7 @@ define(['backbone', 'underscore', 'jquery', '../../../lib/format', 'text!../../.
             // Only get number of observations once.
             if (!this._calculated) {
                 this.model.dimensions.each(function(dimension, index) {
-                    var dimensionId = dimension.get('field').id;
+                    var dimensionId = dimension.get('field');
                     // Get the total number of observations for each dimension.
                     this.numberOfObservations[dimensionId] = this.model.getObservations(dimensionId).length;
                 }, this);
