@@ -1,93 +1,63 @@
-define(['underscore', 'jquery', 'dc', 'd3', './chart', '../../../lib/format'],
-    function(_, $, dc, d3, DcChartView, format) {
+define(['underscore', 'dc', 'd3', './dcChart', '../../../lib/format'],
+    function(_, dc, d3, DcChartView, format) {
     'use strict';
 
+    /**
+     * Dc.js Line Chart
+     */
     var LineChartView = DcChartView.extend({
 
-        dcChartConstructor : dc.lineChart,
+        dcChart: dc.lineChart,
         tooltipSelector: 'g circle.dot',
         dataFeatureSelector: 'circle',
 
-        /**
-         * Override DcChartView.getDCDatumFromObservation
-         * Data translation helpers: dc.lineChart uses a different format
-         */
-        getDCDatumFromObservation: function(o) {
-            var obsLabel = this.model.getLabel(o),
-                xLabel = o.id;
-
-            // If the field type is not 'date' use labels, if possible
-            if (this.model.getFieldType() !== 'date') {
-                if (!_.isUndefined(obsLabel.short_label)) {
-                    xLabel = obsLabel.short_label;
-                } else if (!_.isUndefined(obsLabel.label)) {
-                    xLabel = obsLabel.label;
-                }
-            }
-
-            return {
-                data: {key: o.id, value: o.total},
-                layer: this.model.getMeasureLabel(),
-                key: o.id,
-                x: xLabel,
-                y: o.total,
-                y0: 0
-            };
-        },
+        margins: {top: 5, left: 50, right: 10, bottom: 70},
 
         /**
-         * Override DcChartView.getObservationFromDCDatum
+         * Override DcChartView.initChart
          */
-        getObservationFromDCDatum: function(d) {
-            return {id: d.data.key, total: d.data.value};
-        },
+        initChart: function() {
+            var chart = DcChartView.prototype.initChart.apply(this, arguments);
 
-        /**
-         * Build the chart's data.
-         * Dc LineChart requires data defined as an array of layers (which,
-         * in turn, are defined through crossfilter groups) and assumes that
-         * there is at least one layer.
-         */
-        getChartData: function() {
-            var values = _.map(
-                this.model.getObservations(),
-                this.getDCDatumFromObservation,
-                this
-            );
-            if (values.length < 1) {
-                return [];
-            }
+            // Setup chart
+            chart
+                .elasticY(true)
 
-            // Return layer values and label
-            return [{
-                name: this.model.getMeasureLabel(),
-                values: values
-            }];
-        },
+                // No area or brush
+                .renderArea(false)
+                .brushOn(false)
 
-        /**
-         * Set the proper scale for the X axis
-         */
-        prepareXaxis: function() {
+                // Set opacity and radius of the data points (circles).
+                // See drawDots(), hideDots() and showDots() in dc.lineChart()
+                // to figure out how these values are used.
+                .renderDataPoints({strokeOpacity: 0.5, fillOpacity: 1, radius: 3})
+
+                // We need this call because otherwise we can't properly set the
+                // circle colors due to the "fill" attr set by drawDots() in
+                // dc.lineChart()
+                .ordinalColors([this.getStyle('featureActive')])
+
+                // Tweak the padding for the clip path - see dc.coordinateGridMixin
+                .clipPadding(5)
+
+                // Y-Axis
+                .yAxis()
+                    .tickFormat(format.numScale);
+
+            // Attach onClick handler after rendering
+            chart.on('renderlet.attachOnClick', this.attachOnClick);
+
             // Note we don't have to set the scale domain: it will be handled
             // by prepareXAxis() in dc.coordinateGridMixin
             if (this.model.getFieldType() === 'date') {
-                this.chart.x(d3.time.scale.utc())
+                chart.x(d3.time.scale.utc())
                     .xUnits(d3.time.seconds);
             } else {
-                this.chart.x(d3.scale.ordinal())
+                chart.x(d3.scale.ordinal())
                     .xUnits(dc.units.ordinal);
             }
-        },
 
-        /**
-         * Override DcChartView.prepareChart
-         */
-        prepareChart: function(data) {
-            DcChartView.prototype.prepareChart.apply(this, arguments);
-            this.chart.on('renderlet.attachOnClick', this.attachOnClick);
-            this.chartHeight = this.height;
-            this.prepareXaxis();
+            return chart;
         },
 
         /**
@@ -102,81 +72,58 @@ define(['underscore', 'jquery', 'dc', 'd3', './chart', '../../../lib/format'],
          * DcChartView.initChart()).
          */
         attachOnClick: function(chart) {
-            chart.svg().selectAll('circle').on('click', chart.onClick);
+            chart.svg().selectAll('circle').on('click', function(d) {
+                chart.onClick(d.data);
+            });
         },
 
         /**
-         * Override DcChartView.initChart
+         * Override DcChartView.prepareChart
          */
-        initChart: function() {
-            // Set margins on initialisation as yAxixLabel() alters them and
-            // the object is shared across instances
-            this.margins = {top: 5, left: 50, right: 10, bottom: 70};
-
-            DcChartView.prototype.initChart.apply(this, arguments);
-            this.chart
-                .renderArea(false)
-                .elasticY(true)
-                .elasticX(true)
-                .renderHorizontalGridLines(true)
-                .brushOn(false)
-                .yAxisLabel(this.model.getMeasureLabel(), 25)
-
-                // Don't set the titles: we attach our own tooltips
-                // (see DcChartView.setupTooltips()
-                .title($.noop)
-
-                // Set opacity and radius of the data points (circles).
-                // See drawDots(), hideDots() and showDots() in dc.lineChart()
-                // to figure out how these values are used.
-                .renderDataPoints({strokeOpacity: 0.5, fillOpacity: 1, radius: 3})
-
-                // We need this call because otherwise we can't properly set the
-                // circle colors due to the "fill" attr set by drawDots() in
-                // dc.lineChart()
-                .ordinalColors([this.getStyle('featureActive')])
-
-                // tweak the padding for the clip path - see dc.coordinateGridMixin
-                .clipPadding(5);
-
-            this.chart.yAxis().tickFormat(format.numScale);
+        prepareChart: function() {
+            DcChartView.prototype.prepareChart.apply(this, arguments);
+            this.updateMeasureLabel();
         },
 
         /**
          * Set chart styles
          */
-        applyStyles: function() {
+        styleChart: function(svg) {
             // See also the call to this.chart.ordinalColors() in this.initChart()
-            this.chart.svg().selectAll('g.axis.x text')
+            svg.selectAll('g.axis.x text')
                 .attr('transform', 'rotate(-45)')
                 .attr('dy', '0.8em')
                 .attr('dx', '-2em');
 
             // Ref lines
-            this.chart.svg()
-                .selectAll('g.dc-tooltip path')
+            svg.selectAll('g.dc-tooltip path')
                 .style('fill', this.getStyle('featureFill'))
                 .style('stroke', this.getStyle('featureFill'));
 
-            // line
-            var lineStyle = (this.model.isCut()) ? 'featureFillActive' : 'featureFill';
-            this.chart.svg()
-                .selectAll('path.line')
-                .style('stroke', this.getStyle(lineStyle))
+            // Line
+            svg.selectAll('path.line')
+                .style('stroke', this.getStyle('featureFill' + ((this.model.isCut()) ? 'Active' : '')))
                 .style('fill', 'none')
                 .style('stroke-width', 2);
 
-            // dots
+            // Circles
             // DC line charts don't use the "selected"/"deselected" classes
             // (see drawDots() in dc.lineChart())
-            this.chart.svg().selectAll(this.dataFeatureSelector)
-                .classed('deselected', _.bind(function (d) {
-                    return this.model.isCut() && !this.model.hasCutId(d.key);
-                }, this));
+            svg.selectAll(this.dataFeatureSelector)
+                .classed('deselected', _.bind(this.isDeselected, this));
+
+            DcChartView.prototype.styleChart.apply(this, arguments);
         },
 
         /**
-         * Set chart measure label
+         * Return true if chart has a cut but not for the passed value
+         */
+        isDeselected: function(d) {
+            return this.model.isCut() && !this.model.hasCutId(d.data.id);
+        },
+
+        /**
+         * Set chart measure label (Y-Axis)
          */
         updateMeasureLabel: function() {
             this.chart.yAxisLabel(this.model.getMeasureLabel(), 25);

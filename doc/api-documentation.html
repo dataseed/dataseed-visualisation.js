@@ -355,12 +355,14 @@
                             "elements": [
                                 {
                                     "id": "year",
-                                    "label": "Year",
-                                    "measure_label": "Number of deaths",
                                     "type": "bar",
-                                    "aggregation": "sum",
-                                    "measure": {"id": "value"},
-                                    "dimensions": [{"field": {"id": "year", "type": "string"}}],
+                                    "settings": {
+                                        "label": "Year",
+                                        "measure_label": "Number of deaths",
+                                        "aggregation": "sum",
+                                        "measure": "value",
+                                        "dimensions": [{"field": "year"}]
+                                    },
                                     "width": 1,
                                     "height": 6,
                                     "y": 1,
@@ -368,12 +370,14 @@
                                 },
                                 {
                                     "id": "gender",
-                                    "label": "Gender",
-                                    "measure_label": "Number of deaths",
                                     "type": "bar",
-                                    "aggregation": "sum",
-                                    "measure": {"id": "value"},
-                                    "dimensions": [{"field": {"id": "gender", "type": "string"}}],
+                                    "settings": {
+                                        "label": "Gender",
+                                        "measure_label": "Number of deaths",
+                                        "aggregation": "sum",
+                                        "measure": "value",
+                                        "dimensions": [{"field": "gender"}]
+                                    },
                                     "width": 1,
                                     "height": 6,
                                     "y": 1,
@@ -676,22 +680,26 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
                                 {
                                     "id": "sum0",
                                     "type": "summary",
-                                    "label": "Total",
-                                    "measure_label": "Number of deaths",
-                                    "aggregation": "sum",
-                                    "measure": {"id": "value"},
-                                    "dimensions": [{"field": {"id": "year", "type": "string"}}],
+                                    "settings": {
+                                        "label": "Total",
+                                        "measure_label": "Number of deaths",
+                                        "aggregation": "sum",
+                                        "measure": "value",
+                                        "dimensions": [{"field": "year"}]
+                                    },
                                     "width": 4,
                                     "height": 1
                                 },
                                 {
                                     "id": "chart0",
                                     "type": "mylist",
-                                    "label": "My List Chart",
-                                    "measure_label": "Number of deaths",
-                                    "aggregation": "sum",
-                                    "measure": {"id": "value"},
-                                    "dimensions": [{"field": {"id": "year", "type": "string"}}],
+                                    "settings": {
+                                        "label": "My List Chart",
+                                        "measure_label": "Number of deaths",
+                                        "aggregation": "sum",
+                                        "measure": "value",
+                                        "dimensions": [{"field": "year"}]
+                                    },
                                     "width": 4,
                                     "height": 6
                                 }
@@ -713,7 +721,7 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
             var MyListView = Backbone.View.extend({
 
                 // Chart HTML template
-                chartTemplate: _.template('&lt;h2&gt;&lt;%- label %&gt;&lt;/h2&gt;&lt;ul&gt;&lt;/ul&gt;'),
+                chartTemplate: _.template('&lt;h2&gt;&lt;%- settings.get('label') %&gt;&lt;/h2&gt;&lt;ul&gt;&lt;/ul&gt;'),
 
                 // Chart item HTML template
                 itemTemplate: _.template(
@@ -1076,28 +1084,32 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
         "description": "Explore the number of deaths by disease, sex, area and year",
         "elements": [{
             "id": "year",
-            "label": "Year",
-            "measure_label": "Number of deaths",
             "type": "bar",
-            "aggregation": "sum",
-            "measure": {"id": "value"},
-            "dimensions": [{"field": {"id": "year", "type": "string"}}],
             "width": 1,
             "height": 6,
             "y": 1,
-            "x": 1
+            "x": 1,
+            "settings": {
+                "label": "Year",
+                "measure_label": "Number of deaths",
+                "aggregation": "sum",
+                "measure": "value",
+                "dimensions": [{"field": "year"}]
+            }
         }, {
             "id": "gender",
-            "label": "Gender",
-            "measure_label": "Number of deaths",
             "type": "bar",
-            "aggregation": "sum",
-            "measure": {"id": "value"},
-            "dimensions": [{"field": {"id": "gender", "type": "string"}}],
             "width": 1,
             "height": 6,
             "y": 1,
-            "x": 2
+            "x": 2,
+            "settings": {
+                "label": "Gender",
+                "measure_label": "Number of deaths",
+                "aggregation": "sum",
+                "measure": "value",
+                "dimensions": [{"field": "gender"}]
+            }
         }],
         "styles": []
     }],
@@ -1275,14 +1287,15 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
 
         <table class="table table-hover table-responsive">
             <tr>
-                <th colspan="2">id (string)</th>
+                <th colspan="3">id (string)</th>
                 <td>The ID of the element</td>
             </tr>
             <tr>
-                <th colspan="2">type (string)</th>
-                <td>The type of element, one of <em>summary</em>, <em>navigation</em>, <em>bar</em>, <em>bubble</em>, <em>geo</em>, <em>table</em> or <em>line</em>.</td>
+                <th colspan="3">type (string)</th>
+                <td>The type of element, one of <em>summary</em>, <em>navigation</em>, <em>bar</em>, <em>column</em>, <em>bubble</em>, <em>geo</em>, <em>table</em> or <em>line</em>.</td>
             </tr>
             <tr>
+                <th rowspan="11">settings (object)</th>
                 <th colspan="2">label (string)</th>
                 <td>The title of the element, usually displayed at the top of a chart (dependent on the element's type).</td>
             </tr>
@@ -1295,14 +1308,13 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
                 <td>The aggregation to perform on the element's measure, one of <em>sum</em>, <em>mean</em>, <em>min</em>, <em>max</em> or <em>rows</em>. The special <em>rows</em> aggregation is used when the element's measure is <em>null</em>.</td>
             </tr>
             <tr>
-                <th>measure (object)</th>
-                <th>id (string)</th>
+                <th colspan="2">measure (string)</th>
                 <td>The ID of the dataset field to use as the element's measure</td>
             </tr>
             <tr>
-                <th rowspan="4">dimensions (array)</th>
-                <th>field (object)</th>
-                <td>An object containing the ID of the dataset field to use as a dimension</td>
+                <th rowspan="3">dimensions (array)</th>
+                <th>field (string)</th>
+                <td>The ID of the dataset field to use as a dimension</td>
             </tr>
             <tr>
                 <th>bucket_interval (string)</th>
@@ -1313,10 +1325,6 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
                 <td>If <em>bucket_interval</em> is <em>custom</em> and the dimension is an <em>integer</em> or <em>float</em>, the dimension will be bucketed by this value.</td>
             </tr>
             <tr>
-                <th>weight (integer)</th>
-                <td>The weight/order of this dimension in the element. This is only relevant in multi-dimensional elements such as filters.</td>
-            </tr>
-            <tr>
                 <th colspan="2">interactive (boolean)</th>
                 <td>By default clicking on a chart feature (such as a bar or a point on a line) will filter the visualisation. If interactive is set to false clicking on the chart will have no effect.</td>
             </tr>
@@ -1325,28 +1333,27 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
                 <td>Only used by the <em>navigation</em> element type. When set to true this will stop users from unselecting a default dataset cut, effectively making the default cut required.</td>
             </tr>
             <tr>
-                <th>sort (object)</th>
-                <th>id (string)</th>
-                <td>The ID of the dataset field to sort the element's features by. Only used by the <em>bar</em>, <em>line</em> and <em>table</em> element types.</td>
+                <th colspan="2">sort (string)</th>
+                <td>The ID of the dataset field to sort the element's features by. Only used by the <em>bar</em>, <em>column</em>, <em>line</em> and <em>table</em> element types.</td>
             </tr>
             <tr>
                 <th colspan="2">sort_direction (string)</th>
                 <td>The direction the element's features should be sorted in, either <em>asc</em> or <em>desc</em>.</td>
             </tr>
             <tr>
-                <th colspan="2">width (integer)</th>
+                <th colspan="3">width (integer)</th>
                 <td>An integer from 1 to 4 representing the width of the rendered element. Dataseed is responsive so a value of "1" will used 25% of the current screen width. On mobile, this value is ignored as elements are always full width.</td>
             </tr>
             <tr>
-                <th colspan="2">height (integer)</th>
+                <th colspan="3">height (integer)</th>
                 <td>An integer from 1 to 255 representing the height of the rendered element. A value of "1" is equivalent to 50 pixels and the same height will be used across all devices.</td>
             </tr>
             <tr>
-                <th colspan="2">x (integer)</th>
+                <th colspan="3">x (integer)</th>
                 <td>An integer specifying the element's X position within the visualisation.</td>
             </tr>
             <tr>
-                <th colspan="2">y (integer)</th>
+                <th colspan="3">y (integer)</th>
                 <td>An integer specifying the element's Y position within the visualisation.</td>
             </tr>
         </table>
@@ -1359,35 +1366,34 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
 
         <div class="indent">
             <pre class="collapsed"><code class="html prettyprint">{
-    "aggregation": "sum",
-    // Each dimension will be related to a component of the summary text.
-    // The first component is always the aggregated totals.
-    "dimensions": [
-        {
-            "field": {"id":"gender", "type":"string"},
-
-            // Component value. $ is a placeholder for the current dimension cut value
-            // (in this case we have suffixed it with 's' in order to make plurals)
-            "text_format": "&lt;strong&gt;$s died&lt;/strong&gt;",
-
-            // Default summary text component value (displayed when a cut is not
-            // set on this dimension)
-            "text_default": "people died",
-
-            "weight": 1
-        },
-        {
-            "field": {"id":"year", "type":"string"},
-            "text_default": "between 2002 and 2011",
-            "text_format": "in &lt;strong&gt;$&lt;/strong&gt;",
-            "weight": 4
-        }
-    ],
     "id": "summary",
-    "label": "Number of deaths",
-    "measure": {"id": "value"},
-    "measure_label": "Number of deaths",
     "type": "summary",
+    "settings": {
+        "label": "Number of deaths",
+        "measure_label": "Number of deaths",
+        "aggregation": "sum",
+        "measure": "value",
+        // Each dimension will be related to a component of the summary text.
+        // The first component is always the aggregated totals.
+        "dimensions": [
+            {
+                "field": "gender",
+
+                // Component value. $ is a placeholder for the current dimension cut value
+                // (in this case we have suffixed it with 's' in order to make plurals)
+                "text_format": "&lt;strong&gt;$s died&lt;/strong&gt;",
+
+                // Default summary text component value (displayed when a cut is not
+                // set on this dimension)
+                "text_default": "people died",
+            },
+            {
+                "field": "year",
+                "text_default": "between 2002 and 2011",
+                "text_format": "in &lt;strong&gt;$&lt;/strong&gt;",
+            }
+        ]
+    },
     "width": 4,
     "height": 1
 }</code></pre>
@@ -1399,43 +1405,42 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
 
         <div class="indent">
             <pre class="collapsed"><code class="html prettyprint">{
-    "aggregation": "sum",
-    // The links will be displayed within an accordion. Each dimension will be a header.
-    "dimensions": [
-        {
-            "field": {"id": "gender", "type": "string"},
-            "weight":1
-        },
-        {
-            "field": {"id": "year", "type": "string"},
-            "weight": 4
-        }
-    ],
     "id": "nav01",
-    "label": "Navigation",
-    "measure": {"id": "value"},
-    "measure_label": "Number of deaths",
     "type": "navigation",
+    "settings": {
+        "label": "Navigation",
+        "measure_label": "Number of deaths",
+        "aggregation": "sum",
+        "measure": "value",
+        // The links will be displayed within an accordion. Each dimension will be a header.
+        "dimensions": [
+            {"field": "gender"},
+            {"field": "year"}
+        ]
+    },
     "width": 4,
     "height": 6
 }</code></pre>
         </div>
 
-        <h5>Bar / Bubble / Line</h5>
+        <h5>Bar / Column / Bubble / Line</h5>
 
         <p class="indent">A generic chart visualisation element can be defined by:</p>
 
         <div class="indent">
             <pre class="collapsed"><code class="html prettyprint">{
     "id": "year",
-    "label": "Year",
-    "measure_label": "Number of deaths",
 
     // The attribute that defines the chart type to display
     "type": "&lt;CHART_TYPE_HERE&gt;",
-    "aggregation": "sum",
-    "measure": {"id": "value"},
-    "dimensions": [{"field": {"id": "year", "type": "string"}}],
+
+    "settings" {
+        "label": "Year",
+        "measure_label": "Number of deaths",
+        "aggregation": "sum",
+        "measure": "value",
+        "dimensions": [{"field": "year"}]
+    },
     "width": 1,
     "height": 6
 }</code></pre>
@@ -1448,12 +1453,14 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
         <div class="indent">
             <pre class="collapsed"><code class="html prettyprint">{
     "id": "year",
-    "label": "Year",
-    "measure_label": "Number of deaths",
     "type": "table",
-    "aggregation": "sum",
-    "measure": {"id": "value"},
-    "dimensions": [{"field": {"id": "year", "type": "string"}}],
+    "settings": {
+        "label": "Year",
+        "measure_label": "Number of deaths",
+        "aggregation": "sum",
+        "measure": "value",
+        "dimensions": [{"field": "year"}]
+    },
     "width": 1,
     "height": 6
 }</code></pre>
@@ -1466,12 +1473,14 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
         <div class="indent">
             <pre class="collapsed"><code class="html prettyprint">{
     "id": "area",
-    "label": "Area",
-    "measure_label": "Number of deaths",
     "type": "geo",
-    "aggregation": "sum",
-    "measure": {"id": "value"},
-    "dimensions": [{"field": {"id": "area", "type": "geo"}}],
+    "settings": {
+        "label": "Area",
+        "measure_label": "Number of deaths",
+        "aggregation": "sum",
+        "measure": "value",
+        "dimensions": [{"field": "area"}]
+    },
     "width": 1,
     "height": 6
 }</code></pre>
@@ -1486,37 +1495,31 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
     "elements": [{
         "id": "summary",
         "type": "summary",
-        "label": "Number of deaths",
-        "aggregation": "sum",
-        "measure": {"id": "value"},
-        "measure_label": "Number of deaths",
-        "dimensions": [{
-            "id": "d4",
-            "field": {"id": "gender", "type": "string"},
-            "text_default": "people",
-            "text_format": "&lt;strong&gt;$s&lt;/strong&gt;",
-            "weight": 1
-        }, {
-            "id": "d5",
-            "field": {"id": "area", "type": "geo"},
-            "text_default": "in England and Wales",
-            "text_format": "in &lt;strong&gt;$&lt;/strong&gt;",
-            "weight": 2
+        "settings": {
+            "label": "Number of deaths",
+            "measure_label": "Number of deaths",
+            "aggregation": "sum",
+            "measure": "value",
+            "dimensions": [{
+                "field": "gender",
+                "text_default": "people",
+                "text_format": "&lt;strong&gt;$s&lt;/strong&gt;"
+            }, {
+                "field": "area",
+                "text_default": "in England and Wales",
+                "text_format": "in &lt;strong&gt;$&lt;/strong&gt;"
+            },
+            {
+                "field": "chapter",
+                "text_default": "died",
+                "text_format": "died from &lt;strong&gt;$&lt;/strong&gt;"
+            },
+            {
+                "field": "year",
+                "text_default": "between 2002 and 2011",
+                "text_format": "in &lt;strong&gt;$&lt;/strong&gt;"
+            }]
         },
-        {
-            "id": "d6",
-            "field": {"id": "chapter", "type": "string"},
-            "text_default": "died",
-            "text_format": "died from &lt;strong&gt;$&lt;/strong&gt;",
-            "weight": 3
-        },
-        {
-            "id": "d7",
-            "field": {"id": "year", "type": "string"},
-            "text_default": "between 2002 and 2011",
-            "text_format": "in &lt;strong&gt;$&lt;/strong&gt;",
-            "weight": 4
-        }],
         "height": 1,
         "width": 4,
         "x": 1,
@@ -1524,14 +1527,13 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
     }, {
         "id": "year",
         "type": "bar",
-        "label": "Year",
-        "aggregation": "sum",
-        "measure": {"id": "value"},
-        "measure_label": "Number of deaths",
-        "dimensions": [{
-            "id": "d0",
-            "field": {"id": "year", "type": "string"}
-        }],
+        "settings": {
+            "label": "Year",
+            "measure_label": "Number of deaths",
+            "aggregation": "sum",
+            "measure": "value",
+            "dimensions": [{"field": "year"}]
+        },
         "height": 6,
         "width": 1,
         "x": 1,
@@ -1539,14 +1541,13 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
     }, {
         "id": "area",
         "type": "geo",
-        "label": "Area",
-        "aggregation": "sum",
-        "measure": {"id": "value"},
-        "measure_label": "Number of deaths",
-        "dimensions": [{
-            "id": "d1",
-            "field": {"id": "area", "type": "geo"}
-        }],
+        "settings": {
+            "label": "Area",
+            "measure_label": "Number of deaths",
+            "aggregation": "sum",
+            "measure": "value",
+            "dimensions": [{"field": "area"}]
+        },
         "height": 6,
         "width": 1,
         "x": 2,
@@ -1554,29 +1555,27 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
     }, {
         "id": "chapter",
         "type": "bubble",
-        "label": "Chapter",
-        "aggregation": "sum",
-        "measure": {"id": "value"},
-        "measure_label": "Number of deaths",
-        "dimensions": [{
-            "id": "d2",
-            "field": {"id": "chapter", "type": "string"}
-        }],
+        "settings": {
+            "label": "Chapter",
+            "measure_label": "Number of deaths",
+            "aggregation": "sum",
+            "measure": "value",
+            "dimensions": [{"field": "chapter"}]
+        },
         "height": 6,
         "width": 1,
         "x": 3,
         "y": 2
     }, {
         "id": "gender",
-        "type": "bar",
-        "label": "Gender",
-        "aggregation": "sum",
-        "measure": {"id": "value"},
-        "measure_label": "Number of deaths",
-        "dimensions": [{
-            "id": "d3",
-            "field": {"id": "gender", "type": "string"}
-        }],
+        "type": "column",
+        "settings": {
+            "label": "Gender",
+            "measure_label": "Number of deaths",
+            "aggregation": "sum",
+            "measure": "value",
+            "dimensions": [{"field": "gender"}]
+        },
         "height": 6,
         "width": 1,
         "x": 4,

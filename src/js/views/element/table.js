@@ -27,6 +27,10 @@ define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../temp
 
         scrollPosition: 0,
 
+        initialize: function(options) {
+            this.listenTo(this.model.get('settings'), 'change:label', this.updateLabel);
+        },
+
         render: function() {
             var sortProperty = this.getSortProperty(),
                 sortDirection = this.getSortDirection(),
@@ -74,6 +78,10 @@ define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../temp
                 .scrollTop(this.scrollPosition);
 
             return this;
+        },
+
+        updateLabel: function(){
+            this.$('h2').text(this.model.get('settings').get('label'));
         },
 
         /**

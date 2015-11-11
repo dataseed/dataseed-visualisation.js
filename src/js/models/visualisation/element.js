@@ -27,7 +27,7 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
 
         // Allowed element types mapped by their dimensionality
         elementTypes: {
-            monoDimensional:  ['bar', 'bubble', 'line', 'table', 'geo'],
+            monoDimensional:  ['bar', 'column', 'bubble', 'line', 'table', 'geo'],
             multiDimensional: ['navigation', 'summary']
         },
 
@@ -107,7 +107,8 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
          */
         parse: function(response) {
             if (response.settings) {
-                response.settings = new Backbone.Model(response.settings);
+                this.get('settings').set(response.settings);
+                response.settings = this.get('settings');
                 if (response.settings.get('dimensions')) {
                     this.updateDimensions(response.settings.get('dimensions'));
                 }
@@ -402,7 +403,7 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
                 case 'date':
                     return _.extend(value, {
                         label: format.dateLong(value.id, dimension.get('bucket_interval')),
-                        label_short: format.dateShort(value.id)
+                        short_label: format.dateShort(value.id)
                     });
 
                 case 'integer':
@@ -523,7 +524,7 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
          */
         isSortable: function(index) {
             return (
-                _.contains(['bar', 'table', 'line'], this.get('type')) &&
+                _.contains(['bar', 'column', 'table', 'line'], this.get('type')) &&
                 !(this.get('type') === 'line' && this._getField(index).get('type') === 'date')
             );
         },

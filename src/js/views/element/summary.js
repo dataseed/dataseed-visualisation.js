@@ -4,7 +4,7 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
 
     var SummaryElementView = Backbone.View.extend({
 
-        className: "inner-element",
+        className: 'inner-element',
 
         template: _.template(summaryTemplate),
 
@@ -12,7 +12,7 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
             // Bind to element models
             this.visualisation = options.visualisation;
 
-            this.listenTo(this.model.get('settings'), 'change:measure_label', this.changeMeasureLabel);
+            this.listenTo(this.model.get('settings'), 'change:label', this.updateLabel);
         },
 
         render: function() {
@@ -25,8 +25,8 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
             return this;
         },
 
-        changeMeasureLabel: function() {
-            this.model.get('settings').set('label', this.model.getMeasureLabel());
+        updateLabel: function(){
+            this.$('h1').text(this.getSummaryText());
         },
 
         getSummaryText: function() {
