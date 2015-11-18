@@ -115,7 +115,7 @@
 
         <h4>Import API</h4>
 
-        <p>First, start an import by POSTing a new import model. The URL should point to a publicly accessible CSV or XLS file that you want to import:</p>
+        <p>First, prepare an import by POSTing a new import model. The URL should point to a publicly accessible CSV or XLS file that you want to import:</p>
 
         <div class="collapsed code-wrap">
             <code class="shell prettyprint">curl -XPOST -u'dataseed@example.com:password' -H'Accept: application/json' -H'Content-type: application/json' https://dataseedapp.com/api/imports/ -d'</code><pre><code class="json prettyprint">{
@@ -130,20 +130,17 @@
 }'</code></pre>
         </div>
 
-        <p>If the file was fetched successfully the import will start and Dataseed will respond with:</p>
+        <p>If the file was fetched and validated successfully Dataseed will respond with:</p>
 
         <pre><code class="json prettyprint">{
     "href": "/api/imports/95e2e1761e80fe5542cc95ff1c3e7ca5",
     "status": 303
 }</code></pre>
 
-        <p>The <em>href</em> in this response can be used to query the status of the import:</p>
+        <p>The <em>href</em> in this response can be used to fetch the pending the import:</p>
 
-        <code class="shell prettyprint">curl -XGET -u'dataseed@example.com:password' -H'Accept: application/json' https://dataseedapp.com/api/imports/95e2e1761e80fe5542cc95ff1c3e7ca5</code>
-
-        <p>When the import has finished the <em>status</em> attribute of the import will be set to <em>completed</em>:</p>
-
-        <pre class="collapsed"><code class="json prettyprint">{
+        <div class="collapsed code-wrap">
+            <code class="shell prettyprint">curl -XGET -u'dataseed@example.com:password' -H'Accept: application/json' https://dataseedapp.com/api/imports/95e2e1761e80fe5542cc95ff1c3e7ca5</code><pre><code class="json prettyprint">{
     "created": "2015-04-08T14:56:32.479716",
     "data": {
         "columns": {
@@ -183,10 +180,58 @@
         "type": "external"
     }],
     "id": "95e2e1761e80fe5542cc95ff1c3e7ca5",
-    "status": "completed"
-}</code></pre>
+    "status": "ready"
+}'</code></pre>
+        </div>
 
-        <p>You can view the imported data by selecting the visualisation on your <a href="https://dataseedapp.com">datasets page</a> or by querying the <a href="#api-dataset">dataset</a> and its <a href="#api-observations">observations</a>.</p>
+        <p>To start the import, just PUT the data received from the GET request:</p>
+
+        <div class="collapsed code-wrap">
+            <code class="shell prettyprint">curl -XPUT -u'dataseed@example.com:password' -H'Accept: application/json' https://dataseedapp.com/api/imports/95e2e1761e80fe5542cc95ff1c3e7ca5 -d'</code><pre><code class="json prettyprint">{
+    "created": "2015-04-08T14:56:32.479716",
+    "data": {
+        "columns": {
+            "0": "DateYearType",
+            "1": "StringType",
+            "2": "StringType",
+            "3": "StringType",
+            "4": "IntegerType"
+        },
+        "data_row": 2,
+        "description": "",
+        "header_labels": {
+            "0": "Year",
+            "1": "Geo Eng Ons",
+            "2": "Icd 10 Cause Of Death",
+            "3": "Sex",
+            "4": "Number Of Deaths"
+        },
+        "header_row": 1,
+        "headers": [
+            "Year",
+            "geo_eng_ons",
+            "ICD-10 Cause of Death",
+            "Sex",
+            "Number of Deaths"
+        ],
+        "label": "Mortality Case Study",
+        "measure": "rows",
+        "numeric_columns": {
+            "4": "Number Of Deaths"
+        },
+        "public": "true",
+        "table_set_type": "CSV"
+    },
+    "files": [{
+        "key": "https://dataseed.s3.amazonaws.com/samples/Dataseed_healthcare_mortality_case_study.csv",
+        "type": "external"
+    }],
+    "id": "95e2e1761e80fe5542cc95ff1c3e7ca5",
+    "status": "ready"
+}'</code></pre>
+        </div>
+
+        <p>When the import has finished the <em>status</em> attribute of the import will be set to <em>completed</em>. You can view the imported data by selecting the visualisation on your <a href="https://dataseedapp.com">datasets page</a> or by querying the <a href="#api-dataset">dataset</a> and its <a href="#api-observations">observations</a>.</p>
 
         <h4>Manual Dataset creation</h4>
 
@@ -858,7 +903,9 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
 
         <p>The first step is accomplished by POSTing an import model with a publicly accessible URL for a spreadsheet file and the <em>label</em> and <em>public</em> values for the new dataset (see <a href="#api-import-create">the examples below</a>).</p>
 
-        <p>Once the import has been successfully POSTed a background process will be started that transforms the rows in the spreadsheet into observations in Dataseed. Each observation will have an ID as well as a value for every column/field. For example:</p>
+        <p>If the file is fetched and validated successfully then dataseed will respond with a URL for the newly created import. Fetching the import allows you to inspect the detected field types, column headings, etc (see <a href="#api-import">the import object</a>).</p>
+
+        <p>To initiate the import the object should be PUT, either as-is or with modifications to the auto-detected configuration. This will start a background process that transforms the rows in the spreadsheet into observations in Dataseed. Each observation will have an ID as well as a value for every column/field. For example:</p>
 
         <pre><code class="json prettyprint">{
     "id": 1,

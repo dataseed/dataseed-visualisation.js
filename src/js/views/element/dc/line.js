@@ -45,43 +45,57 @@ define(['underscore', 'dc', 'd3', './dcChart', '../../../lib/format'],
                     .tickFormat(format.numScale);
 
             // Attach onClick handler after rendering
-            chart.on('renderlet.attachOnClick', this.attachOnClick);
-
-            // Note we don't have to set the scale domain: it will be handled
-            // by prepareXAxis() in dc.coordinateGridMixin
-            if (this.model.getFieldType() === 'date') {
-                chart.x(d3.time.scale.utc())
-                    .xUnits(d3.time.seconds);
-            } else {
-                chart.x(d3.scale.ordinal())
-                    .xUnits(dc.units.ordinal);
-            }
+            //
+            // Dc line charts, by default, handle the double click on the data
+            // points instead of the 'click' event that we want. Moreover it
+            // seems that the double click doesn't even trigger the call to
+            // this.chart.filter() (which is called by _chart.onClick() in
+            // MixinBase): we need this.chart.filter() to be called because
+            // otherwise we can't trigger our feature click flow (see
+            // DcChartView.initChart()).
+            chart.on('renderlet.attachOnClick', function(chart) {
+                chart.svg().selectAll('circle').on('click', function(d) {
+                    chart.onClick(d.data);
+                });
+            });
 
             return chart;
         },
 
         /**
-         * Attach the DC onClick event handler
-         *
-         * Dc line charts, by default, handle the double click on the data
-         * points instead of the 'click' event that we want. Moreover it
-         * seems that the double click doesn't even trigger the call to
-         * this.chart.filter() (which is called by _chart.onClick() in
-         * MixinBase): we need this.chart.filter() to be called because
-         * otherwise we can't trigger our feature click flow (see
-         * DcChartView.initChart()).
+         * Override ChartView.getFeatureLabel
          */
-        attachOnClick: function(chart) {
-            chart.svg().selectAll('circle').on('click', function(d) {
-                chart.onClick(d.data);
-            });
+        getFeatureLabel: function(id) {
+            return DcChartView.prototype.getFeatureLabel.call(this, {id: id});
         },
+
+        /**
+         * Override DcChartView.ignoreLabel
+         */
+        ignoreLabel: _.constant(false),
 
         /**
          * Override DcChartView.prepareChart
          */
         prepareChart: function() {
             DcChartView.prototype.prepareChart.apply(this, arguments);
+
+            // Use date scale for x-axis
+            if (this.model.getFieldType() === 'date') {
+                this.chart.x(d3.time.scale.utc())
+                    .xUnits(d3.time.seconds)
+                    .xAxis()
+                        .tickFormat(null);
+
+            // Use ordinal scale for x-axis
+            } else {
+                this.chart.x(d3.scale.ordinal())
+                    .xUnits(dc.units.ordinal)
+                    .xAxis()
+                        .tickFormat(_.bind(this.getFeatureLabel, this));
+            }
+
+            // Set y-axis label
             this.updateMeasureLabel();
         },
 

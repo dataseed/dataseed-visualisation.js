@@ -1,5 +1,5 @@
-define(['backbone', 'underscore', 'jquery', 'd3', '../../lib/format', 'text!../../templates/element/chart.html', 'tipsy'],
-    function(Backbone, _, $, d3, format, chartTemplate) {
+define(['backbone', 'underscore', 'jquery', 'd3', 'filesaver', '../../lib/format', 'text!../../templates/element/chart.html', 'tipsy'],
+    function(Backbone, _, $, d3, filesaver, format, chartTemplate) {
     'use strict';
 
     var ChartView = Backbone.View.extend({
@@ -9,12 +9,13 @@ define(['backbone', 'underscore', 'jquery', 'd3', '../../lib/format', 'text!../.
         template: _.template(chartTemplate),
 
         events: {
-            'mouseover g': 'removeTooltips'
+            'mouseover g': 'removeTooltips',
+            'click .download-svg' : 'downloadSVG'
         },
 
         initialize: function(options) {
             // Listen to changes in chart label
-            this.listenTo(this.model.get('settings'), 'change:label', this.updateChartLabel);
+            this.listenTo(this.model.get('settings'), 'change:label', this.updateLabel);
         },
 
         /**
@@ -45,7 +46,7 @@ define(['backbone', 'underscore', 'jquery', 'd3', '../../lib/format', 'text!../.
             return this;
         },
 
-        updateChartLabel: function(){
+        updateLabel: function(){
             this.$heading.text(this.model.get('settings').get('label'));
         },
 
@@ -164,7 +165,58 @@ define(['backbone', 'underscore', 'jquery', 'd3', '../../lib/format', 'text!../.
             if($('.tipsy').length > 0) {
                 $('.tipsy:gt(0)').remove();
             }
-        }
+        },
+
+        /**
+         * Download Chart as SVG
+         */
+        downloadSVG: function(e) {
+            e.preventDefault();
+            if (!window.Blob) {
+                throw new Error('SVG download not supported');
+            }
+
+            // Get clone of chart SVG
+            var svg = this.$('.chart-container > svg').get(0).cloneNode(true),
+                defaultNS = 'http://www.w3.org/2000/xmlns/',
+                svgNS = 'http://www.w3.org/2000/svg',
+                xLinkNS = 'http://www.w3.org/1999/xlink';
+
+            // Set XML namespaces
+            if (!svg.hasAttributeNS(defaultNS, 'xmlns')) {
+                svg.setAttributeNS(defaultNS, 'xmlns', svgNS);
+            }
+
+            if (!svg.hasAttributeNS(defaultNS, 'xmlns:xlink')) {
+                svg.setAttributeNS(defaultNS, 'xmlns:xlink', xLinkNS);
+            }
+
+            // Set basic chart styles
+            var defs = svg.querySelector('defs');
+            if (!defs) {
+                defs = document.createElement('defs');
+                svg.appendChild(defs);
+            }
+
+            var style = document.createElementNS(svgNS, 'style');
+            style.setAttribute('type', 'text/css');
+            defs.appendChild(style);
+
+            style.appendChild(document.createTextNode([
+                'text {',
+                'font-family: Verdana;',
+                'font-size: 12px;',
+                '}'
+            ].join(' ')));
+
+            // Serialise SVG
+            var data = (new XMLSerializer()).serializeToString(svg),
+                type = 'image/svg+xml',
+                filename = 'chart.svg';
+
+            // Prompt user to save
+            filesaver(new Blob([data], {type: type}), filename);
+         }
 
     });
 

@@ -27,16 +27,16 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
 
         // Allowed element types mapped by their dimensionality
         elementTypes: {
-            monoDimensional:  ['bar', 'column', 'bubble', 'line', 'table', 'geo'],
-            multiDimensional: ['navigation', 'summary']
+            monoDimensional:  ['bar', 'bubble', 'line', 'table', 'geo'],
+            multiDimensional: ['summary']
         },
 
         // Field types that can be used with each element type
         allowedFields: {
             geo         : function(f) { return (f.get('type') === 'geo'); },
             navigation  : function(f) { return (f.get('type') === 'string'); },
-            summary     : function() { return false; },
-            default     : function() { return true; }
+            summary     : _.constant(false),
+            default     : _.constant(true)
         },
 
         // Field types that have an associated dimension connection model.

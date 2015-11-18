@@ -60,7 +60,7 @@ require.config({
         jquery: 'components/jquery/jquery',
 
         // Underscore (Lo-Dash - http://lodash.com)
-        underscore: 'components/lodash/dist/lodash.underscore',
+        underscore: 'components/lodash/dist/lodash',
 
         // Backbone
         backbone: 'components/backbone/backbone',
@@ -71,6 +71,9 @@ require.config({
         // DC.js
         dc: 'components/dc.js/dc',
         crossfilter: 'components/crossfilter/crossfilter',
+
+        // FileSaver
+        filesaver: 'components/file-saver.js/FileSaver',
 
         // Gridster.js
         gridster: 'components/gridster/dist/jquery.gridster.min',
