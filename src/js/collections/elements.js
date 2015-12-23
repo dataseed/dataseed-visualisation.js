@@ -30,18 +30,21 @@ define(['backbone', 'underscore', '../models/visualisation/element/measureElemen
          * Get a serialized representation of elements' state
          */
         getState: function() {
-            return this.invoke('getState');
+            return _.object(this.map(function(element) {
+                return [element.get('id'), element.getState()];
+            }));
         },
 
         /**
          * Update elements' state from serialized representations returned by getState()
          */
         setState: function(states) {
-            _.each(states, function(state) {
-                var model = this.get(state.id);
-                model.setState(state);
-                model.resetConnections();
-            }, this);
+            this.forEach(function(element) {
+                if (element.get('id') in states) {
+                    element.setState(states[element.get('id')]);
+                    element.resetConnections();
+                }
+            });
         }
 
     });

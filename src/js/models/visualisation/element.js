@@ -1,5 +1,5 @@
-define(['backbone', 'underscore', 'jquery', '../../lib/format', '../../collections/elementDimensions'],
-function (Backbone, _, $, format, ElementDimensionCollection) {
+define(['backbone', 'underscore', 'jquery', 'd3', '../../lib/format', '../dataset/field', '../../collections/elementDimensions'],
+function (Backbone, _, $, d3, format, Field, ElementDimensionCollection) {
     'use strict';
 
     /**
@@ -27,7 +27,7 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
 
         // Allowed element types mapped by their dimensionality
         elementTypes: {
-            monoDimensional:  ['bar', 'bubble', 'line', 'table', 'geo'],
+            monoDimensional:  ['bar', 'bubble', 'column', 'donut', 'line', 'table', 'geo'],
             multiDimensional: ['summary']
         },
 
@@ -54,6 +54,14 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
         // them because for those fields cut values should be defined by ranges
         // of values
         bucketFields: ['date', 'float', 'integer'],
+
+        // Allowed measure formats for different element types
+        measureFormats: {
+            donut: ['tooltip'],
+            summary: ['tooltip'],
+            table: ['tooltip'],
+            default: ['scale', 'tooltip']
+        },
 
         // Regex to test for a valid parent property name in a hierarchical dimension
         validParent: /\d+/,
@@ -106,9 +114,13 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
          * Parse model
          */
         parse: function(response) {
+            // Update settings model
             if (response.settings) {
-                this.get('settings').set(response.settings);
-                response.settings = this.get('settings');
+                response.settings = this.get('settings')
+                    .clear({silent: true})
+                    .set(response.settings);
+
+                // Update dimensions models
                 if (response.settings.get('dimensions')) {
                     this.updateDimensions(response.settings.get('dimensions'));
                 }
@@ -120,10 +132,17 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
          * Serialize model
          */
         toJSON: function() {
+            // Get model attributes
             var data = Backbone.Model.prototype.toJSON.apply(this, arguments);
+
+            // Get settings model attributes
             data.settings = data.settings.toJSON();
+
+            // Get dimensions models' attributes
             data.settings.dimensions = this.dimensions.toJSON();
-            return data;
+
+            // Create deep copy (ignoring references to dataset and visualisation models)
+            return _.clone(_.omit(data, 'dataset', 'visualisation'), true);
         },
 
         /**
@@ -151,6 +170,13 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
          */
         _getField: function(index) {
             return this.dataset.fields.get(this.dimensions.at(index || 0).get('field'));
+        },
+
+        /**
+         * Get measure field
+         */
+        _getMeasureField: function() {
+            return this.dataset.fields.get(this.get('settings').get('measure'));
         },
 
         /**
@@ -356,40 +382,124 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
         },
 
         /**
-         * Get the specified observation
+         * Update measure formatting type ("value" or "percentage")
          */
-        getObservation: function(i, id) {
-            return this._getConnection('observations', id).getValue(i);
+        updateMeasureFormatType: function(type, value) {
+            var format = this.get('settings').get('format') || {};
+            format[type] = this.getDefaultMeasureFormat(type, value);
+            this.get('settings').set('format', format);
+            this.ready();
+        },
+
+        /**
+         * Update measure formatting value (d3 number format string)
+         */
+        updateMeasureFormatValue: function(type, value) {
+            var format = this.get('settings').get('format') || {};
+            format[type] = format[type] || {};
+            format[type].format = value;
+            this.get('settings').set('format', format);
+            this.ready();
+        },
+
+        /**
+         * Get measure formats for the current element type
+         */
+        getMeasureFormats: function() {
+            var type = this.get('type');
+            if (!(type in this.measureFormats)) {
+                type = 'default';
+            }
+            return _.object(_.map(this.measureFormats[type], function(formatType) {
+                return [formatType, this.getMeasureFormat(formatType)];
+            }, this));
+        },
+
+        /**
+         * Get default measure format
+         */
+        getDefaultMeasureFormat: function(type, format) {
+            var measure = this._getMeasureField(),
+                isInteger = !(measure && measure.get('type') === 'integer'),
+                isPercentage = (format === 'percentage'),
+                isTooltip = (type === 'tooltip');
+
+            if (isPercentage) {
+                return {
+                    type: 'percentage',
+                    format: '.2%'
+                };
+            } else if (isTooltip && isInteger) {
+                return {
+                    type: 'value',
+                    format: ',f'
+                };
+            } else if (isTooltip && !isInteger) {
+                return {
+                    type: 'value',
+                    format: ',.2f'
+                };
+            } else if (!isTooltip && isInteger) {
+                return {
+                    type: 'value',
+                    format: 's'
+                };
+            } else {
+                return {
+                    type: 'value',
+                    format: '.2s'
+                };
+            }
+        },
+
+        /**
+         * Get measure format
+         */
+        getMeasureFormat: function(type) {
+            var format = this.get('settings').get('format');
+            if (format && format[type]) {
+                return format[type];
+            }
+            return this.getDefaultMeasureFormat(type);
+        },
+
+        /**
+         * Get measure format type
+         */
+        getMeasureFormatType: function(type) {
+            return this.getMeasureFormat(type || 'scale').type;
+        },
+
+        /**
+         * Get measure formatter function
+         */
+        getMeasureFormatter: function(type) {
+            return d3.format(this.getMeasureFormat(type).format);
         },
 
         /**
          * Get the specified observation
          */
-        getObservationById: function(oid, fid) {
-            return this._getConnection('observations', fid).getValueById(oid);
+        getObservation: function(i, id, type) {
+            return this._getConnection('observations', id).getValue(i, this.getMeasureFormatType(type));
+        },
+
+        /**
+         * Get the specified observation
+         */
+        getObservationById: function(oid, fid, type) {
+            return this._getConnection('observations', fid).getValueById(oid, this.getMeasureFormatType(type));
         },
 
         /**
          * Get all observations
          */
-        getObservations: function(id) {
-            var data = this._getConnection('observations', id).getData(),
-                sort = this.getSort();
-
-            // Apply sorting if element is sortable and a sort has been set
-            if (this.isSortable() && sort) {
-
-                // Sort
-                data = _.sortBy(data, sort);
-
-                // Sort direction
-                if (this.get('settings').get('sort_direction') === 'desc') {
-                    data = data.reverse();
-                }
-
-            }
-
-            return data;
+        getObservations: function(id, type) {
+            return this._getConnection('observations', id).getData(
+                this.getMeasureFormatType(type),
+                (this.isSortable()) ? this.getSort() : null,
+                this.get('settings').get('sort_direction')
+            );
         },
 
         /**
@@ -401,9 +511,10 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
 
             switch(field.get('type')) {
                 case 'date':
+                    var interval = dimension.get('bucket_interval');
                     return _.extend(value, {
-                        label: format.dateLong(value.id, dimension.get('bucket_interval')),
-                        short_label: format.dateShort(value.id)
+                        label: format.dateLong(value.id, interval),
+                        short_label: format.dateShort(value.id, interval),
                     });
 
                 case 'integer':
@@ -634,7 +745,7 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
          * Get a serialized representation of element state
          */
         getState: function() {
-            return this.toJSON();
+            return JSON.stringify(this.toJSON());
         },
 
         /**
@@ -642,7 +753,7 @@ function (Backbone, _, $, format, ElementDimensionCollection) {
          * by getState()
          */
         setState: function(state) {
-            this.set(this.parse(state), {silent: false});
+            this.set(this.parse(JSON.parse(state)), {silent: false});
         }
 
     });

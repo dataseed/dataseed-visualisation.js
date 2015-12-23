@@ -24,6 +24,7 @@ define(['backbone', 'underscore', 'jquery', '../../../lib/format', 'text!../../.
                 field = this.dataset.fields.findWhere({id: id}),
                 index = this.index,
                 cut = this.model.getCut(this.index),
+                numFormatter = this.model.getMeasureFormatter('tooltip'),
 
                 // Get sort
                 sort = !_.isUndefined(this.dimension.sort) ? this.dimension.sort : {total: 'desc'},
@@ -35,7 +36,7 @@ define(['backbone', 'underscore', 'jquery', '../../../lib/format', 'text!../../.
                         return _.extend(
                             {
                                 total: d.total,
-                                totalFormat: format.num(d.total)
+                                totalFormat: numFormatter(d.total)
                             },
                             this.model.getLabel(d, this.index)
                         );

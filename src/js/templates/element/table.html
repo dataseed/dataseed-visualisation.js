@@ -34,7 +34,7 @@
                         data-value="<%- format.data(observation.id) %>"
                         data-content="<%- observation.label.toLowerCase() %>">
                         <td><a href="#"><%- observation.label %></a></td>
-                        <td><a href="#"><%- format.num(observation.total) %></a></td>
+                        <td><a href="#"><%- numFormatter(observation.total) %></a></td>
                     </tr>
                 <% }); %>
             </table>

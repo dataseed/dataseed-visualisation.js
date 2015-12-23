@@ -1,5 +1,5 @@
-define(['underscore', 'dc', './dcChart', '../../../lib/format'],
-    function(_, dc, DcChartView, format) {
+define(['underscore', 'dc', './dcChart'],
+    function(_, dc, DcChartView) {
     'use strict';
 
     /**
@@ -14,7 +14,7 @@ define(['underscore', 'dc', './dcChart', '../../../lib/format'],
         barHeight: 30,
         minBarHeight: 1,
 
-        margins: {top: 0, left: 10, right: 10, bottom: 70},
+        margins: {top: 0, left: 25, right: 25, bottom: 70},
 
         scaleTicks: 4,
 
@@ -22,14 +22,12 @@ define(['underscore', 'dc', './dcChart', '../../../lib/format'],
          * Override DcChartView.initChart
          */
         initChart: function() {
-            var chart = DcChartView.prototype.initChart.apply(this, arguments);
+            return DcChartView.prototype.initChart.apply(this, arguments)
+                // Set margins
+                .margins(_.clone(this.margins))
 
-            // Setup x-axis scale
-            chart.xAxis()
-                .ticks(this.scaleTicks)
-                .tickFormat(format.numScale);
-
-            return chart;
+                // Auto-scale X axis
+                .elasticX(true);
         },
 
         /**
@@ -48,7 +46,12 @@ define(['underscore', 'dc', './dcChart', '../../../lib/format'],
             }
             this.chart.height(this.chartHeight);
 
-            // Update X-Axis position
+            // Setup x-axis scale
+            this.chart.xAxis()
+                .ticks(this.scaleTicks)
+                .tickFormat(this.model.getMeasureFormatter('scale'));
+
+            // Update x-axis position
             if (this.chart.svg()) {
                 this.chart.svg().select('g.axis')
                     .attr('transform', 'translate(0, ' + (this.chartHeight - this.margins.bottom) + ')');

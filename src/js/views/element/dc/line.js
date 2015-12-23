@@ -1,5 +1,5 @@
-define(['underscore', 'dc', 'd3', './dcChart', '../../../lib/format'],
-    function(_, dc, d3, DcChartView, format) {
+define(['underscore', 'dc', 'd3', './dcChart'],
+    function(_, dc, d3, DcChartView) {
     'use strict';
 
     /**
@@ -21,7 +21,12 @@ define(['underscore', 'dc', 'd3', './dcChart', '../../../lib/format'],
 
             // Setup chart
             chart
+                // Auto-scale axes
+                .elasticX(true)
                 .elasticY(true)
+
+                // Set margins
+                .margins(_.clone(this.margins))
 
                 // No area or brush
                 .renderArea(false)
@@ -38,11 +43,7 @@ define(['underscore', 'dc', 'd3', './dcChart', '../../../lib/format'],
                 .ordinalColors([this.getStyle('featureActive')])
 
                 // Tweak the padding for the clip path - see dc.coordinateGridMixin
-                .clipPadding(5)
-
-                // Y-Axis
-                .yAxis()
-                    .tickFormat(format.numScale);
+                .clipPadding(5);
 
             // Attach onClick handler after rendering
             //
@@ -94,6 +95,10 @@ define(['underscore', 'dc', 'd3', './dcChart', '../../../lib/format'],
                     .xAxis()
                         .tickFormat(_.bind(this.getFeatureLabel, this));
             }
+
+            // Setup y-axis scale
+            this.chart.yAxis()
+                .tickFormat(this.model.getMeasureFormatter('scale'));
 
             // Set y-axis label
             this.updateMeasureLabel();

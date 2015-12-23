@@ -1,5 +1,5 @@
-define(['backbone', 'underscore', 'jquery', 'd3', 'filesaver', '../../lib/format', 'text!../../templates/element/chart.html', 'tipsy'],
-    function(Backbone, _, $, d3, filesaver, format, chartTemplate) {
+define(['backbone', 'underscore', 'jquery', 'd3', 'filesaver', 'text!../../templates/element/chart.html', 'tipsy'],
+    function(Backbone, _, $, d3, filesaver, chartTemplate) {
     'use strict';
 
     var ChartView = Backbone.View.extend({
@@ -138,7 +138,7 @@ define(['backbone', 'underscore', 'jquery', 'd3', 'filesaver', '../../lib/format
          * Get a tooltip label
          */
         getTooltip: function(d, i) {
-            var value = this.model.getObservationById(d.id);
+            var value = this.model.getObservationById(d.id, null, 'tooltip');
             if (!value) {
                 return;
             }
@@ -147,7 +147,7 @@ define(['backbone', 'underscore', 'jquery', 'd3', 'filesaver', '../../lib/format
             if (valueLabel && valueLabel.label) {
                label += valueLabel.label + ': ';
             }
-            label += format.num(value.total);
+            label += this.model.getMeasureFormatter('tooltip')(value.total);
             return label;
         },
 

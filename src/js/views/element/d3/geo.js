@@ -1,5 +1,5 @@
-define(['underscore', 'd3', 'topojson', '../chart', '../../../lib/format'],
-    function(_, d3, topojson, ChartView, format) {
+define(['underscore', 'd3', 'topojson', '../chart'],
+    function(_, d3, topojson, ChartView) {
     'use strict';
 
     var GeoChartView = ChartView.extend({
@@ -119,7 +119,7 @@ define(['underscore', 'd3', 'topojson', '../chart', '../../../lib/format'],
                     .attr('x', _.bind(this.getScaleItemX, this))
                     .attr('y', (this.margin * 2) + this.scaleItemHeight)
                     .style('fill', this.getStyle('scaleLabel'))
-                    .text(format.numScale);
+                    .text(this.model.getMeasureFormatter('scale'));
 
             chartScale.append('text')
                     .attr('class', 'scaleLabel')

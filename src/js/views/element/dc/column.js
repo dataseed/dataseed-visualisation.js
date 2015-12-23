@@ -21,8 +21,19 @@ define(['underscore', 'dc', 'd3', './dcChart', '../../../lib/format'],
          */
         initChart: function() {
             return DcChartView.prototype.initChart.apply(this, arguments)
+                // Auto-scale axes
+                .elasticX(true)
                 .elasticY(true)
-                .brushOn(false);
+
+                // Set margins
+                .margins(_.clone(this.margins))
+
+                // No brush
+                .brushOn(false)
+
+                // Use ordinal scale for x-axis
+                .x(d3.scale.ordinal())
+                .xUnits(dc.units.ordinal);
         },
 
         /**
@@ -31,14 +42,37 @@ define(['underscore', 'dc', 'd3', './dcChart', '../../../lib/format'],
         prepareChart: function() {
             DcChartView.prototype.prepareChart.apply(this, arguments);
 
-            // Setup X-Axis
-            this.chart.x(d3.scale.ordinal())
-                .xUnits(dc.units.ordinal);
-            this.chart.xAxis()
-                .ticks(5)
-                .tickFormat(_.bind(this.getFeatureLabel, this));
+            // Setup x-axis
+            if (this.model.getFieldType() === 'date' && !this.model.isBucketed()) {
+                // Use d3's date/time scale formatter
+                this.chart.xAxis()
+                    .tickFormat(_.bind(format.dateScale, format));
+            } else {
+                // Otherwise, use standard feature labels
+                this.chart.xAxis()
+                    .tickFormat(_.bind(this.getFeatureLabel, this));
+            }
 
+            // Setup y-axis
+            this.chart.yAxis()
+                .tickFormat(this.model.getMeasureFormatter('scale'));
+
+            // Set y-axis label
             this.updateMeasureLabel();
+
+            // Re-scale chart in case the canvas size has changed
+            this.chart.rescale();
+
+            // TODO: Remove this hack to fix sorting when using
+            // a date dimension once the following bug has been fixed:
+            // https://github.com/dc-js/dc.js/issues/598
+            var sort = this.model.getSort();
+            if (this.model.getFieldType() === 'date' && sort) {
+                var sortDirection = (this.model.get('settings').get('sort_direction') === 'asc') ? 1 : -1;
+                this.chart.ordering(function(d) {
+                    return d[sort] * sortDirection;
+                });
+            }
         },
 
         /**

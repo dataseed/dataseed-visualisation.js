@@ -36,8 +36,9 @@ define(['backbone', 'underscore', 'jquery', '../../lib/format', 'text!../../temp
                 sortDirection = this.getSortDirection(),
                 attrs = _.extend({
                     format: format,
+                    numFormatter: this.model.getMeasureFormatter('tooltip'),
                     cut: this.model.isCut(),
-                    values: _.chain(this.model.getObservations())
+                    values: _.chain(this.model.getObservations(null, 'tooltip'))
                         .map(function(value, index) {
                             return {
                                 id: value.id,

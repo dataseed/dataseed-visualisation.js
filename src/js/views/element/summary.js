@@ -1,5 +1,5 @@
-define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/element/summary.html'],
-    function(Backbone, _, format, summaryTemplate) {
+define(['backbone', 'underscore', 'text!../../templates/element/summary.html'],
+    function(Backbone, _, summaryTemplate) {
     'use strict';
 
     var SummaryElementView = Backbone.View.extend({
@@ -9,16 +9,14 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
         template: _.template(summaryTemplate),
 
         initialize: function(options) {
-            // Bind to element models
             this.visualisation = options.visualisation;
-
             this.listenTo(this.model.get('settings'), 'change:label', this.updateLabel);
         },
 
         render: function() {
             this.$el.html(this.template(_.extend({summary: this.getSummaryText()}, this.model.attributes)));
 
-            // Setting the background and title colours
+            // Set background and title colours
             this.$el.css('background-color', this.visualisation.styles.getStyle('background', this.model));
             this.$('h1').css('color', this.visualisation.styles.getStyle('heading', this.model));
             this.height = this.$('h1').outerHeight();
@@ -32,7 +30,7 @@ define(['backbone', 'underscore', '../../lib/format', 'text!../../templates/elem
         getSummaryText: function() {
             var summaryText,
                 element_label = this.model.get('settings').get('label'),
-                total = format.num(this.model.getObservations());
+                total = this.model.getMeasureFormatter('tooltip')(this.model.getObservations());
 
             // Basic summary. It will be used if the element has no dimensions.
             summaryText = _.escape(element_label) + ': ' + total;

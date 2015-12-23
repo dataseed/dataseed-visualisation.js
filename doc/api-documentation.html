@@ -49,7 +49,7 @@
 <div class="col-md-9 col-md-pull-3 col-sm-9 col-sm-pull-3 col-xs-12">
     <h2 id="introduction">Introduction</h2>
     <p>It's easy to build real-time data-driven visualisations, or add analytics to your existing applications.  We provide a hosted back-end with analytics capabilities, into which you can load your data via a RESTful API.</p>
-    <p>If you want to modify your visualisation's appearance beyond what our UI allows, you can clone the <a href="https://github.com/dataseed/dataseed-visualisation.js">dataseed-visualisation.js repo on Github</a> - it's written entirely in js and provided as open source under the GPL2 license.</p>
+    <p>If you want to modify your visualisation's appearance beyond what our UI allows, you can clone the <a href="https://github.com/dataseed/dataseed-visualisation.js">dataseed-visualisation.js repo on Github</a> - it's written entirely in js and provided as open source under the <a href="https://raw.githubusercontent.com/dataseed/dataseed-visualisation.js/master/LICENSE.txt">AGPL v3 license</a>.</p>
 
     <h3>Benefits</h3>
     <ul>
@@ -1334,73 +1334,92 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
 
         <table class="table table-hover table-responsive">
             <tr>
-                <th colspan="3">id (string)</th>
+                <th colspan="4">id (string)</th>
                 <td>The ID of the element</td>
             </tr>
             <tr>
-                <th colspan="3">type (string)</th>
-                <td>The type of element, one of <em>summary</em>, <em>navigation</em>, <em>bar</em>, <em>column</em>, <em>bubble</em>, <em>geo</em>, <em>table</em> or <em>line</em>.</td>
+                <th colspan="4">type (string)</th>
+                <td>The type of element, one of <em>bar</em>, <em>bubble</em>, <em>column</em>, <em>donut</em>, <em>geo</em>, <em>line</em>, <em>navigation</em>, <em>summary</em> or <em>table</em>.</td>
             </tr>
             <tr>
-                <th rowspan="11">settings (object)</th>
-                <th colspan="2">label (string)</th>
+                <th rowspan="15">settings (object)</th>
+                <th colspan="3">label (string)</th>
                 <td>The title of the element, usually displayed at the top of a chart (dependent on the element's type).</td>
             </tr>
             <tr>
-                <th colspan="2">measure_label (string)</th>
+                <th colspan="3">measure_label (string)</th>
                 <td>The label for the element's measure. For example, on line charts this will be the y-axis label.</td>
             </tr>
             <tr>
-                <th colspan="2">aggregation (string)</th>
+                <th colspan="3">aggregation (string)</th>
                 <td>The aggregation to perform on the element's measure, one of <em>sum</em>, <em>mean</em>, <em>min</em>, <em>max</em> or <em>rows</em>. The special <em>rows</em> aggregation is used when the element's measure is <em>null</em>.</td>
             </tr>
             <tr>
-                <th colspan="2">measure (string)</th>
+                <th colspan="3">measure (string)</th>
                 <td>The ID of the dataset field to use as the element's measure</td>
             </tr>
             <tr>
                 <th rowspan="3">dimensions (array)</th>
-                <th>field (string)</th>
+                <th colspan="2">field (string)</th>
                 <td>The ID of the dataset field to use as a dimension</td>
             </tr>
             <tr>
-                <th>bucket_interval (string)</th>
+                <th colspan="2">bucket_interval (string)</th>
                 <td>Used to bucket (also known as <a href="http://en.wikipedia.org/wiki/Data_binning">binning</a>) the dimension. Allowed values are <em>date_year</em>, <em>date_quarter</em>, <em>date_month</em>, <em>date_week</em>, <em>date_day</em>, <em>date_hour</em>, <em>date_minute</em>, <em>date_second</em> or <em>custom</em>.</td>
             </tr>
             <tr>
-                <th>bucket (integer)</th>
+                <th colspan="2">bucket (integer)</th>
                 <td>If <em>bucket_interval</em> is <em>custom</em> and the dimension is an <em>integer</em> or <em>float</em>, the dimension will be bucketed by this value.</td>
             </tr>
             <tr>
-                <th colspan="2">interactive (boolean)</th>
+                <th colspan="3">interactive (boolean)</th>
                 <td>By default clicking on a chart feature (such as a bar or a point on a line) will filter the visualisation. If interactive is set to false clicking on the chart will have no effect.</td>
             </tr>
             <tr>
-                <th colspan="2">required (boolean)</th>
+                <th colspan="3">required (boolean)</th>
                 <td>Only used by the <em>navigation</em> element type. When set to true this will stop users from unselecting a default dataset cut, effectively making the default cut required.</td>
             </tr>
             <tr>
-                <th colspan="2">sort (string)</th>
+                <th colspan="3">sort (string)</th>
                 <td>The ID of the dataset field to sort the element's features by. Only used by the <em>bar</em>, <em>column</em>, <em>line</em> and <em>table</em> element types.</td>
             </tr>
             <tr>
-                <th colspan="2">sort_direction (string)</th>
+                <th colspan="3">sort_direction (string)</th>
                 <td>The direction the element's features should be sorted in, either <em>asc</em> or <em>desc</em>.</td>
             </tr>
             <tr>
-                <th colspan="3">width (integer)</th>
+                <th rowspan="4">format (object)</th>
+                <th rowspan="2">scale (object)</th>
+                <th>type (string)</th>
+                <td>The type of value to show on the chart's scale/axis, either <em>value</em> or <em>percentage</em>.</td>
+            </tr>
+            <tr>
+                <th>format (string)</th>
+                <td>A <a href="https://github.com/mbostock/d3/wiki/Formatting">d3 number format string</a> used to format values shown on the chart's axis/axes.</td>
+            </tr>
+           <tr>
+                <th rowspan="2">tooltip (object)</th>
+                <th>type (string)</th>
+                <td>The type of value to show on the chart's tooltips and feature labels, either <em>value</em> or <em>percentage</em>.</td>
+            </tr>
+            <tr>
+                <th>format (string)</th>
+                <td>A <a href="https://github.com/mbostock/d3/wiki/Formatting">d3 number format string</a> used to format values shown on the chart's tooltips and feature labels.</td>
+            </tr>
+            <tr>
+                <th colspan="4">width (integer)</th>
                 <td>An integer from 1 to 4 representing the width of the rendered element. Dataseed is responsive so a value of "1" will used 25% of the current screen width. On mobile, this value is ignored as elements are always full width.</td>
             </tr>
             <tr>
-                <th colspan="3">height (integer)</th>
+                <th colspan="4">height (integer)</th>
                 <td>An integer from 1 to 255 representing the height of the rendered element. A value of "1" is equivalent to 50 pixels and the same height will be used across all devices.</td>
             </tr>
             <tr>
-                <th colspan="3">x (integer)</th>
+                <th colspan="4">x (integer)</th>
                 <td>An integer specifying the element's X position within the visualisation.</td>
             </tr>
             <tr>
-                <th colspan="3">y (integer)</th>
+                <th colspan="4">y (integer)</th>
                 <td>An integer specifying the element's Y position within the visualisation.</td>
             </tr>
         </table>
@@ -1470,7 +1489,7 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
 }</code></pre>
         </div>
 
-        <h5>Bar / Column / Bubble / Line</h5>
+        <h5>Bar / Bubble / Column / Donut / Line</h5>
 
         <p class="indent">A generic chart visualisation element can be defined by:</p>
 

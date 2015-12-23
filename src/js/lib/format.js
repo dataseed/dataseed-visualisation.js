@@ -10,37 +10,30 @@ define(['underscore', 'd3'], function(_, d3) {
             if (!_.isNumber(n)) {
                 // NaN
                 return '0';
-
             } else if ((n % 1) === 0) {
                 // Integer
-                return this.numInteger(n);
-
+                return this._numInteger(n);
             } else {
                 // Float
-                return this.numFloat(n);
+                return this._numFloat(n);
             }
         },
 
-        /**
-         * Format a number with commas
-         */
-        numInteger: d3.format('0'),
-
-        /**
-         * Format a number with commas to 2 d.p.
-         */
-        numFloat: d3.format('0.2f'),
-
-        /**
-         * Format a number with an SI prefix (e.g. k, M)
-         */
-        numScale: d3.format('s'),
+        _numInteger: d3.format('0'),
+        _numFloat: d3.format('0.2f'),
 
         /**
          * Format a timestamp using the shortest date format
          */
-        dateShort: function(timestamp) {
+        dateShort: function(timestamp, granularity) {
             var d = new Date(timestamp);
+
+            // Use specific format when dates are bucketed
+            if (granularity) {
+                return this._dateLongFormats[granularity](d);
+            }
+
+            // Otherwise, use the shortest date format
             return _.reduce(this._dateShortFormats, function(output, format) {
                 if (format[1](d)) {
                     output += format[0](d) + ' ';
@@ -55,8 +48,7 @@ define(['underscore', 'd3'], function(_, d3) {
             [d3.time.format.utc('%I:%M'), function(d) { return d.getMinutes(); }],
             [d3.time.format.utc('%I %p'), function(d) { return d.getHours(); }],
             [d3.time.format.utc('%a %d'), function(d) { return d.getDay() && d.getDate() !== 1; }],
-            [d3.time.format.utc('%b %d'), function(d) { return d.getDate() !== 1; }],
-            [d3.time.format.utc('%B'), function(d) { return d.getMonth(); }],
+            [d3.time.format.utc('%b'), function(d) { return d.getDate() !== 1 || d.getMonth(); }],
             [d3.time.format.utc('%Y'), function() { return true; }]
         ],
 
@@ -85,6 +77,15 @@ define(['underscore', 'd3'], function(_, d3) {
             'date_second': d3.time.format.utc('%A, %e %B %Y %H:%M:%S'),
             'date_day': d3.time.format.utc('%A, %e %B %Y')
         },
+
+        /**
+         * Format a timestamp using d3's date/time formatter
+         */
+        dateScale: function(timestamp) {
+            return this._dateScale(new Date(timestamp));
+        },
+
+        _dateScale: d3.time.scale.utc().tickFormat(),
 
         /**
          * Format a value for output in an HTML5 data attribute

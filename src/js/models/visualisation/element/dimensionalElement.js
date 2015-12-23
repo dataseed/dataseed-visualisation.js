@@ -138,20 +138,16 @@ function (Backbone, _, Element) {
                 return false;
             }
             var obs = this._connections.observations,
-                dims = this._connections.dimensions,
-                // True if all observations have loaded
-                observationsAllLoaded = (obs.num > 0 && obs.loaded > 0 && (obs.loaded % obs.num) === 0),
-                // True if all dimensions have loaded
-                dimensionsAllLoaded = (dims.loaded > 0 && (dims.loaded % dims.num) === 0);
+                dims = this._connections.dimensions;
             return (
-                // All observations have loaded, and...
-                observationsAllLoaded &&
+                // If all observations have loaded...
+                (obs.num > 0 && obs.loaded > 0 && (obs.loaded % obs.num) === 0) &&
                 (
-                    // There are no dimensions, or...
-                    (dims.num === 0) ||
-                    // All dimensions have loaded and
-                    // Dimensions and observations have loaded an equal number of times
-                    (dimensionsAllLoaded && (dims.loaded / obs.loaded === dims.num / obs.num))
+                    // And there's no dimensions...
+                    dims.num === 0 ||
+
+                    // Or all dimensions have loaded
+                    (dims.loaded > 0 && (dims.loaded % dims.num) === 0)
                 )
             );
         },

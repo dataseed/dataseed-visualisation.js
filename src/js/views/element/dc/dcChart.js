@@ -73,10 +73,7 @@ define(['underscore', 'jquery', '../chart'],
             chart.hasFilter = _.bind(this.hasFilter, this);
             chart.filter = _.bind(this.filter, this);
 
-            chart
-                // Set chart margins
-                .margins(_.clone(this.margins))
-
+            return chart
                 // Data
                 .dimension({filter: _.noop})
                 .group({all: _.bind(this.model.getObservations, this.model)})
@@ -89,12 +86,7 @@ define(['underscore', 'jquery', '../chart'],
                 .label(_.bind(this.getFeatureLabel, this))
 
                 // Tooltips
-                .title(_.bind(this.getTooltip, this))
-
-                // Auto-scale X axis
-                .elasticX(true);
-
-            return chart;
+                .title(_.bind(this.getTooltip, this));
         },
 
         /**
@@ -140,7 +132,18 @@ define(['underscore', 'jquery', '../chart'],
             this.$el.find('svg ' + this.tooltipSelector).tipsy({
                 gravity: 's',
                 title: function() {
-                    return $(this).children('title').text();
+                    // Get SVG title element created by Dc
+                    var $title = $(this).children('title');
+
+                    // If the title element has text content then move it
+                    // into a data property so the browser doesn't display
+                    // it as a normal tooltip
+                    if (!_.isEmpty($title.text())) {
+                        $title.data('title', $title.text()).empty();
+                    }
+
+                    // Return data property containing tooltip text
+                    return $title.data('title');
                 }
             });
         },

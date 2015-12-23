@@ -2,6 +2,7 @@
   "name": "dataseed-visualisation",
   "description": "Dataseed interactive visualisations",
   "version": "3.0.0",
+  "license" : "AGPL-3.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/dataseed/dataseed-visualisation.git"

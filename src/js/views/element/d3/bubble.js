@@ -1,5 +1,5 @@
-define(['underscore', 'd3', '../chart', '../../../lib/format'],
-    function(_, d3, ChartView, format) {
+define(['underscore', 'd3', '../chart'],
+    function(_, d3, ChartView) {
     'use strict';
 
     var BubbleChartView = ChartView.extend({
@@ -118,7 +118,7 @@ define(['underscore', 'd3', '../chart', '../../../lib/format'],
                     .attr('y', this.scaleMarginY)
                     .attr('x', _.bind(this.getRadius, this))
                     .style('fill', this.getStyle('scaleLabel'))
-                    .text(format.numScale);
+                    .text(this.model.getMeasureFormatter('scale'));
 
             // Add measure label
             scale.append('text')
