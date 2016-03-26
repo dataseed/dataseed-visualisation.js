@@ -1,5 +1,5 @@
-define(['backbone', 'underscore', 'jquery', './element/summary', './element/filter/navigation', './element/table', './element/dc/line', './element/dc/bar', './element/dc/column', './element/dc/donut', './element/d3/bubble', './element/d3/geo', './loadScreen', 'bootstrap_dropdown'],
-    function(Backbone, _, $, SummaryElementView, NavigationElementView, TableChartView, LineChartView, BarChartView, ColumnChartView, DonutChartView, BubbleChartView, GeoChartView, LoadScreenView) {
+define(['backbone', 'underscore', 'jquery', './element/summary', './element/filter/navigation', './element/table', './element/text', './element/dc/line', './element/dc/bar', './element/dc/column', './element/dc/donut', './element/d3/bubble', './element/d3/geo', './loadScreen', 'bootstrap_dropdown'],
+    function(Backbone, _, $, SummaryElementView, NavigationElementView, TableChartView, TextElementView, LineChartView, BarChartView, ColumnChartView, DonutChartView, BubbleChartView, GeoChartView, LoadScreenView) {
     'use strict';
 
     var ElementView = Backbone.View.extend({
@@ -15,6 +15,7 @@ define(['backbone', 'underscore', 'jquery', './element/summary', './element/filt
             summary:      SummaryElementView,
             navigation:   NavigationElementView,
             table:        TableChartView,
+            text:         TextElementView,
 
             // D3/DC elements
             column:       ColumnChartView,

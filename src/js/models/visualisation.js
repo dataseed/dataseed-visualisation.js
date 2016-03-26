@@ -17,12 +17,12 @@ define(['backbone', 'underscore', '../collections/elements', '../collections/sty
             // Set dataset
             this.dataset = options.dataset;
 
+            // Create collection for style models
+            this.styles = new StylesCollection(null, {visualisation: this});
+
             // Create collection for element models
             this.elements = new ElementsCollection();
             this.elements.bind('add', this.addElement, this);
-
-            // Create collection for style models
-            this.styles = new StylesCollection(null, {visualisation: this});
         },
 
         /**
@@ -43,13 +43,13 @@ define(['backbone', 'underscore', '../collections/elements', '../collections/sty
                 visualisation: this
             };
 
-            // Set element models in collection from visualisation "elements" attribute
-            this.elements.set(_.map(this.get('elements'), function (element) {
+            // Set style models in collection from visualisation "styles" attribute
+            this.styles.set(_.map(this.get('styles'), function (element) {
                 return _.extend({}, defaults, element);
             }, this));
 
-            // Set style models in collection from visualisation "styles" attribute
-            this.styles.set(_.map(this.get('styles'), function (element) {
+            // Set element models in collection from visualisation "elements" attribute
+            this.elements.set(_.map(this.get('elements'), function (element) {
                 return _.extend({}, defaults, element);
             }, this));
         },
@@ -68,8 +68,8 @@ define(['backbone', 'underscore', '../collections/elements', '../collections/sty
          * Save element's child models (elements and styles)
          */
         saveChildren: function(model, response, opts) {
-            this.elements.save();
             this.styles.save();
+            this.elements.save();
         },
 
         /**

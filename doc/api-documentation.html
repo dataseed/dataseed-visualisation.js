@@ -481,7 +481,7 @@
                 <th>Elements</th>
                 <td>Collection</td>
                 <td><a href="https://github.com/dataseed/dataseed-visualisation.js/blob/master/src/js/collections/elements.js">src/js/collections/elements.js</a></td>
-                <td>The elements collection owns all the element models in a visualisation. It uses the <a href="http://backbonejs.org/#Collection-model">polymorphic models pattern</a> to keep both <a href="https://github.com/dataseed/dataseed-visualisation.js/blob/master/src/js/models/visualisation/element/dimensionalElement.js">DimensionalElements</a> (charts with a dimension and measure) and <a href="https://github.com/dataseed/dataseed-visualisation.js/blob/master/src/js/models/visualisation/element/measureElement.js">MeasureElements</a> (charts with only a measure).</td>
+                <td>The elements collection owns all the element models in a visualisation. It uses the <a href="http://backbonejs.org/#Collection-model">polymorphic models pattern</a> to keep <a href="https://github.com/dataseed/dataseed-visualisation.js/blob/master/src/js/models/visualisation/element/dynamic/dimensionalElement.js">DimensionalElements</a> (charts with a dimension and measure), <a href="https://github.com/dataseed/dataseed-visualisation.js/blob/master/src/js/models/visualisation/element/dynamic/measureElement.js">MeasureElements</a> (charts with only a measure) and <a href="https://github.com/dataseed/dataseed-visualisation.js/blob/master/src/js/models/visualisation/element/staticElement.js">StaticElements</a> (elements without any dimensions, measures or dynamic data).</td>
             </tr>
             <tr>
                 <th rowspan="2">Element</th>
@@ -1339,7 +1339,7 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
             </tr>
             <tr>
                 <th colspan="4">type (string)</th>
-                <td>The type of element, one of <em>bar</em>, <em>bubble</em>, <em>column</em>, <em>donut</em>, <em>geo</em>, <em>line</em>, <em>navigation</em>, <em>summary</em> or <em>table</em>.</td>
+                <td>The type of element, one of <em>bar</em>, <em>bubble</em>, <em>column</em>, <em>donut</em>, <em>geo</em>, <em>line</em>, <em>navigation</em>, <em>summary</em>, <em>table</em> or <em>text</em>.</td>
             </tr>
             <tr>
                 <th rowspan="15">settings (object)</th>
@@ -1549,6 +1549,22 @@ print '&lt;script&gt;require.config(%s);&lt;/script&gt;' % config</code></pre>
     },
     "width": 1,
     "height": 6
+}</code></pre>
+        </div>
+
+        <h5>Text</h5>
+
+        <p class="indent">A static text box:</p>
+
+        <div class="indent">
+            <pre class="collapsed"><code class="html prettyprint">{
+    "id": "info",
+    "type": "text",
+    "settings": {
+        "content": "&lt;p&gt;Hello! This is &lt;em&gt;my&lt;/em&gt; visualisation!&lt;/p&gt;",
+    },
+    "width": 1,
+    "height": 1
 }</code></pre>
         </div>
 

@@ -1,9 +1,10 @@
-define(['backbone', 'underscore', '../models/visualisation/element/measureElement', '../models/visualisation/element/dimensionalElement'],
-    function (Backbone, _, MeasureElement, DimensionalElement) {
+define(['backbone', 'underscore', '../models/visualisation/element/dynamic/measureElement', '../models/visualisation/element/dynamic/dimensionalElement', '../models/visualisation/element/staticElement'],
+    function (Backbone, _, MeasureElement, DimensionalElement, StaticElement) {
     'use strict';
 
     var elementTypes = {
-        summary: MeasureElement
+        summary: MeasureElement,
+        text: StaticElement
     };
 
     var ElementsCollection = Backbone.Collection.extend({

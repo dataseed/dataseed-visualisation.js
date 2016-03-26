@@ -1,5 +1,5 @@
-define(['backbone', 'underscore', '../element'],
-function (Backbone, _, Element) {
+define(['backbone', 'underscore', '../dynamicElement'],
+function (Backbone, _, DynamicElement) {
     'use strict';
 
     /**
@@ -10,7 +10,7 @@ function (Backbone, _, Element) {
      * dimensions attribute to set the value for the text placeholders
      *
      */
-    var MeasureElement = Element.extend({
+    var MeasureElement = DynamicElement.extend({
 
         /**
          * Initialise connection for aggregation data

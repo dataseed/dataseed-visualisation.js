@@ -118,6 +118,9 @@ define(['backbone', 'underscore', 'jquery', '../models/visualisation', './layout
                 element,
                 this._views[element.cid].$el
             );
+            if (element.isLoaded()) {
+                this.renderElement(element);
+            }
         },
 
         /**

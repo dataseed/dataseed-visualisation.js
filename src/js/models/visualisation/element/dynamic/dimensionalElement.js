@@ -1,5 +1,5 @@
-define(['backbone', 'underscore', '../element'],
-function (Backbone, _, Element) {
+define(['backbone', 'underscore', '../dynamicElement'],
+function (Backbone, _, DynamicElement) {
     'use strict';
 
     /**
@@ -9,7 +9,7 @@ function (Backbone, _, Element) {
      *   - a connection of type 'dimensions' to get the dimensions values for d, if d is non
      *     date/numeric
      */
-    var DimensionalElement = Element.extend({
+    var DimensionalElement = DynamicElement.extend({
 
         // Maps field types to the related allowed values and labels for the
         // bucket_interval attribute.
@@ -204,7 +204,7 @@ function (Backbone, _, Element) {
          * @see this.buildCutArgs()
          */
         hasCutId: function (id, index) {
-            var ret = Element.prototype.hasCutId.apply(this, arguments);
+            var ret = DynamicElement.prototype.hasCutId.apply(this, arguments);
 
             if (this.isBucketed(index)) {
                 var dimensionId = this._getField(index).get('id');
