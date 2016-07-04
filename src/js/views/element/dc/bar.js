@@ -102,7 +102,7 @@ define(['underscore', 'dc', './dcChart'],
             this.chart.svg().append('text')
                 .attr('class', 'scaleLabel')
                 .attr('text-anchor', 'middle')
-                .attr('x', (this.width - (this.margins.left + this.margins.right)) / 2)
+                .attr('x', (this.width) / 2)
                 .attr('y', this.chartHeight - this.margins.bottom / 2)
                 .attr('dy', 15)
                 .style('fill', this.getStyle('measureLabel'))

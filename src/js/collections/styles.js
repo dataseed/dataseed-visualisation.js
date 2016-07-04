@@ -10,8 +10,8 @@ define(['backbone', 'underscore', '../models/visualisation/style'],
             'visualisationBackground':  '#fff',
             'background':               '#f5f6f9',
             'heading':                  '#566573',
-            'featureFill':              '#72bd49',
-            'featureFillActive':        '#88939d',
+            'featureFill':              '#72bd49',      // active green
+            'featureFillActive':        '#88939d',      // inactive grey
             'featureStroke':            '#fff',
             'featureStrokeActive':      '#fff',
             'label':                    '#2c3e50',
